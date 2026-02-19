@@ -1,135 +1,355 @@
-# Turborepo starter
+# AwaazAI
 
-This Turborepo starter is maintained by the Turborepo core team.
+Production-grade voice AI application that allows users to chat with AI-generated voices of their loved ones.
 
-## Using this example
+## Tech Stack
 
-Run the following command:
+| Layer | Technology |
+|-------|------------|
+| **Mobile App** | React Native (Expo) |
+| **Backend** | Node.js + Express.js |
+| **Database** | PostgreSQL (AWS RDS) |
+| **Cache/Queue** | Redis (AWS ElastiCache) |
+| **Storage** | AWS S3 |
+| **Voice Cloning** | ElevenLabs API |
+| **AI/LLM** | OpenAI (GPT-4, Whisper) |
+| **CI/CD** | GitHub Actions |
 
-```sh
-npx create-turbo@latest
-```
-
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## Project Structure
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+awaazai/
+├── apps/
+│   ├── mobile/              # React Native Expo app
+│   └── server/              # Express.js backend
+├── packages/
+│   ├── types/               # Shared TypeScript types
+│   ├── utils/               # Shared utility functions
+│   ├── validators/          # Zod validation schemas
+│   ├── eslint-config/       # Shared ESLint configuration
+│   └── typescript-config/   # Shared TypeScript configuration
+├── scripts/                 # Deployment & utility scripts
+├── docker/                  # Docker configurations
+└── .github/workflows/       # CI/CD pipelines
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Prerequisites
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+- Node.js >= 20.0.0
+- npm >= 10.0.0
+- Docker & Docker Compose
+- AWS CLI configured
+- Git
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+## Getting Started
 
-### Develop
+### 1. Clone the repository
 
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+```bash
+git clone https://github.com/your-username/awaazai.git
+cd awaazai
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### 2. Install dependencies
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+```bash
+npm install
 ```
 
-### Remote Caching
+### 3. Setup environment variables
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+```bash
+cp .env.example .env
+# Edit .env with your values
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### 4. Start development
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+```bash
+# Start all apps
+npm run dev
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+# Or start specific app
+npm run dev:server
+npm run dev:mobile
 ```
 
-## Useful Links
+---
 
-Learn more about the power of Turborepo:
+## NPM Scripts Reference
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+### Development Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `dev` | `npm run dev` | Start all apps in development mode |
+| `dev:server` | `npm run dev:server` | Start only the backend server |
+| `dev:mobile` | `npm run dev:mobile` | Start only the mobile app (Expo) |
+
+### Build Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `build` | `npm run build` | Build all apps for production |
+| `build:server` | `npm run build:server` | Build only the backend server |
+
+### Code Quality Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `lint` | `npm run lint` | Run ESLint on all packages |
+| `lint:fix` | `npm run lint:fix` | Run ESLint and auto-fix issues |
+| `format` | `npm run format` | Format code with Prettier |
+| `format:check` | `npm run format:check` | Check code formatting |
+| `typecheck` | `npm run typecheck` | Run TypeScript type checking |
+
+### Testing Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `test` | `npm run test` | Run all tests |
+| `test:coverage` | `npm run test:coverage` | Run tests with coverage report |
+
+### Database Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `db:generate` | `npm run db:generate` | Generate Prisma client |
+| `db:migrate` | `npm run db:migrate` | Run database migrations |
+| `db:push` | `npm run db:push` | Push schema changes to database |
+| `db:studio` | `npm run db:studio` | Open Prisma Studio GUI |
+| `db:seed` | `npm run db:seed` | Seed database with initial data |
+
+### Utility Scripts
+
+| Script | Command | Description |
+|--------|---------|-------------|
+| `clean` | `npm run clean` | Clean all build outputs and node_modules |
+| `prepare` | `npm run prepare` | Setup Husky git hooks (runs automatically) |
+
+---
+
+## Environment Variables
+
+### Server Environment Variables
+
+```env
+# App
+NODE_ENV=development
+PORT=3000
+
+# Database (PostgreSQL - AWS RDS)
+DATABASE_URL=postgresql://user:password@host:5432/awaazai
+
+# Redis (AWS ElastiCache)
+REDIS_URL=redis://host:6379
+
+# AWS
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+AWS_REGION=ap-south-1
+AWS_S3_BUCKET=awaazai-media
+
+# Authentication
+JWT_ACCESS_SECRET=your_access_secret_min_32_chars
+JWT_REFRESH_SECRET=your_refresh_secret_min_32_chars
+JWT_ACCESS_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# AI Services
+OPENAI_API_KEY=sk-your_openai_key
+ELEVENLABS_API_KEY=your_elevenlabs_key
+
+# Logging
+LOG_LEVEL=debug
+```
+
+### Mobile Environment Variables
+
+```env
+# API
+API_URL=http://localhost:3000/api/v1
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+```
+
+---
+
+## Docker Commands
+
+### Development
+
+```bash
+# Start all services (PostgreSQL, Redis)
+docker-compose up -d
+
+# Stop all services
+docker-compose down
+
+# View logs
+docker-compose logs -f
+
+# Reset database
+docker-compose down -v && docker-compose up -d
+```
+
+### Production
+
+```bash
+# Build production image
+docker build -t awaazai-server -f docker/Dockerfile.server .
+
+# Run production container
+docker run -p 3000:3000 --env-file .env awaazai-server
+```
+
+---
+
+## Deployment
+
+### Deploy to Staging
+
+```bash
+npm run deploy:staging
+# or
+./scripts/deploy-staging.sh
+```
+
+### Deploy to Production
+
+```bash
+npm run deploy:prod
+# or
+./scripts/deploy-prod.sh
+```
+
+---
+
+## Git Workflow
+
+### Branch Naming
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| Feature | `feature/feature-name` | `feature/voice-cloning` |
+| Bug Fix | `fix/bug-description` | `fix/auth-token-expiry` |
+| Hotfix | `hotfix/issue` | `hotfix/critical-crash` |
+| Release | `release/version` | `release/1.0.0` |
+
+### Commit Message Format
+
+```
+type(scope): description
+
+Types: feat, fix, docs, style, refactor, test, chore
+
+Examples:
+- feat(auth): add Google OAuth login
+- fix(voice): handle empty audio file
+- docs(readme): update installation steps
+- refactor(api): restructure error handling
+```
+
+---
+
+## API Documentation
+
+Base URL: `http://localhost:3000/api/v1`
+
+### Authentication Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/auth/login` | Google OAuth login |
+| POST | `/auth/logout` | Logout user |
+| POST | `/auth/refresh` | Refresh access token |
+| GET | `/auth/profile` | Get current user profile |
+
+### Voice Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/voices/upload` | Upload voice samples |
+| POST | `/voices/clone` | Clone voice from samples |
+| GET | `/voices` | Get all user voices |
+| GET | `/voices/:id` | Get voice by ID |
+| PUT | `/voices/:id` | Update voice details |
+| DELETE | `/voices/:id` | Delete voice |
+
+### Chat Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/chats` | Create new chat |
+| GET | `/chats` | Get all user chats |
+| GET | `/chats/:id` | Get chat by ID |
+| DELETE | `/chats/:id` | Delete chat |
+
+### Message Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/messages/send` | Send audio message |
+| GET | `/messages/:chatId` | Get chat messages |
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**1. npm install fails**
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+**2. Database connection error**
+```bash
+# Check if Docker is running
+docker-compose ps
+
+# Restart database
+docker-compose restart postgres
+```
+
+**3. Prisma client not found**
+```bash
+npm run db:generate
+```
+
+**4. Port already in use**
+```bash
+# Find process using port
+lsof -i :3000
+
+# Kill process
+kill -9 <PID>
+```
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'feat: add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
+
+---
+
+## License
+
+This project is proprietary and confidential.
+
+---
+
+## Support
+
+For support, contact: support@awaazai.com
