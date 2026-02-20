@@ -1,0 +1,59 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [dev, staging, main]
+  pull_request:
+    branches: [dev, staging, main]
+
+jobs:
+  # ============================================
+  # Server App CI/CD
+  # ============================================
+  server-ci-cd:
+    name: Server CI/CD
+    uses: tkp315/github-workflow/.github/workflows/reusable-ci-cd-complete.yml@main
+    with:
+      node-version: '20'
+      working-directory: 'apps/server'
+      aws-region: 'ap-south-1'
+      ecr-repository: 'awaazai-server'
+      ecs-cluster-staging: 'awaazai-staging-cluster'
+      ecs-service-staging: 'awaazai-server-staging'
+      ecs-cluster-prod: 'awaazai-prod-cluster'
+      ecs-service-prod: 'awaazai-server-prod'
+    secrets: inherit
+
+  # ============================================
+  # Mobile App CI (no deployment - uses Expo EAS)
+  # ============================================
+  mobile-lint:
+    name: Mobile Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+
+  mobile-typecheck:
+    name: Mobile TypeCheck
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run typecheck
