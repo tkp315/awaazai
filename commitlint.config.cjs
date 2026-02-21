@@ -16,6 +16,8 @@ module.exports = {
         'ci',
         'build',
         'revert',
+        'setup',
+        'package'
       ],
     ],
     'type-case': [2, 'always', 'lower-case'],

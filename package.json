@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "description": "Production-grade voice AI application for emotional connection",
+  "type": "module",
   "workspaces": [
     "apps/*",
     "packages/*"
