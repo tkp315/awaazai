@@ -1,4 +1,4 @@
-interface PostgresConfig {
+export interface PostgresConfig {
   url: string;
   host: string;
   password: string;

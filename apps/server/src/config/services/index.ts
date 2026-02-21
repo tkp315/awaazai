@@ -5,11 +5,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export interface AppConfig {
+export interface ServicesConfig {
   [key: string]: unknown;
 }
 
-async function appConfig(): Promise<AppConfig> {
+async function servicesConfig(): Promise<ServicesConfig> {
   const items = fs.readdirSync(__dirname);
 
   const configDirs = items.filter(item => {
@@ -24,14 +24,7 @@ async function appConfig(): Promise<AppConfig> {
     })
   );
 
-  // Add static app info
-  const staticConfig = {
-    name: 'awaazai',
-    version: '1.0.0',
-    apiPrefix: '/api/v1',
-  };
-
-  return { ...staticConfig, ...Object.assign({}, ...configs) };
+  return Object.assign({}, ...configs);
 }
 
-export default appConfig;
+export default servicesConfig;

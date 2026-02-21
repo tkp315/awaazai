@@ -1,4 +1,4 @@
-interface MongoConfig {
+export interface MongoConfig {
   url: string;
   dbName: string;
   maxPoolSize: number;
