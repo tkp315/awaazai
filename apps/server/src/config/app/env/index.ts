@@ -1,5 +1,19 @@
 import dotenv from 'dotenv';
-dotenv.config({ path: './.env' });
+
+function getEnvFile(): string {
+  const env = process.env.NODE_ENV;
+  switch (env) {
+    case 'prod':
+      return './.env.prod';
+    case 'dev':
+    default:
+      return './.env.dev';
+  }
+}
+
+const envFile = getEnvFile();
+dotenv.config({ path: envFile });
+console.log(`📄 Loaded ${envFile}`);
 
 export interface EnvConfig {
   NODE_ENV: string;

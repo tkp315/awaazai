@@ -3,7 +3,18 @@
   "version": "1.0.0",
   "main": "server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "cross-env NODE_ENV=dev tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "cross-env NODE_ENV=prod node dist/server.js",
+    "start:prod": "npm run build && npm run start",
+    "db:init": "npx prisma init",
+    "db:migrate": "npx prisma migrate dev",
+    "db:generate": "npx prisma generate",
+    "db:studio": "npx prisma studio",
+    "db:seed": "node prisma/seed.js",
+    "db:reset": "npx prisma migrate reset",
+    "db:push": "npx prisma db push",
+    "db:deploy": "npx prisma migrate deploy"
   },
   "type": "module",
   "author": "",
@@ -64,6 +75,7 @@
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.17",
     "@types/uuid": "^10.0.0",
+    "cross-env": "^10.1.0",
     "nodemon": "^3.1.13",
     "prisma": "^7.4.1",
     "rimraf": "^6.1.3",

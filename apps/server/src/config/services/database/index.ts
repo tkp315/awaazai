@@ -22,7 +22,7 @@ async function databaseConfig(): Promise<DatabaseConfig> {
   const configs = await Promise.all(
     dbdirs.map(async dir => {
       const module = await import(`./${dir}/index.js`);
-      const config = await module.default;
+      const config = typeof module.default === 'function' ? await module.default() : module.default;
       return {
         [dir]: config,
       };

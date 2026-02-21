@@ -12,6 +12,12 @@ export interface QueueJobConfig {
 }
 
 export interface QueueConfig {
+  redis: {
+    host: string;
+    port: number;
+    password?: string;
+    db: number;
+  };
   prefix: string;
   defaultJobOptions: {
     attempts: number;
@@ -32,6 +38,12 @@ export interface QueueConfig {
 
 async function queueConfig(): Promise<QueueConfig> {
   return {
+    redis: {
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379', 10),
+      password: process.env.REDIS_PASSWORD || undefined,
+      db: parseInt(process.env.REDIS_QUEUE_DB || '1', 10),
+    },
     prefix: 'awaazai',
 
     // Default options for all jobs

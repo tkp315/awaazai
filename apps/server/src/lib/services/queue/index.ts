@@ -12,25 +12,24 @@ import {
 } from './client.js';
 import * as queueService from './service.js';
 import type { QueueConfig } from '../../../config/services/queue/index.js';
-import type { RedisConfig } from '../redis/client.js';
 
-interface InitConfig {
-  queue: QueueConfig;
-  redis: RedisConfig;
-}
+export async function init(config: QueueConfig) {
+  try {
+    const libConfig: QueueLibConfig = {
+      redis: {
+        host: config.redis.host,
+        port: config.redis.port,
+        password: config.redis.password,
+        db: config.redis.db,
+      },
+      queue: config,
+    };
 
-export async function init(config: InitConfig) {
-  const libConfig: QueueLibConfig = {
-    redis: {
-      host: config.redis.host,
-      port: config.redis.port,
-      password: config.redis.password || undefined,
-      db: config.redis.databases.queue,
-    },
-    queue: config.queue,
-  };
-
-  return createQueues(libConfig);
+    return await createQueues(libConfig);
+  } catch (error) {
+    console.warn('⚠️ Queue initialization failed (Redis 5.0+ required):', (error as Error).message);
+    return null;
+  }
 }
 
 // Export client functions

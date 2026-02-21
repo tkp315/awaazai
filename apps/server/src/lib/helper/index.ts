@@ -23,6 +23,7 @@ async function initHelpers(config: Record<string, unknown>): Promise<HelperLib> 
     if (module.init) {
       const helperConfig = (config as Record<string, unknown>)[dir];
       helpers[dir] = await module.init(helperConfig);
+      console.log(`  ✅ helper/${dir} initialized`);
     }
   }
 

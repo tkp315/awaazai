@@ -23,6 +23,7 @@ async function initServices(config: Record<string, unknown>): Promise<ServicesLi
     if (module.init) {
       const serviceConfig = (config as Record<string, unknown>)[dir];
       services[dir] = await module.init(serviceConfig);
+      console.log(`  ✅ service/${dir} initialized`);
     }
   }
 

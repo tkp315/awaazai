@@ -3,7 +3,7 @@ import DailyRotateFile from 'winston-daily-rotate-file';
 let logger: winston.Logger;
 
 import { LoggerConfig } from '@config/helper/logger/index.js';
-export async function initLogger(config: LoggerConfig): Promise<winston.Logger> {
+export async function init(config: LoggerConfig): Promise<winston.Logger> {
   const { level, format, console: consoleConfig, file, error } = config;
 
   // Formats
@@ -80,4 +80,4 @@ export function getLogger(): winston.Logger {
   return logger;
 }
 
-export default { initLogger, getLogger };
+export default { init, getLogger };

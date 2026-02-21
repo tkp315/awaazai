@@ -12,6 +12,8 @@ export interface ConfigResult {
 }
 
 async function configLoader(): Promise<ConfigResult> {
+  console.log('📦 Loading configs...');
+
   const items = fs.readdirSync(__dirname);
 
   const configDirs = items.filter(item => {
@@ -22,11 +24,13 @@ async function configLoader(): Promise<ConfigResult> {
   const configs = await Promise.all(
     configDirs.map(async dir => {
       const module = await import(`./${dir}/index.js`);
-      const config = await module.default();
+      const config = typeof module.default === 'function' ? await module.default() : module.default;
+      console.log(`  ✅ config/${dir} loaded`);
       return { [dir]: config };
     })
   );
 
+  console.log('📦 All configs loaded!\n');
   return Object.assign({}, ...configs) as ConfigResult;
 }
 

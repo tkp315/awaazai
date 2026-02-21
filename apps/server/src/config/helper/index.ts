@@ -19,7 +19,7 @@ async function helperConfig(): Promise<HelperConfig> {
   const configs = await Promise.all(
     configDirs.map(async dir => {
       const module = await import(`./${dir}/index.js`);
-      const config = await module.default();
+      const config = typeof module.default === 'function' ? await module.default() : module.default;
       return { [dir]: config };
     })
   );
