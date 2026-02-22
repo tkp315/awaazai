@@ -1,8 +1,9 @@
 import { createClient, getClient, getConfig, disconnect } from './client.js';
 import * as openaiService from './service.js';
 import type { OpenAIConfig } from '../../../../config/services/ai/openai/index.js';
+import { Application } from 'express';
 
-export async function init(config: OpenAIConfig) {
+export async function init(config: OpenAIConfig, appObj: Application) {
   return createClient(config);
 }
 

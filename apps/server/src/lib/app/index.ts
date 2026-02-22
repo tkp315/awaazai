@@ -6,33 +6,29 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export interface DatabaseLib {
+export interface AppLib {
   [key: string]: unknown;
 }
 
-export async function init(
-  config: Record<string, unknown>,
-  appObj: Application
-): Promise<DatabaseLib> {
+async function initApps(config: Record<string, unknown>, appObj: Application): Promise<AppLib> {
   const items = fs.readdirSync(__dirname);
 
-  const dbDirs = items.filter(item => {
+  const appDirs = items.filter(item => {
     return fs.statSync(path.join(__dirname, item)).isDirectory();
   });
 
-  const databases: DatabaseLib = {};
+  const app: AppLib = {};
 
-  for (const dir of dbDirs) {
+  for (const dir of appDirs) {
     const module = await import(`./${dir}/index.js`);
     if (module.init) {
-      const dbConfig = config[dir];
-      if (dbConfig) {
-        databases[dir] = await module.init(dbConfig, appObj);
-      }
+      const appConfig = (config as Record<string, unknown>)[dir];
+      app[dir] = await module.init(appConfig, appObj);
+      console.log(`  ✅ app/${dir} initialized`);
     }
   }
 
-  return databases;
+  return app;
 }
 
-export default { init };
+export default initApps;

@@ -1,3 +1,4 @@
+import { Application } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -9,7 +10,10 @@ export interface ServicesLib {
   [key: string]: unknown;
 }
 
-async function initServices(config: Record<string, unknown>): Promise<ServicesLib> {
+async function initServices(
+  config: Record<string, unknown>,
+  appObj: Application
+): Promise<ServicesLib> {
   const items = fs.readdirSync(__dirname);
 
   const serviceDirs = items.filter(item => {
@@ -22,7 +26,7 @@ async function initServices(config: Record<string, unknown>): Promise<ServicesLi
     const module = await import(`./${dir}/index.js`);
     if (module.init) {
       const serviceConfig = (config as Record<string, unknown>)[dir];
-      services[dir] = await module.init(serviceConfig);
+      services[dir] = await module.init(serviceConfig, appObj);
       console.log(`  ✅ service/${dir} initialized`);
     }
   }

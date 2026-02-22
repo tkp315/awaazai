@@ -1,3 +1,4 @@
+import { Application } from 'express';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -9,7 +10,10 @@ export interface HelperLib {
   [key: string]: unknown;
 }
 
-async function initHelpers(config: Record<string, unknown>): Promise<HelperLib> {
+async function initHelpers(
+  config: Record<string, unknown>,
+  appObj: Application
+): Promise<HelperLib> {
   const items = fs.readdirSync(__dirname);
 
   const helperDirs = items.filter(item => {
@@ -22,7 +26,7 @@ async function initHelpers(config: Record<string, unknown>): Promise<HelperLib> 
     const module = await import(`./${dir}/index.js`);
     if (module.init) {
       const helperConfig = (config as Record<string, unknown>)[dir];
-      helpers[dir] = await module.init(helperConfig);
+      helpers[dir] = await module.init(helperConfig, appObj);
       console.log(`  ✅ helper/${dir} initialized`);
     }
   }

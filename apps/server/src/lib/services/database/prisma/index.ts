@@ -1,9 +1,10 @@
 import { PrismaClient } from 'generated/prisma/client.js';
 import pgConfig, { PostgresConfig } from '@config/services/database/pg/index.js';
 import { getLogger } from '@lib/helper/logger/index.js';
+import { Application } from 'express';
 
 let prisma: PrismaClient;
-async function initPrisma(config: PostgresConfig) {
+async function initPrisma(config: PostgresConfig, appObj: Application) {
   const logger = getLogger();
 
   prisma = new PrismaClient({

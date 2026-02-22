@@ -12,8 +12,9 @@ import {
 } from './client.js';
 import * as queueService from './service.js';
 import type { QueueConfig } from '../../../config/services/queue/index.js';
+import { Application } from 'express';
 
-export async function init(config: QueueConfig) {
+export async function init(config: QueueConfig, appObj: Application) {
   try {
     const libConfig: QueueLibConfig = {
       redis: {

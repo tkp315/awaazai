@@ -1,6 +1,7 @@
 import IORedis from 'ioredis';
 import { getLogger } from '../../helper/logger/index.js';
 import { RedisConfig } from '@config/services/redis/index.js';
+import { Application } from 'express';
 type RedisClient = InstanceType<typeof IORedis>;
 const redisClients: Map<string, RedisClient> = new Map();
 let redisConfig: RedisConfig | null = null;

@@ -1,8 +1,9 @@
 import { createClient, getClient, getConfig, disconnect } from './client.js';
 import * as elevenlabsService from './service.js';
 import type { ElevenLabsConfig } from '../../../../config/services/ai/elevenlabs/index.js';
+import { Application } from 'express';
 
-export async function init(config: ElevenLabsConfig) {
+export async function init(config: ElevenLabsConfig, appObj: Application) {
   return createClient(config);
 }
 
