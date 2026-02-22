@@ -110,7 +110,8 @@ export async function transcribeAudioBuffer(
   const config = getConfig();
 
   // Create a File-like object from the buffer
-  const file = new File([audioBuffer], fileName, { type: 'audio/webm' });
+  const uint8Array = new Uint8Array(audioBuffer);
+  const file = new File([uint8Array], fileName, { type: 'audio/webm' });
 
   const response = await client.audio.transcriptions.create({
     file: file,

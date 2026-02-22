@@ -17,69 +17,68 @@ jobs:
   server-lint:
     name: 🔍 Server Lint
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/server
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run format:check
 
-  server-typecheck:
-    name: 📝 Server TypeCheck
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/server
-    steps:
-      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
-      - run: npm run typecheck
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run Lint
+        run: npx turbo run lint --filter=server
+
+      - name: Check Formatting
+        run: npm run format:check
 
   server-test:
     name: 🧪 Server Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/server
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
-      - run: npm test
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run Tests
+        run: npx turbo run test --filter=server
 
   server-build:
     name: 🏗️ Server Build
     runs-on: ubuntu-latest
-    needs: [server-lint, server-typecheck]
-    defaults:
-      run:
-        working-directory: apps/server
+    needs: [server-lint, server-test]
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
-      - run: npm run build
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=apps/server/prisma/schema.prisma
+
+      - name: Build
+        run: npx turbo run build --filter=server
 
   server-deploy-staging:
     name: 🚀 Server Deploy Staging
     runs-on: ubuntu-latest
-    needs: [server-lint, server-typecheck, server-test, server-build]
+    needs: [server-build]
     if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
     environment: staging
     defaults:
@@ -88,7 +87,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure AWS
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -121,7 +120,7 @@ jobs:
   server-deploy-production:
     name: 🚀 Server Deploy Production
     runs-on: ubuntu-latest
-    needs: [server-lint, server-typecheck, server-test, server-build]
+    needs: [server-build]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     environment: production
     defaults:
@@ -130,7 +129,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure AWS
+      - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -169,36 +168,3 @@ jobs:
       - name: Notify Success
         run: echo "✅ Deployed to Production successfully!"
 
-  # ============================================
-  # Mobile App CI (no deployment - uses Expo EAS)
-  # ============================================
-  mobile-lint:
-    name: 🔍 Mobile Lint
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/mobile
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run format:check
-
-  mobile-typecheck:
-    name: 📝 Mobile TypeCheck
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/mobile
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run typecheck

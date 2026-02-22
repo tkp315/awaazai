@@ -3,14 +3,20 @@ import { getLogger } from '@lib/helper/logger/index.js';
 import { disconnectAll as disconnectRedis } from '@lib/services/redis/index.js';
 import { disconnectAll as disconnectQueue } from '@lib/services/queue/index.js';
 
+interface EnvConfig {
+  NODE_ENV: string;
+  PORT: number;
+}
+
 async function startServer() {
   try {
     // 1. Initialize config + libs
     await init();
 
     const logger = getLogger();
-    const port = app.config.app.env.PORT;
-    const env = app.config.app.env.NODE_ENV;
+    const envConfig = app.config.app.env as EnvConfig;
+    const port = envConfig.PORT;
+    const env = envConfig.NODE_ENV;
 
     // 2. Start server
     const server = app.listen(port, () => {
