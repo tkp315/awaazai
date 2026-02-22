@@ -30,9 +30,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: npm ci
-        env:
-          HUSKY: 0
+        run: npm ci --ignore-scripts
 
       - name: Run Lint
         run: npm run lint
@@ -56,9 +54,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: npm ci
-        env:
-          HUSKY: 0
+        run: npm ci --ignore-scripts
 
       - name: Run TypeCheck
         run: npm run typecheck
@@ -79,9 +75,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: npm ci
-        env:
-          HUSKY: 0
+        run: npm ci --ignore-scripts
 
       - name: Run Tests
         run: npm test
@@ -103,9 +97,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: npm ci
-        env:
-          HUSKY: 0
+        run: npm ci --ignore-scripts
 
       - name: Build
         run: npm run build
@@ -222,9 +214,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: npm ci
-        env:
-          HUSKY: 0
+        run: npm ci --ignore-scripts
 
       - name: Run Lint
         run: npm run lint
@@ -248,9 +238,7 @@ jobs:
           cache-dependency-path: package-lock.json
 
       - name: Install Dependencies
-        run: npm ci
-        env:
-          HUSKY: 0
+        run: npm ci --ignore-scripts
 
       - name: Run TypeCheck
         run: npm run typecheck
