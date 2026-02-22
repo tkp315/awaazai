@@ -4,16 +4,16 @@ Production-grade voice AI application that allows users to chat with AI-generate
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|------------|
-| **Mobile App** | React Native (Expo) |
-| **Backend** | Node.js + Express.js |
-| **Database** | PostgreSQL (AWS RDS) |
-| **Cache/Queue** | Redis (AWS ElastiCache) |
-| **Storage** | AWS S3 |
-| **Voice Cloning** | ElevenLabs API |
-| **AI/LLM** | OpenAI (GPT-4, Whisper) |
-| **CI/CD** | GitHub Actions |
+| Layer             | Technology              |
+| ----------------- | ----------------------- |
+| **Mobile App**    | React Native (Expo)     |
+| **Backend**       | Node.js + Express.js    |
+| **Database**      | PostgreSQL (AWS RDS)    |
+| **Cache/Queue**   | Redis (AWS ElastiCache) |
+| **Storage**       | AWS S3                  |
+| **Voice Cloning** | ElevenLabs API          |
+| **AI/LLM**        | OpenAI (GPT-4, Whisper) |
+| **CI/CD**         | GitHub Actions          |
 
 ## Project Structure
 
@@ -80,51 +80,51 @@ npm run dev:mobile
 
 ### Development Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `dev` | `npm run dev` | Start all apps in development mode |
-| `dev:server` | `npm run dev:server` | Start only the backend server |
-| `dev:mobile` | `npm run dev:mobile` | Start only the mobile app (Expo) |
+| Script       | Command              | Description                        |
+| ------------ | -------------------- | ---------------------------------- |
+| `dev`        | `npm run dev`        | Start all apps in development mode |
+| `dev:server` | `npm run dev:server` | Start only the backend server      |
+| `dev:mobile` | `npm run dev:mobile` | Start only the mobile app (Expo)   |
 
 ### Build Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `build` | `npm run build` | Build all apps for production |
+| Script         | Command                | Description                   |
+| -------------- | ---------------------- | ----------------------------- |
+| `build`        | `npm run build`        | Build all apps for production |
 | `build:server` | `npm run build:server` | Build only the backend server |
 
 ### Code Quality Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `lint` | `npm run lint` | Run ESLint on all packages |
-| `lint:fix` | `npm run lint:fix` | Run ESLint and auto-fix issues |
-| `format` | `npm run format` | Format code with Prettier |
-| `format:check` | `npm run format:check` | Check code formatting |
-| `typecheck` | `npm run typecheck` | Run TypeScript type checking |
+| Script         | Command                | Description                    |
+| -------------- | ---------------------- | ------------------------------ |
+| `lint`         | `npm run lint`         | Run ESLint on all packages     |
+| `lint:fix`     | `npm run lint:fix`     | Run ESLint and auto-fix issues |
+| `format`       | `npm run format`       | Format code with Prettier      |
+| `format:check` | `npm run format:check` | Check code formatting          |
+| `typecheck`    | `npm run typecheck`    | Run TypeScript type checking   |
 
 ### Testing Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `test` | `npm run test` | Run all tests |
+| Script          | Command                 | Description                    |
+| --------------- | ----------------------- | ------------------------------ |
+| `test`          | `npm run test`          | Run all tests                  |
 | `test:coverage` | `npm run test:coverage` | Run tests with coverage report |
 
 ### Database Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `db:generate` | `npm run db:generate` | Generate Prisma client |
-| `db:migrate` | `npm run db:migrate` | Run database migrations |
-| `db:push` | `npm run db:push` | Push schema changes to database |
-| `db:studio` | `npm run db:studio` | Open Prisma Studio GUI |
-| `db:seed` | `npm run db:seed` | Seed database with initial data |
+| Script        | Command               | Description                     |
+| ------------- | --------------------- | ------------------------------- |
+| `db:generate` | `npm run db:generate` | Generate Prisma client          |
+| `db:migrate`  | `npm run db:migrate`  | Run database migrations         |
+| `db:push`     | `npm run db:push`     | Push schema changes to database |
+| `db:studio`   | `npm run db:studio`   | Open Prisma Studio GUI          |
+| `db:seed`     | `npm run db:seed`     | Seed database with initial data |
 
 ### Utility Scripts
 
-| Script | Command | Description |
-|--------|---------|-------------|
-| `clean` | `npm run clean` | Clean all build outputs and node_modules |
+| Script    | Command           | Description                                |
+| --------- | ----------------- | ------------------------------------------ |
+| `clean`   | `npm run clean`   | Clean all build outputs and node_modules   |
 | `prepare` | `npm run prepare` | Setup Husky git hooks (runs automatically) |
 
 ---
@@ -234,12 +234,12 @@ npm run deploy:prod
 
 ### Branch Naming
 
-| Type | Pattern | Example |
-|------|---------|---------|
+| Type    | Pattern                | Example                 |
+| ------- | ---------------------- | ----------------------- |
 | Feature | `feature/feature-name` | `feature/voice-cloning` |
-| Bug Fix | `fix/bug-description` | `fix/auth-token-expiry` |
-| Hotfix | `hotfix/issue` | `hotfix/critical-crash` |
-| Release | `release/version` | `release/1.0.0` |
+| Bug Fix | `fix/bug-description`  | `fix/auth-token-expiry` |
+| Hotfix  | `hotfix/issue`         | `hotfix/critical-crash` |
+| Release | `release/version`      | `release/1.0.0`         |
 
 ### Commit Message Format
 
@@ -263,39 +263,39 @@ Base URL: `http://localhost:3000/api/v1`
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/auth/login` | Google OAuth login |
-| POST | `/auth/logout` | Logout user |
-| POST | `/auth/refresh` | Refresh access token |
-| GET | `/auth/profile` | Get current user profile |
+| Method | Endpoint        | Description              |
+| ------ | --------------- | ------------------------ |
+| POST   | `/auth/login`   | Google OAuth login       |
+| POST   | `/auth/logout`  | Logout user              |
+| POST   | `/auth/refresh` | Refresh access token     |
+| GET    | `/auth/profile` | Get current user profile |
 
 ### Voice Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/voices/upload` | Upload voice samples |
-| POST | `/voices/clone` | Clone voice from samples |
-| GET | `/voices` | Get all user voices |
-| GET | `/voices/:id` | Get voice by ID |
-| PUT | `/voices/:id` | Update voice details |
-| DELETE | `/voices/:id` | Delete voice |
+| Method | Endpoint         | Description              |
+| ------ | ---------------- | ------------------------ |
+| POST   | `/voices/upload` | Upload voice samples     |
+| POST   | `/voices/clone`  | Clone voice from samples |
+| GET    | `/voices`        | Get all user voices      |
+| GET    | `/voices/:id`    | Get voice by ID          |
+| PUT    | `/voices/:id`    | Update voice details     |
+| DELETE | `/voices/:id`    | Delete voice             |
 
 ### Chat Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/chats` | Create new chat |
-| GET | `/chats` | Get all user chats |
-| GET | `/chats/:id` | Get chat by ID |
-| DELETE | `/chats/:id` | Delete chat |
+| Method | Endpoint     | Description        |
+| ------ | ------------ | ------------------ |
+| POST   | `/chats`     | Create new chat    |
+| GET    | `/chats`     | Get all user chats |
+| GET    | `/chats/:id` | Get chat by ID     |
+| DELETE | `/chats/:id` | Delete chat        |
 
 ### Message Endpoints
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/messages/send` | Send audio message |
-| GET | `/messages/:chatId` | Get chat messages |
+| Method | Endpoint            | Description        |
+| ------ | ------------------- | ------------------ |
+| POST   | `/messages/send`    | Send audio message |
+| GET    | `/messages/:chatId` | Get chat messages  |
 
 ---
 
@@ -304,12 +304,14 @@ Base URL: `http://localhost:3000/api/v1`
 ### Common Issues
 
 **1. npm install fails**
+
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
 **2. Database connection error**
+
 ```bash
 # Check if Docker is running
 docker-compose ps
@@ -319,11 +321,13 @@ docker-compose restart postgres
 ```
 
 **3. Prisma client not found**
+
 ```bash
 npm run db:generate
 ```
 
 **4. Port already in use**
+
 ```bash
 # Find process using port
 lsof -i :3000

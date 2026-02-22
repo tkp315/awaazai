@@ -16,14 +16,14 @@ feature/* / fix/*      → Individual work branches
 
 ## Branch Descriptions
 
-| Branch | Purpose | Deploys To | Protection |
-|--------|---------|------------|------------|
-| `main` | Production code | Production server | PR required, 1+ approval, CI pass |
-| `staging` | Testing/QA | Staging server | PR required, CI pass |
-| `dev` | Development integration | Dev server (optional) | PR required |
-| `feature/*` | New features | - | None |
-| `fix/*` | Bug fixes | - | None |
-| `hotfix/*` | Urgent production fixes | - | None |
+| Branch      | Purpose                 | Deploys To            | Protection                        |
+| ----------- | ----------------------- | --------------------- | --------------------------------- |
+| `main`      | Production code         | Production server     | PR required, 1+ approval, CI pass |
+| `staging`   | Testing/QA              | Staging server        | PR required, CI pass              |
+| `dev`       | Development integration | Dev server (optional) | PR required                       |
+| `feature/*` | New features            | -                     | None                              |
+| `fix/*`     | Bug fixes               | -                     | None                              |
+| `hotfix/*`  | Urgent production fixes | -                     | None                              |
 
 ---
 
@@ -39,6 +39,7 @@ test/short-description       → Test additions
 ```
 
 ### Examples:
+
 ```
 feature/voice-cloning
 feature/google-auth
@@ -149,6 +150,7 @@ git push origin dev
 ## Commit Message Format
 
 ### Structure
+
 ```
 type(scope): description
 
@@ -158,26 +160,29 @@ type(scope): description
 ```
 
 ### Types
-| Type | Description |
-|------|-------------|
-| `feat` | New feature |
-| `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Code style (formatting, semicolons) |
-| `refactor` | Code refactoring |
-| `test` | Adding tests |
-| `chore` | Maintenance tasks |
-| `perf` | Performance improvement |
-| `ci` | CI/CD changes |
-| `build` | Build system changes |
+
+| Type       | Description                         |
+| ---------- | ----------------------------------- |
+| `feat`     | New feature                         |
+| `fix`      | Bug fix                             |
+| `docs`     | Documentation only                  |
+| `style`    | Code style (formatting, semicolons) |
+| `refactor` | Code refactoring                    |
+| `test`     | Adding tests                        |
+| `chore`    | Maintenance tasks                   |
+| `perf`     | Performance improvement             |
+| `ci`       | CI/CD changes                       |
+| `build`    | Build system changes                |
 
 ### Scopes (for this project)
+
 ```
 auth, user, voice, chat, message, subscription,
 config, lib, middleware, api, db, ci, docker
 ```
 
 ### Examples
+
 ```bash
 feat(auth): add Google OAuth login
 fix(voice): handle empty audio file upload
@@ -194,33 +199,41 @@ ci(github): add staging deployment workflow
 ## Pull Request Guidelines
 
 ### PR Title Format
+
 ```
 type(scope): brief description
 ```
 
 ### PR Description Template
+
 ```markdown
 ## Summary
+
 Brief description of changes
 
 ## Changes Made
+
 - Change 1
 - Change 2
 - Change 3
 
 ## Testing Done
+
 - [ ] Unit tests added/updated
 - [ ] Manual testing completed
 - [ ] No breaking changes
 
 ## Screenshots (if UI changes)
+
 [Add screenshots here]
 
 ## Related Issues
+
 Closes #issue_number
 ```
 
 ### PR Checklist
+
 - [ ] Code follows project style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex logic
@@ -234,6 +247,7 @@ Closes #issue_number
 ## Branch Protection Rules (GitHub Settings)
 
 ### For `main` branch:
+
 - [x] Require pull request before merging
 - [x] Require at least 1 approval
 - [x] Require status checks to pass (CI)
@@ -242,11 +256,13 @@ Closes #issue_number
 - [x] Restrict who can push (only via PR)
 
 ### For `staging` branch:
+
 - [x] Require pull request before merging
 - [x] Require status checks to pass (CI)
 - [ ] Approvals optional (for faster testing)
 
 ### For `dev` branch:
+
 - [x] Require pull request before merging
 - [ ] No approval required
 - [ ] CI checks recommended
@@ -256,6 +272,7 @@ Closes #issue_number
 ## Quick Reference Commands
 
 ### Daily Workflow
+
 ```bash
 # Start of day - sync with remote
 git checkout dev
@@ -273,6 +290,7 @@ git push origin feature/my-feature
 ```
 
 ### Sync with Latest Dev
+
 ```bash
 # If your feature branch is behind dev
 git checkout feature/my-feature
@@ -283,11 +301,13 @@ git rebase origin/dev
 ```
 
 ### Undo Last Commit (not pushed)
+
 ```bash
 git reset --soft HEAD~1
 ```
 
 ### Discard Local Changes
+
 ```bash
 # Single file
 git checkout -- filename
@@ -297,6 +317,7 @@ git checkout -- .
 ```
 
 ### View Branch Graph
+
 ```bash
 git log --oneline --graph --all
 ```
@@ -305,18 +326,19 @@ git log --oneline --graph --all
 
 ## CI/CD Pipeline Triggers
 
-| Branch | Trigger | Action |
-|--------|---------|--------|
-| `feature/*` | Push/PR | Run tests, lint |
-| `dev` | Push | Run tests, lint, build |
-| `staging` | Push | Run tests, deploy to staging |
-| `main` | Push | Run tests, deploy to production |
+| Branch      | Trigger | Action                          |
+| ----------- | ------- | ------------------------------- |
+| `feature/*` | Push/PR | Run tests, lint                 |
+| `dev`       | Push    | Run tests, lint, build          |
+| `staging`   | Push    | Run tests, deploy to staging    |
+| `main`      | Push    | Run tests, deploy to production |
 
 ---
 
 ## Release Process
 
 ### Version Tagging
+
 ```bash
 # After merging to main
 git checkout main
@@ -328,6 +350,7 @@ git push origin v1.0.0
 ```
 
 ### Version Format
+
 ```
 v{major}.{minor}.{patch}
 
@@ -341,6 +364,7 @@ patch: Bug fixes
 ## Emergency Procedures
 
 ### Rollback Production
+
 ```bash
 # Find previous stable commit
 git log --oneline main
@@ -352,11 +376,13 @@ git push origin main
 ```
 
 ### Delete Remote Branch
+
 ```bash
 git push origin --delete feature/old-branch
 ```
 
 ### Recover Deleted Branch
+
 ```bash
 # Find the commit hash from reflog
 git reflog
@@ -383,6 +409,7 @@ git checkout -b recovered-branch <commit-hash>
 ## Useful Git Aliases (Optional)
 
 Add to `~/.gitconfig`:
+
 ```ini
 [alias]
     co = checkout
@@ -395,6 +422,7 @@ Add to `~/.gitconfig`:
 ```
 
 Usage:
+
 ```bash
 git co dev      # checkout dev
 git br          # list branches
