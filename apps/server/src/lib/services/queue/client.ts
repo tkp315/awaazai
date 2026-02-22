@@ -1,15 +1,13 @@
 import { Queue, Worker, QueueEvents } from 'bullmq';
-import IORedis from 'ioredis';
+import Redis from 'ioredis';
 import { getLogger } from '../../helper/logger/index.js';
 import type { QueueConfig, QueueJobConfig } from '../../../config/services/queue/index.js';
-
-type RedisConnection = InstanceType<typeof IORedis>;
 
 const queues: Map<string, Queue> = new Map();
 const workers: Map<string, Worker> = new Map();
 const queueEvents: Map<string, QueueEvents> = new Map();
 
-let redisConnection: RedisConnection | null = null;
+let redisConnection: Redis | null = null;
 let queueConfig: QueueConfig | null = null;
 
 export interface QueueLibConfig {
@@ -26,7 +24,7 @@ export async function createQueues(config: QueueLibConfig): Promise<Map<string, 
   const logger = getLogger();
 
   // Create Redis connection for BullMQ
-  redisConnection = new IORedis({
+  redisConnection = new Redis({
     host: config.redis.host,
     port: config.redis.port,
     password: config.redis.password || undefined,
@@ -71,7 +69,7 @@ export function getAllQueues(): Map<string, Queue> {
   return queues;
 }
 
-export function getRedisConnection(): RedisConnection {
+export function getRedis(): Redis {
   if (!redisConnection) {
     throw new Error('Queue Redis connection not initialized');
   }

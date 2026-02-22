@@ -1,24 +1,25 @@
-import IORedis from 'ioredis';
+import Redis from 'ioredis';
 import { getLogger } from '../../helper/logger/index.js';
 import { RedisConfig } from '@config/services/redis/index.js';
+export type { RedisConfig };
 import { Application } from 'express';
-type RedisClient = InstanceType<typeof IORedis>;
-const redisClients: Map<string, RedisClient> = new Map();
+
+const redisClients: Map<string, Redis> = new Map();
 let redisConfig: RedisConfig | null = null;
 
-export async function createClients(config: RedisConfig): Promise<Map<string, RedisClient>> {
+export async function createClients(config: RedisConfig): Promise<Map<string, Redis>> {
   const logger = getLogger();
   redisConfig = config;
   const { host, port, password, tls, databases } = config;
 
   for (const [name, dbNumber] of Object.entries(databases)) {
-    const client = new IORedis({
+    const client = new Redis({
       host,
       port,
       password: password || undefined,
       db: dbNumber as number,
       tls: tls ? {} : undefined,
-      retryStrategy: times => {
+      retryStrategy: (times: number) => {
         if (times > 3) {
           logger.error(`Redis ${name} max retries reached`);
           return null;
@@ -29,7 +30,7 @@ export async function createClients(config: RedisConfig): Promise<Map<string, Re
       lazyConnect: true,
     });
 
-    client.on('error', err => {
+    client.on('error', (err: Error) => {
       logger.error(`Redis ${name} error`, { error: err.message });
     });
 
@@ -50,7 +51,7 @@ export async function createClients(config: RedisConfig): Promise<Map<string, Re
   return redisClients;
 }
 
-export function getClient(name: 'cache' | 'queue' | 'session' | 'rateLimit'): RedisClient {
+export function getClient(name: 'cache' | 'queue' | 'session' | 'rateLimit'): Redis {
   const client = redisClients.get(name);
   if (!client) {
     throw new Error(`Redis ${name} not initialized`);
@@ -58,7 +59,7 @@ export function getClient(name: 'cache' | 'queue' | 'session' | 'rateLimit'): Re
   return client;
 }
 
-export function getAllClients(): Map<string, RedisClient> {
+export function getAllClients(): Map<string, Redis> {
   return redisClients;
 }
 
