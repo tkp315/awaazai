@@ -50,6 +50,9 @@ jobs:
       - name: Install Dependencies
         run: npm ci --ignore-scripts
 
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=apps/server/prisma/schema.prisma
+
       - name: Run TypeCheck
         run: npx turbo run typecheck --filter=server
 
@@ -86,6 +89,9 @@ jobs:
 
       - name: Install Dependencies
         run: npm ci --ignore-scripts
+
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=apps/server/prisma/schema.prisma
 
       - name: Build
         run: npx turbo run build --filter=server
