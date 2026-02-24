@@ -10,6 +10,8 @@
 | Chat Messages           | MongoDB    | High volume, fast writes       |
 | Conversation History    | MongoDB    | Flexible, document-based       |
 | Meeting Transcripts     | MongoDB    | Unstructured text data         |
+| Activity & Login Logs   | PostgreSQL | Audit trail, indexed queries   |
+| API Logs (high volume)  | MongoDB    | Millions/day, time-series      |
 
 ---
 
@@ -432,7 +434,88 @@
 
 ---
 
+## Logs Module
+
+### Audit & Monitoring
+
+| Table        | Status | Purpose                          |
+| ------------ | ------ | -------------------------------- |
+| ActivityLog  | ✅     | User actions audit trail         |
+| LoginHistory | ✅     | Login attempts & sessions        |
+| ApiLog       | ✅     | API calls tracking (rate limits) |
+
+### 26. ActivityLog (PostgreSQL)
+
+```
+- id (UUID)
+- userId (FK → User)
+- action (create, update, delete, view, export)
+- resource (voice, chat, subscription, profile)
+- resourceId (UUID of the affected resource)
+- details (JSONB - what changed, old/new values)
+- ipAddress
+- userAgent
+- createdAt
+```
+
+**Details JSONB example:**
+
+```json
+{
+  "oldValue": { "name": "Old Voice" },
+  "newValue": { "name": "New Voice" },
+  "changedFields": ["name"]
+}
+```
+
+### 27. LoginHistory (PostgreSQL)
+
+```
+- id (UUID)
+- userId (FK → User, nullable for failed attempts)
+- email (for failed login tracking)
+- status (success, failed, blocked)
+- failReason (nullable - wrong_password, account_locked, expired_token)
+- ipAddress
+- userAgent
+- deviceType (mobile, desktop, tablet)
+- location (JSONB - city, country from IP)
+- sessionId (nullable, for successful logins)
+- createdAt
+```
+
+**Location JSONB example:**
+
+```json
+{
+  "city": "Mumbai",
+  "country": "India",
+  "timezone": "Asia/Kolkata"
+}
+```
+
+### 28. ApiLog (PostgreSQL / MongoDB for high volume)
+
+```
+- id (UUID / ObjectId)
+- userId (FK → User, nullable for public APIs)
+- apiKey (nullable, for API key based auth)
+- endpoint (/api/v1/voice/clone)
+- method (GET, POST, PUT, DELETE)
+- statusCode (200, 400, 500)
+- requestBody (JSONB, sanitized - no passwords)
+- responseTime (milliseconds)
+- ipAddress
+- userAgent
+- error (nullable - error message if failed)
+- createdAt
+```
+
+**Note:** ApiLog can be in MongoDB if volume is very high (millions/day). For moderate volume, PostgreSQL with partitioning works fine.
+
+---
+
 ## Other Modules (To Be Added)
 
-- [ ] Bot Module (Bot, BotConfig)
-- [ ] Meeting Module (Meeting, Participant, Transcript)
+- [x] Bot Module (Bot, BotConfig) - See DATABASE-SCHEMA-B2B.md
+- [x] Meeting Module (Meeting, Participant, Transcript) - See DATABASE-SCHEMA-B2B.md

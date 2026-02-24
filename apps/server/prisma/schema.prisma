@@ -12,3 +12,174 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum DeviceType {
+  MOBILE
+  DESKTOP
+  TABLET
+  UNKNOWN
+}
+
+enum TalkType {
+  CASUAL // chill baatein
+  FORMAL // professional
+  FRIENDLY // dost jaisa
+  MOTIVATIONAL // motivation wali
+  STORYTELLING // kahaniya sunna
+}
+
+enum TalkingTone {
+  CALM // shaant
+  WARM // pyaar bhara
+  ENERGETIC // full energy
+  SERIOUS // serious baatein
+  HUMOROUS // funny
+}
+
+enum Emotion {
+  HAPPY
+  NEUTRAL
+  EMPATHETIC // samajhne wala
+  ENCOURAGING // supportive
+  RELAXED
+}
+
+enum ResponseLength {
+  SHORT // 1-2 lines
+  MEDIUM // 3-5 lines
+  DETAILED // full explanation
+}
+
+enum VoiceSpeed {
+  SLOW
+  NORMAL
+  FAST
+}
+
+enum AccountType {
+  INDIVIDUAL // B2C - personal use
+  ORGANIZATION // B2B - business/team
+}
+enum RoleType {
+  CUSTOMER
+  ADMIN
+  GUEST_USER
+}
+ enum VerificationType {
+    EMAIL_VERIFY
+    PASSWORD_RESET
+  }
+
+model User {
+  id           String         @id @default(uuid())
+  fullName     String?
+  email        String         @unique
+  password     String
+  isVerified   Boolean        @default(false)
+  userStatus   UserStatus
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  accountType  AccountType
+  profile      Profile?
+  loginHistory LoginHistory[]
+  refreshToken RefreshToken[]
+}
+
+model Profile {
+  id                  String  @id @default(uuid())
+  age                 Int?
+  gender              Gender
+  // ACTIVE_SUBSCRIPTION_PLAN_ID
+  totalPlansPurchased Int?
+  avatar              String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  preference Preferences?
+}
+
+model LoginHistory {
+  id         String   @id @default(uuid())
+  deviceId   String
+  deviceType String
+  ipAddress  String
+  location   Json
+  loginAt    DateTime
+  userAgent  String?
+  userId     String
+  sessionId  String?
+  failReason String?
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  token      String
+  expiresAt  DateTime
+  deviceId   String?
+  deviceInfo String?
+  isRevoked  Boolean
+  revokedAt  DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Preferences {
+  id                String         @id @default(uuid())
+  talkType          TalkType       @default(FRIENDLY)
+  talkingTone       TalkingTone    @default(WARM)
+  emotion           Emotion        @default(NEUTRAL)
+  responseLength    ResponseLength @default(MEDIUM)
+  preferredLanguage String         @default("en")
+  voiceSpeed        VoiceSpeed     @default(NORMAL)
+  topicsOfInterest  String[] // ["motivation", "stories", "jokes"]
+  avoidTopics       String[] // ["politics", "religion"]
+  reminderEnabled   Boolean        @default(false)
+  reminderTime      String? // "20:00" - daily reminder
+  dailyGoalMinutes  Int?
+  profileId         String         @unique
+  profile           Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OTP {
+  id         String   @id @default(uuid())
+  email String 
+  otp String 
+  expiresAt DateTime
+  attempts Int
+  type VerificationType 
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// b2c -> auth
+

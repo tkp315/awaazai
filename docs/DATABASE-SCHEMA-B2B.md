@@ -283,12 +283,13 @@ Total B2B specific: 11 tables
 ## Complete Database Overview
 
 ```
-B2C Tables: 19
+B2C Tables: 22
 ├── Auth: User, Profile, RefreshToken
 ├── Voice: Voice, VoiceSample, VoiceTraining, VoiceUsage
 ├── Chat: Chat, Conversation, Message
 ├── Subscription: Plan, Subscription, Payment, Invoice, UsageLimit, UsageTrack
-└── Support: Notification, SupportTicket, Feedback
+├── Support: Notification, SupportTicket, Feedback
+└── Logs: ActivityLog, LoginHistory, ApiLog
 
 B2B Tables: 17 (6 shared from Auth + 11 new)
 ├── Auth: Org, OrgMember, Invitation, OTP, Team, TeamMember
@@ -296,7 +297,7 @@ B2B Tables: 17 (6 shared from Auth + 11 new)
 └── Meeting: Meeting, MeetingParticipant, MeetingBot, MeetingTranscript,
              MeetingNote, MeetingSuggestion, MeetingAction
 
-Shared Tables: Voice, Subscription modules
+Shared Tables: Voice, Subscription, Logs modules
 
-Grand Total: ~30 tables (PostgreSQL + MongoDB)
+Grand Total: ~33 tables (PostgreSQL + MongoDB)
 ```
