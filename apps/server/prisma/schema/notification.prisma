@@ -1,0 +1,86 @@
+// AwaazAI Database Schema - Notification Module
+// Tables: DeviceToken, Notification, Scheduler
+
+model DeviceToken {
+  id       String      @id @default(uuid())
+  fcmToken String
+  deviceId String?     @unique
+  status   TokenStatus @default(ACTIVE)
+
+  // User Relation
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // Nested Relations
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([fcmToken])
+}
+
+model Notification {
+  id          String             @id @default(uuid())
+  type        NotificationType
+  status      NotificationStatus
+  sentAt      DateTime
+  title       String
+  body        String
+  subject     String?            // for email
+  imageUrl    String?
+  attachment  String?
+  refrenceId  String?            // chatId, botId, etc.
+  actionUrl   String?
+  data        Json?              // extra payload
+  deliveredAt DateTime?
+  readAt      DateTime?
+  failReason  String?
+
+  // DeviceToken Relation
+  tokenId String
+  token   DeviceToken @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+
+  // Nested Relations
+  botRemainder BotRemainder[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// GENERIC SCHEDULER
+// ==========================================
+
+model Scheduler {
+  id            String         @id @default(uuid())
+  type          ScheduleType
+  referenceId   String?        // botId, userId, etc.
+  referenceType String?        // "bot", "user", etc.
+
+  // Schedule Timing
+  scheduledAt   DateTime
+  fromDate      DateTime?
+  toDate        DateTime?
+  repeatPattern RepeatPattern  @default(ONCE)
+  repeateConfig Json?          // { daysOfWeek: [1,3,5], time: "20:00" }
+  nextRunAt     DateTime?
+  lastRunAt     DateTime?
+
+  // Status & Tracking
+  status    ScheduleStatus
+  runCount  Int            @default(0)
+  failCount Int            @default(0)
+  maxRuns   Int?
+  lastError String?
+  metadata  Json?          // extra data for the job
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([nextRunAt])
+  @@index([scheduledAt])
+}
