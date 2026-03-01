@@ -1,0 +1,50 @@
+// AwaazAI Database Schema - Chat Module
+// Tables: Chat, Session, File
+// Note: Message table is in MongoDB for high volume
+
+model Chat {
+  id          String  @id @default(uuid())
+  lastMessage String? // MongoDB message _id
+  name        String?
+  UsedFor     String?
+
+  // BotVoice Relation
+  botVoiceId String   @unique
+  botVoice   BotVoice @relation(fields: [botVoiceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // Nested Relations
+  chatSession Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id           String    @id @default(uuid())
+  messages     String[]  @default([]) // MongoDB message _ids
+  startedAt    DateTime  @default(now())
+  endedAt      DateTime?
+  userFeedback Json?     // { rating: 5, comment: "Great!" }
+
+  // Chat Relation
+  chatId String
+  chat   Chat   @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model File {
+  id           String       @id @default(uuid())
+  fileName     String?
+  fileUrl      String?
+  fileCategory FileCategory
+  type         FileType
+  status       FileStatus
+  fileSize     Int?         // in bytes
+  duration     Int?         // for audio/video in seconds
+  metadata     Json?        // { width, height, format, etc. }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

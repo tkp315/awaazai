@@ -1,0 +1,146 @@
+// AwaazAI Database Schema - Subscription Module
+// Tables: Plan, PlanFeature, Subscription, Payment, Invoice, UsageTrack
+
+model Plan {
+  id           String   @id @default(uuid())
+  name         String   // Free, Starter, Pro, Premium
+  slug         String   @unique
+  type         PlanType
+  monthlyPrice Decimal
+  yearlyPrice  Decimal  // Fixed: was DateTime
+  currency     Currency @default(INR)
+  description  String?
+  isActive     Boolean  @default(true)
+  displayOrder Int      @default(0)
+
+  // Relations
+  features     PlanFeature[]
+  subscription Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PlanFeature {
+  id          String      @id @default(uuid())
+  name        String      // "Voice Clones", "Messages per Day"
+  description String?
+  limitKey    LimitKey
+  limitValue  Int         // -1 = unlimited (Fixed: was Decimal)
+  resetPeriod ResetPeriod @default(NEVER)
+
+  // Plan Relation
+  planId String
+  plan   Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([planId, limitKey])
+}
+
+model Subscription {
+  id                     String             @id @default(uuid())
+  status                 SubscriptionStatus @default(TRIAL)
+  billingCycle           BillingCycle       @default(MONTHLY)
+  currentPeriodStart     DateTime
+  currentPeriodEnd       DateTime
+  trialEndsAt            DateTime?
+  cancelledAt            DateTime?
+  cancelReason           String?
+  razorpaySubscriptionId String?
+
+  // User Relation (B2C)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Org Relation (B2B - nullable) - Fixed: was required
+  orgId String?
+  org   Org?   @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  // Plan Relation
+  planId String
+  plan   Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  // Nested Relations
+  payments   Payment[]
+  invoices   Invoice[]
+  usageTrack UsageTrack[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([orgId])
+  @@index([status])
+}
+
+model Payment {
+  id                String        @id @default(uuid())
+  amount            Decimal
+  currency          Currency      @default(INR)
+  status            PaymentStatus @default(PENDING)
+  paymentMethod     PaymentMethod?
+  razorpayOrderId   String?
+  razorpayPaymentId String?
+  razorpaySignature String?
+  paidAt            DateTime?
+  failReason        String?
+  refundedAt        DateTime?
+  refundAmount      Decimal?
+  metadata          Json?         // { cardLast4, bankName, etc. }
+
+  // Subscription Relation
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([subscriptionId])
+  @@index([status])
+}
+
+model Invoice {
+  id                 String        @id @default(uuid())
+  invoiceNumber      String        @unique // INV-2024-0001 (Added)
+  amount             Decimal
+  tax                Decimal       @default(0)
+  discount           Decimal       @default(0)
+  totalAmount        Decimal
+  status             InvoiceStatus @default(DRAFT) // Fixed: was PaymentStatus
+  dueDate            DateTime
+  paidAt             DateTime?
+  invoiceUrl         String?       // PDF S3 link
+  billingPeriodStart DateTime
+  billingPeriodEnd   DateTime
+
+  // Subscription Relation
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([subscriptionId])
+  @@index([status])
+}
+
+model UsageTrack {
+  id         String   @id @default(uuid())
+  limitKey   LimitKey
+  used       Int      @default(0) // Fixed: was String
+  period     String   // "2024-01" for monthly, "2024-01-15" for daily
+  lastUsedAt DateTime @default(now())
+
+  // Subscription Relation (removed direct planId - get via subscription)
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([subscriptionId, limitKey, period])
+  @@index([subscriptionId])
+  @@index([limitKey])
+}

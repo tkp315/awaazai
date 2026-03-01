@@ -1,0 +1,815 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum DeviceType {
+  MOBILE
+  DESKTOP
+  TABLET
+  UNKNOWN
+}
+
+enum TalkType {
+  CASUAL // chill baatein
+  FORMAL // professional
+  FRIENDLY // dost jaisa
+  MOTIVATIONAL // motivation wali
+  STORYTELLING // kahaniya sunna
+}
+
+enum TalkingTone {
+  CALM // shaant
+  WARM // pyaar bhara
+  ENERGETIC // full energy
+  SERIOUS // serious baatein
+  HUMOROUS // funny
+}
+
+enum Emotion {
+  HAPPY
+  NEUTRAL
+  EMPATHETIC // samajhne wala
+  ENCOURAGING // supportive
+  RELAXED
+}
+
+enum ResponseLength {
+  SHORT // 1-2 lines
+  MEDIUM // 3-5 lines
+  DETAILED // full explanation
+}
+
+enum VoiceSpeed {
+  SLOW
+  NORMAL
+  FAST
+}
+
+enum AccountType {
+  INDIVIDUAL // B2C - personal use
+  ORGANIZATION // B2B - business/team
+}
+
+enum RoleType {
+  CUSTOMER
+  ADMIN
+  GUEST_USER
+}
+
+enum VerificationType {
+  EMAIL_VERIFY
+  PASSWORD_RESET
+}
+
+enum BusinessType {
+  PRIVATE_LIMITED
+  LLP
+  PARTNERSHIP
+  PROPRIETORSHIP
+  PUBLIC_LIMITED
+  OTHER
+}
+
+enum OrgStatus {
+  PENDING_VERIFICATION // GST verify nahi hua
+  UNDER_REVIEW // Admin review mein
+  VERIFIED // Approved
+  REJECTED // Rejected
+  SUSPENDED // Baad mein suspend kiya
+}
+
+enum OrgPlan {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
+enum OrgMemberRole {
+  OWNER // created the org
+  ADMIN // full access
+  MEMBER // limited access
+}
+
+enum OrgMemberStatus {
+  ACTIVE
+  INACTIVE
+  REMOVED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum TeamStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model User {
+  id              String           @id @default(uuid())
+  fullName        String?
+  email           String           @unique
+  password        String
+  isVerified      Boolean          @default(false)
+  userStatus      UserStatus
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  accountType     AccountType
+  profile         Profile?
+  loginHistory    LoginHistory[]
+  refreshToken    RefreshToken[]
+  orgVerification OrgVerification?
+  orgMember       OrgMember?
+  bot             Bot[]
+  deviceToken     DeviceToken[]
+  botRemainder    BotRemainder[]
+}
+
+model GuestUser {
+  id          String    @id @default(uuid())
+  enteredAt   DateTime?
+  deviceId    String?
+  trialUsed   Boolean
+  rating      Int?
+  review      String?
+  leftAt      DateTime?
+  triedAt     DateTime?
+  convertedAt DateTime?
+  convertedTo String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Profile {
+  id                  String  @id @default(uuid())
+  age                 Int?
+  gender              Gender
+  // ACTIVE_SUBSCRIPTION_PLAN_ID
+  totalPlansPurchased Int?
+  avatar              String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  preference Preferences?
+}
+
+model LoginHistory {
+  id         String   @id @default(uuid())
+  deviceId   String
+  deviceType String
+  ipAddress  String
+  location   Json
+  loginAt    DateTime
+  userAgent  String?
+  userId     String
+  sessionId  String?
+  failReason String?
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  token      String
+  expiresAt  DateTime
+  deviceId   String?
+  deviceInfo String?
+  isRevoked  Boolean
+  revokedAt  DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Preferences {
+  id                String         @id @default(uuid())
+  talkType          TalkType       @default(FRIENDLY)
+  talkingTone       TalkingTone    @default(WARM)
+  emotion           Emotion        @default(NEUTRAL)
+  responseLength    ResponseLength @default(MEDIUM)
+  preferredLanguage String         @default("en")
+  voiceSpeed        VoiceSpeed     @default(NORMAL)
+  topicsOfInterest  String[] // ["motivation", "stories", "jokes"]
+  avoidTopics       String[] // ["politics", "religion"]
+  reminderEnabled   Boolean        @default(false)
+  reminderTime      String? // "20:00" - daily reminder
+  dailyGoalMinutes  Int?
+  profileId         String         @unique
+  profile           Profile        @relation(fields: [profileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model OTP {
+  id        String           @id @default(uuid())
+  email     String
+  otp       String
+  expiresAt DateTime
+  attempts  Int
+  type      VerificationType
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+// b2c -> auth
+
+model Org {
+  id         String       @id @default(uuid())
+  name       String
+  email      String       @unique
+  ownerName  String?
+  // ACTIVE_PLAN_ID
+  orgMembers OrgMember[]
+  invitation Invitation[]
+  team       Team[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now())
+}
+
+model OrgVerification {
+  id                 String        @id @default(uuid())
+  businessType       BusinessType?
+  gstNumber          String?       @unique
+  panNumber          String?
+  verificationStatus OrgStatus
+  verifiedAt         DateTime?
+  verifiedById       String        @unique
+  verified           User          @relation(fields: [verifiedById], references: [id])
+  documentUrl        String[]      @default([])
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @default(now())
+}
+
+model OrgMember {
+  id          String          @id @default(uuid())
+  userId      String          @unique
+  role        OrgMemberRole
+  orgId       String
+  org         Org             @relation(fields: [orgId], references: [id])
+  permissions Json
+  status      OrgMemberStatus @default(ACTIVE)
+  joinedAt    DateTime
+  user        User            @relation(fields: [userId], references: [id])
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @default(now())
+  teamMember  TeamMember[]
+
+  @@unique([userId, orgId])
+  @@index([orgId])
+}
+
+model Invitation {
+  id        String           @id @default(uuid())
+  orgId     String
+  org       Org              @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  email     String
+  role      OrgMemberRole
+  invitedBy String
+  status    InvitationStatus
+  token     String
+  expiresAt DateTime
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @default(now())
+}
+
+model Team {
+  id         String       @id @default(uuid())
+  orgId      String
+  org        Org          @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  adminId    String       @unique
+  department String?
+  teamStatus TeamStatus
+  teamMember TeamMember[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @default(now())
+}
+
+enum TeamMemberRole {
+  LEAD
+  MEMBER
+}
+
+model TeamMember {
+  id          String         @id @default(uuid())
+  memberId    String
+  member      OrgMember      @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  role        TeamMemberRole
+  teamId      String
+  permissions Json?
+  team        Team           @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @default(now())
+
+  @@unique([teamId, memberId])
+}
+
+// Plan details
+// Permissions
+// auth logs table 
+
+// BOT module 
+enum BotStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Bot {
+  id           String          @id @default(uuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  name         String?
+  purpose      String?
+  status       BotStatus       @default(ACTIVE)
+  capability   BotCapability[]
+  avatar       String?
+  lastUsedAt   DateTime?
+  isPublic     Boolean
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @default(now())
+  botVoices    BotVoice[]
+  trainings    BotTraining[]
+  knowledge    BotKnowledge[]
+  config       BotConfig?
+  rules        BotRules?
+  botRemainder BotRemainder[]
+}
+
+model Capability {
+  id            String               @id @default(uuid())
+  name          String
+  description   String
+  functions     CapabilityFunction[]
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @default(now())
+  botCapability BotCapability[]
+  trainings     BotTraining[]
+  knowledge     BotKnowledge[]
+}
+
+model CapabilityFunction {
+  id           String     @id @default(uuid())
+  capabilityId String
+  capability   Capability @relation(fields: [capabilityId], references: [id])
+  name         String
+  description  String
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now())
+}
+
+model BotCapability {
+  id           String     @id @default(uuid())
+  capabilityId String
+  botId        String
+  capability   Capability @relation(fields: [capabilityId], references: [id])
+  bot          Bot        @relation(fields: [botId], references: [id])
+  isEnabled    Boolean?
+  settings     Json
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @default(now())
+}
+
+model BotVoice {
+  id                   String        @id @default(uuid())
+  botId                String
+  bot                  Bot           @relation(fields: [botId], references: [id])
+  generatedVoiceSample String?
+  elvenlabsVoiceId     String?
+  voiceName            String?
+  relation             String?
+  status               String
+  language             String
+  slangs               String[]      @default([])
+  aiObservations       Json? // gender, language
+  aiCallUserAs         String?
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @default(now())
+  sampleVoices         SampleVoice[]
+  chat                 Chat?
+}
+
+// sample voice 
+model SampleVoice {
+  id         String   @id @default(uuid())
+  botVoiceId String
+  botVoice   BotVoice @relation(fields: [botVoiceId], references: [id])
+  url        String?
+  // bot trainingID
+  status     String
+  duration   Int // in seconds
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now())
+}
+
+enum TrainingStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum TrainingTrigger {
+  USER
+  SYSTEM
+}
+
+model BotTraining {
+  id              String          @id @default(uuid())
+  botId           String
+  bot             Bot             @relation(fields: [botId], references: [id], onDelete: Cascade)
+  capabilityId    String?
+  capability      Capability?     @relation(fields: [capabilityId], references: [id])
+  status          TrainingStatus  @default(QUEUED)
+  progress        Int             @default(0) // 0-100
+  startedAt       DateTime?
+  completedAt     DateTime?
+  error           String?
+  trainedModelUrl String?
+  modelVersion    String?
+  triggeredBy     TrainingTrigger @default(USER)
+  metadata        Json? // { samplesUsed: 5, duration: 120 }
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  knowledge       BotKnowledge[] // knowledge items used in this training
+
+  @@index([botId])
+  @@index([status])
+}
+
+enum KnowledgeType {
+  DOCUMENT
+  NOTE
+  URL
+  FAQ
+}
+
+enum KnowledgeStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
+model BotKnowledge {
+  id           String      @id @default(uuid())
+  botId        String
+  bot          Bot         @relation(fields: [botId], references: [id], onDelete: Cascade)
+  capabilityId String?
+  capability   Capability? @relation(fields: [capabilityId], references: [id])
+
+  // Training Material (Input)
+  type      KnowledgeType
+  title     String
+  content   String? // text content for notes
+  fileUrl   String? // S3 path for documents
+  sourceUrl String? // if type is URL
+
+  // Training Link
+  trainingId String?
+  training   BotTraining? @relation(fields: [trainingId], references: [id], onDelete: SetNull)
+
+  // Training Output (What AI learned)
+  percentage   Int? // how much used in training
+  observations Json? // training se AI ne kya sikha
+
+  // Status
+  status   KnowledgeStatus @default(PENDING)
+  metadata Json? // { pages: 5, wordCount: 1000 }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([botId])
+  @@index([status])
+}
+
+enum BotTone {
+  FORMAL
+  CASUAL
+  FRIENDLY
+  PROFESSIONAL
+  HUMOROUS
+}
+
+enum ResponseFormat {
+  TEXT_ONLY
+  TEXT_WITH_EMOJI
+  MARKDOWN
+  RICH_TEXT
+}
+
+model BotConfig {
+  id    String @id @default(uuid())
+  botId String @unique
+  bot   Bot    @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  // === Personality ===
+  tone         BotTone @default(FRIENDLY)
+  personality  Json? // { traits: ["helpful", "patient"], style: "concise" }
+  customPrompt String? // Custom system prompt
+
+  // === Language ===
+  primaryLanguage   String  @default("en")
+  secondaryLanguage String?
+  languageMixing    Boolean @default(false) // Hinglish allowed?
+
+  // === Response ===
+  responseLength ResponseLength @default(MEDIUM)
+  responseFormat ResponseFormat @default(TEXT_ONLY)
+  useEmoji       Boolean        @default(false)
+
+  // === Greeting ===
+  welcomeMessage  String? // "Hey! Kaise ho?"
+  fallbackMessage String? // "Samajh nahi aaya, phir se bolo"
+
+  // === Voice Settings (if voice capability) ===
+  voiceSpeed  VoiceSpeed @default(NORMAL)
+  voicePitch  String? // low, medium, high
+  voiceVolume Int?       @default(100) // 0-100
+
+  // === Behavior ===
+  typingDelay     Int?    @default(500) // ms - feels human
+  autoGreet       Boolean @default(true)
+  rememberContext Boolean @default(true) // remember past chats
+
+  // === Capability-specific (Json for flexibility) ===
+  capabilitySettings Json? // { "voice": {...}, "tools": {...} }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BotRules {
+  id    String @id @default(uuid())
+  botId String @unique
+  bot   Bot    @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  // === Content Moderation ===
+  profanityFilter Boolean  @default(true)
+  blockedWords    String[] @default([]) // ["gaali1", "gaali2"]
+  blockedPatterns String[] @default([]) // regex patterns
+
+  // === Topic Restrictions ===
+  avoidTopics   String[] @default([]) // ["politics", "religion"]
+  allowedTopics String[] @default([]) // empty = all allowed
+  sensitiveMode Boolean  @default(false) // extra careful responses
+
+  // === Safety Limits ===
+  maxResponseLength Int? @default(2000) // characters
+  maxMessagesPerMin Int? @default(10) // rate limit
+  sessionTimeout    Int? @default(30) // minutes
+
+  // === Permissions ===
+  canInitiateChat   Boolean @default(false) // bot pehle msg kar sakta?
+  canAccessUserData Boolean @default(false) // user data access?
+  canMakeToolCalls  Boolean @default(false) // tool calling allowed?
+  canShareExternal  Boolean @default(false) // share links/content?
+
+  // === Compliance ===
+  dataRetentionDays Int?    @default(90) // kitne din data rakhe
+  ageRestriction    Int?    @default(0) // 0 = no restriction, 18 = adult only
+  gdprCompliant     Boolean @default(true)
+
+  // === Custom Rules ===
+  doList             String[] @default([]) // ["be polite", "use simple words"]
+  dontList           String[] @default([]) // ["don't give medical advice"]
+  customInstructions String? // detailed custom rules
+
+  // === Capability-specific Rules ===
+  capabilityRules Json? // { "voice": {...}, "tools": {...} }
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BotRemainder {
+  id             String       @id @default(uuid())
+  botId          String
+  bot            Bot          @relation(fields: [botId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notificationId String
+  notification   Notification @relation(fields: [notificationId], references: [id])
+  schedulerId    String?
+  isEnabled      Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+// CHAT MODULE 
+model Chat {
+  id          String    @id @default(uuid())
+  botVoiceId  String    @unique
+  botVoice    BotVoice  @relation(fields: [botVoiceId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  lastMessage String? // mongoDB id
+  name        String?
+  UsedFor     String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  chatSession Session[]
+}
+
+model Session {
+  id           String    @id @default(uuid())
+  chatId       String
+  chat         Chat      @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  messages     String[]  @default([])
+  startedAt    DateTime  @default(now())
+  endedAt      DateTime?
+  userFeedback Json?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+enum FileCategory {
+  GENERATED
+  SAMPLE
+  MESSAGE
+  OTHER
+}
+
+enum FileStatus {
+  UPLOADING
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+  DELETED
+}
+
+enum FileType {
+  AUDIO
+  IMAGE
+  DOCUMENT
+  VIDEO
+}
+
+model File {
+  id           String       @id @default(uuid())
+  fileName     String?
+  fileUrl      String?
+  fileCategory FileCategory
+  type         FileType
+  status       FileStatus
+  fileSize     Int?
+  duration     Int?
+  metadata     Json?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+enum TokenStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
+model DeviceToken {
+  id            String         @id @default(uuid())
+  fcmToken      String
+  userId        String
+  deviceId      String?        @unique
+  status        TokenStatus    @default(ACTIVE)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  notifications Notification[]
+
+  @@index([userId])
+  @@index([fcmToken])
+}
+
+enum NotificationType {
+  MAIL
+  PUSH_NOTIFICATION
+  SYSTEM
+  PROMO
+  ALERT
+  BOT_MESSAGE
+  REMAINDER
+}
+
+enum NotificationStatus {
+  SENT
+  FAILED
+  PENDING
+  DELIVERED
+  READ
+}
+
+model Notification {
+  id           String             @id @default(uuid())
+  tokenId      String
+  token        DeviceToken        @relation(fields: [tokenId], references: [id], onDelete: Cascade)
+  type         NotificationType
+  status       NotificationStatus
+  sentAt       DateTime
+  title        String
+  body         String
+  subject      String?
+  imageUrl     String?
+  attachment   String?
+  refrenceId   String? // chatId,botId
+  actionUrl    String?
+  data         Json?
+  deliveredAt  DateTime?
+  readAt       DateTime?
+  failReason   String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  botRemainder BotRemainder[]
+}
+
+// Schedulers
+
+enum ScheduleType {
+  BOT_REMINDER
+  REPORT
+  CLEANUP
+  EMAIL
+  SUBSCRIPTION
+  CUSTOM
+}
+
+enum ScheduleStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
+enum RepeatPattern {
+  ONCE
+  DAILY
+  WEEKLY
+  MONTHLY
+  CUSTOM
+}
+
+model Scheduler {
+  id            String       @id @default(uuid())
+  type          ScheduleType
+  referenceId   String?
+  referenceType String?
+
+  scheduledAt   DateTime
+  fromDate      DateTime?
+  toDate        DateTime?
+  repeatPattern RepeatPattern  @default(ONCE)
+  repeateConfig Json?
+  nextRunAt     DateTime?
+  lastRunAt     DateTime?
+  status        ScheduleStatus
+  runCount      Int            @default(0)
+  failCount     Int            @default(0)
+  maxRuns       Int?
+  lastError     String?
+  metadata      Json?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([type])
+  @@index([status])
+  @@index([nextRunAt])
+  @@index([scheduledAt])
+}
