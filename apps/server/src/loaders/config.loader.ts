@@ -1,17 +1,14 @@
-import configLoader from '../config/index.js';
+import configLoader, { ConfigResult } from '../config/index.js';
 
-export interface AppConfig {
-  [key: string]: unknown;
-}
-let appConfig: AppConfig;
+let appConfig: ConfigResult;
 
-async function loadConfig(): Promise<AppConfig> {
+async function loadConfig(): Promise<ConfigResult> {
   appConfig = await configLoader();
   console.log('✅ Config loaded');
   return appConfig;
 }
 
-export function getConfig(): AppConfig {
+export function getConfig(): ConfigResult {
   return appConfig;
 }
 

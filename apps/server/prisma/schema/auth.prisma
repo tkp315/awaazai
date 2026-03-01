@@ -1,0 +1,142 @@
+// AwaazAI Database Schema - Auth Module
+// Tables: User, GuestUser, Profile, Preferences, LoginHistory, RefreshToken, OTP
+
+model User {
+  id          String      @id @default(uuid())
+  fullName    String?
+  email       String      @unique
+  password    String
+  isVerified  Boolean     @default(false)
+  userStatus  UserStatus
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  accountType AccountType
+
+  // Relations
+  profile         Profile?
+  loginHistory    LoginHistory[]
+  refreshToken    RefreshToken[]
+  orgVerification OrgVerification?
+  orgMember       OrgMember?
+  bot             Bot[]
+  deviceToken     DeviceToken[]
+  botRemainder    BotRemainder[]
+  subscription    Subscription[]
+
+  // Logs Relations
+  activityLogs ActivityLog[]
+  apiLogs      ApiLog[]
+
+  // Support Relations
+  supportTickets   SupportTicket[]
+  assignedTickets  SupportTicket[] @relation("AssignedTickets")
+  feedbacks        Feedback[]
+}
+
+model GuestUser {
+  id          String    @id @default(uuid())
+  enteredAt   DateTime?
+  deviceId    String?
+  trialUsed   Boolean
+  rating      Int?
+  review      String?
+  leftAt      DateTime?
+  triedAt     DateTime?
+  convertedAt DateTime?
+  convertedTo String? // userId if converted
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Profile {
+  id                  String  @id @default(uuid())
+  age                 Int?
+  gender              Gender
+  totalPlansPurchased Int?
+  avatar              String?
+
+  // User Relation
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Nested Relations
+  preference Preferences?
+}
+
+model Preferences {
+  id                String         @id @default(uuid())
+  talkType          TalkType       @default(FRIENDLY)
+  talkingTone       TalkingTone    @default(WARM)
+  emotion           Emotion        @default(NEUTRAL)
+  responseLength    ResponseLength @default(MEDIUM)
+  preferredLanguage String         @default("en")
+  voiceSpeed        VoiceSpeed     @default(NORMAL)
+  topicsOfInterest  String[] // ["motivation", "stories", "jokes"]
+  avoidTopics       String[] // ["politics", "religion"]
+  reminderEnabled   Boolean        @default(false)
+  reminderTime      String? // "20:00" - daily reminder
+  dailyGoalMinutes  Int?
+
+  // Profile Relation
+  profileId String  @unique
+  profile   Profile @relation(fields: [profileId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LoginHistory {
+  id         String   @id @default(uuid())
+  deviceId   String
+  deviceType String
+  ipAddress  String
+  location   Json // { city, country, timezone }
+  loginAt    DateTime
+  userAgent  String?
+  sessionId  String?
+  failReason String?
+
+  // User Relation
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model RefreshToken {
+  id         String   @id @default(uuid())
+  token      String
+  expiresAt  DateTime
+  deviceId   String?
+  deviceInfo String?
+  isRevoked  Boolean
+  revokedAt  DateTime
+
+  // User Relation
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model OTP {
+  id        String           @id @default(uuid())
+  email     String
+  otp       String
+  expiresAt DateTime
+  attempts  Int
+  type      VerificationType
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

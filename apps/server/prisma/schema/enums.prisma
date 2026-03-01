@@ -1,0 +1,400 @@
+// AwaazAI Database Schema - All Enums
+// Organized by module for better readability
+
+// ==========================================
+// AUTH MODULE ENUMS
+// ==========================================
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+}
+
+enum DeviceType {
+  MOBILE
+  DESKTOP
+  TABLET
+  UNKNOWN
+}
+
+enum AccountType {
+  INDIVIDUAL   // B2C - personal use
+  ORGANIZATION // B2B - business/team
+}
+
+enum RoleType {
+  CUSTOMER
+  ADMIN
+  GUEST_USER
+}
+
+enum VerificationType {
+  EMAIL_VERIFY
+  PASSWORD_RESET
+}
+
+// ==========================================
+// USER PREFERENCES ENUMS
+// ==========================================
+
+enum TalkType {
+  CASUAL       // chill baatein
+  FORMAL       // professional
+  FRIENDLY     // dost jaisa
+  MOTIVATIONAL // motivation wali
+  STORYTELLING // kahaniya sunna
+}
+
+enum TalkingTone {
+  CALM      // shaant
+  WARM      // pyaar bhara
+  ENERGETIC // full energy
+  SERIOUS   // serious baatein
+  HUMOROUS  // funny
+}
+
+enum Emotion {
+  HAPPY
+  NEUTRAL
+  EMPATHETIC   // samajhne wala
+  ENCOURAGING  // supportive
+  RELAXED
+}
+
+enum ResponseLength {
+  SHORT    // 1-2 lines
+  MEDIUM   // 3-5 lines
+  DETAILED // full explanation
+}
+
+enum VoiceSpeed {
+  SLOW
+  NORMAL
+  FAST
+}
+
+// ==========================================
+// ORGANIZATION MODULE ENUMS
+// ==========================================
+
+enum BusinessType {
+  PRIVATE_LIMITED
+  LLP
+  PARTNERSHIP
+  PROPRIETORSHIP
+  PUBLIC_LIMITED
+  OTHER
+}
+
+enum OrgStatus {
+  PENDING_VERIFICATION // GST verify nahi hua
+  UNDER_REVIEW         // Admin review mein
+  VERIFIED             // Approved
+  REJECTED             // Rejected
+  SUSPENDED            // Baad mein suspend kiya
+}
+
+enum OrgPlan {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
+enum OrgMemberRole {
+  OWNER  // created the org
+  ADMIN  // full access
+  MEMBER // limited access
+}
+
+enum OrgMemberStatus {
+  ACTIVE
+  INACTIVE
+  REMOVED
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  EXPIRED
+}
+
+enum TeamStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum TeamMemberRole {
+  LEAD
+  MEMBER
+}
+
+// ==========================================
+// BOT MODULE ENUMS
+// ==========================================
+
+enum BotStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum TrainingStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum TrainingTrigger {
+  USER
+  SYSTEM
+}
+
+enum KnowledgeType {
+  DOCUMENT
+  NOTE
+  URL
+  FAQ
+}
+
+enum KnowledgeStatus {
+  PENDING
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
+enum BotTone {
+  FORMAL
+  CASUAL
+  FRIENDLY
+  PROFESSIONAL
+  HUMOROUS
+}
+
+enum ResponseFormat {
+  TEXT_ONLY
+  TEXT_WITH_EMOJI
+  MARKDOWN
+  RICH_TEXT
+}
+
+// ==========================================
+// CHAT MODULE ENUMS
+// ==========================================
+
+enum FileCategory {
+  GENERATED
+  SAMPLE
+  MESSAGE
+  OTHER
+}
+
+enum FileStatus {
+  UPLOADING
+  UPLOADED
+  PROCESSING
+  READY
+  FAILED
+  DELETED
+}
+
+enum FileType {
+  AUDIO
+  IMAGE
+  DOCUMENT
+  VIDEO
+}
+
+// ==========================================
+// NOTIFICATION MODULE ENUMS
+// ==========================================
+
+enum TokenStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
+enum NotificationType {
+  MAIL
+  PUSH_NOTIFICATION
+  SYSTEM
+  PROMO
+  ALERT
+  BOT_MESSAGE
+  REMAINDER
+}
+
+enum NotificationStatus {
+  SENT
+  FAILED
+  PENDING
+  DELIVERED
+  READ
+}
+
+// ==========================================
+// SCHEDULER ENUMS
+// ==========================================
+
+enum ScheduleType {
+  BOT_REMINDER
+  REPORT
+  CLEANUP
+  EMAIL
+  SUBSCRIPTION
+  CUSTOM
+}
+
+enum ScheduleStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+  FAILED
+}
+
+enum RepeatPattern {
+  ONCE
+  DAILY
+  WEEKLY
+  MONTHLY
+  CUSTOM
+}
+// SUBSCRIPTION 
+enum PlanType {
+    ORGANIZATION
+    INDIVIDUAL
+}
+
+enum Currency {
+    USD
+    INR
+}
+
+enum LimitKey {
+    VOICE_CLONES
+    TRAINED_BOTS
+    MESSAGES_PER_DAY
+    VOICE_MIN_PER_MONTH
+    STORAGE_GB
+    API_CALLS_PER_DAY
+    TRAINING_DATA_MB
+}
+
+enum BillingCycle {
+    MONTHLY
+    YEARLY
+}
+
+enum ResetPeriod {
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+  NEVER // for lifetime limits like voiceClones
+}
+
+enum PaymentStatus {
+    PENDING
+    SUCCESS
+    FAILED
+    REFUNDED
+}
+
+enum PaymentMethod {
+    UPI
+    NETBANKING
+    CARD
+    WALLET
+}
+
+enum InvoiceStatus {
+    DRAFT
+    SENT
+    PAID
+    OVERDUE
+    VOID
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELLED
+  EXPIRED
+}
+
+// ==========================================
+// LOGS MODULE ENUMS
+// ==========================================
+
+enum ActionType {
+  CREATE
+  UPDATE
+  DELETE
+  VIEW
+  EXPORT
+  LOGIN
+  LOGOUT
+  UPLOAD
+  DOWNLOAD
+}
+
+enum ResourceType {
+  USER
+  PROFILE
+  BOT
+  VOICE
+  CHAT
+  SESSION
+  SUBSCRIPTION
+  PAYMENT
+  INVOICE
+  SETTINGS
+}
+
+// ==========================================
+// SUPPORT MODULE ENUMS
+// ==========================================
+
+enum TicketCategory {
+  BUG
+  FEATURE_REQUEST
+  BILLING
+  ACCOUNT
+  VOICE_QUALITY
+  GENERAL
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum TicketStatus {
+  OPEN
+  IN_PROGRESS
+  WAITING_FOR_USER
+  RESOLVED
+  CLOSED
+}
+
+enum FeedbackType {
+  VOICE_QUALITY
+  APP_EXPERIENCE
+  BOT_RESPONSE
+  FEATURE_REQUEST
+  GENERAL
+}

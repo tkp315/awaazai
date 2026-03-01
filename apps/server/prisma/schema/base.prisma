@@ -1,0 +1,13 @@
+// AwaazAI Database Schema - Base Configuration
+// Multi-file schema using prismaSchemaFolder (default in Prisma 7+)
+
+generator client {
+  provider = "prisma-client"
+  output   = "../../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  // URL is configured in prisma.config.ts
+  url =env("DATABASE_URL")
+}

@@ -1,0 +1,49 @@
+// AwaazAI Database Schema - Logs Module
+// Tables: ActivityLog, ApiLog
+
+model ActivityLog {
+  id         String       @id @default(uuid())
+  action     ActionType
+  resource   ResourceType
+  resourceId String?      // UUID of affected resource
+  details    Json?        // { oldValue, newValue, changedFields }
+  ipAddress  String?
+  userAgent  String?
+
+  // User Relation (nullable for system actions)
+  userId String?
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([resource])
+  @@index([createdAt])
+}
+
+model ApiLog {
+  id           String @id @default(uuid())
+  endpoint     String // /api/v1/voice/clone
+  method       String // GET, POST, PUT, DELETE
+  statusCode   Int
+  requestBody  Json?  // sanitized - no passwords
+  responseTime Int    // milliseconds
+  ipAddress    String?
+  userAgent    String?
+  error        String? // error message if failed
+
+  // User Relation (nullable for public APIs)
+  userId String?
+  user   User?  @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  // API Key (if using API key auth)
+  apiKeyId String?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([endpoint])
+  @@index([statusCode])
+  @@index([createdAt])
+}

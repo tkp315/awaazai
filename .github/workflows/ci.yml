@@ -6,54 +6,165 @@ on:
   pull_request:
     branches: [dev, staging, main]
 
+env:
+  NODE_VERSION: '20'
+  AWS_REGION: 'ap-south-1'
+
 jobs:
   # ============================================
   # Server App CI/CD
   # ============================================
-  server-ci-cd:
-    name: Server CI/CD
-    uses: tkp315/github-workflow/.github/workflows/reusable-ci-cd-complete.yml@main
-    with:
-      node-version: '20'
-      working-directory: 'apps/server'
-      aws-region: 'ap-south-1'
-      ecr-repository: 'awaazai-server'
-      ecs-cluster-staging: 'awaazai-staging-cluster'
-      ecs-service-staging: 'awaazai-server-staging'
-      ecs-cluster-prod: 'awaazai-prod-cluster'
-      ecs-service-prod: 'awaazai-server-prod'
-    secrets: inherit
-
-  # ============================================
-  # Mobile App CI (no deployment - uses Expo EAS)
-  # ============================================
-  mobile-lint:
-    name: Mobile Lint
+  server-lint:
+    name: 🔍 Server Lint
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
-      - run: npm run lint
-      - run: npm run format:check
+          cache-dependency-path: package-lock.json
 
-  mobile-typecheck:
-    name: Mobile TypeCheck
+      - name: Install Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run Lint
+        run: npx turbo run lint --filter=server
+
+      - name: Check Formatting
+        run: npm run format:check
+
+  server-test:
+    name: 🧪 Server Test
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: apps/mobile
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-      - run: npm ci
-      - run: npm run typecheck
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run Tests
+        run: npx turbo run test --filter=server
+
+  server-build:
+    name: 🏗️ Server Build
+    runs-on: ubuntu-latest
+    needs: [server-lint, server-test]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=apps/server/prisma/schema.prisma
+
+      - name: Build
+        run: npx turbo run build --filter=server
+
+  server-deploy-staging:
+    name: 🚀 Server Deploy Staging
+    runs-on: ubuntu-latest
+    needs: [server-build]
+    if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+    environment: staging
+    defaults:
+      run:
+        working-directory: apps/server
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & Push Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: awaazai-server
+          IMAGE_TAG: staging-${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy to ECS Staging
+        run: |
+          aws ecs update-service \
+            --cluster awaazai-staging-cluster \
+            --service awaazai-server-staging \
+            --force-new-deployment
+
+      - name: Notify Success
+        run: echo "✅ Deployed to Staging successfully!"
+
+  server-deploy-production:
+    name: 🚀 Server Deploy Production
+    runs-on: ubuntu-latest
+    needs: [server-build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    defaults:
+      run:
+        working-directory: apps/server
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build & Push Docker Image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: awaazai-server
+          IMAGE_TAG: prod-${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      - name: Deploy to ECS Production
+        run: |
+          aws ecs update-service \
+            --cluster awaazai-prod-cluster \
+            --service awaazai-server-prod \
+            --force-new-deployment
+
+      - name: Create Release Tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag -a "v$(date +'%Y.%m.%d-%H%M')" -m "Production release"
+          git push origin --tags
+
+      - name: Notify Success
+        run: echo "✅ Deployed to Production successfully!"
+

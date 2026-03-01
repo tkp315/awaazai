@@ -1,5 +1,5 @@
-import { HTTP_STATUS } from '@globals/constants.js';
 import { Response } from 'express';
+import { HTTP_STATUS } from 'globals/constants.js';
 
 export interface PaginationMeta {
   page: number;

@@ -1,11 +1,13 @@
 # AWAAZAI - Production Voice AI Application
 
 ## Project Overview
+
 AwaazAI is a production-grade voice cloning application that allows users to chat with AI-generated voices of their loved ones. Users can clone voices from audio samples and have conversations with AI that responds in the cloned voice.
 
 ## Tech Stack
 
 ### Infrastructure
+
 - **Cloud**: AWS (RDS, ElastiCache, S3, EC2/ECS)
 - **Database**: PostgreSQL (AWS RDS)
 - **Cache/Queue**: Redis (AWS ElastiCache)
@@ -13,6 +15,7 @@ AwaazAI is a production-grade voice cloning application that allows users to cha
 - **CI/CD**: GitHub Actions
 
 ### Backend
+
 - **Runtime**: Node.js 20+
 - **Framework**: Express.js 5.x
 - **ORM**: Prisma
@@ -21,18 +24,21 @@ AwaazAI is a production-grade voice cloning application that allows users to cha
 - **Language**: TypeScript (strict mode)
 
 ### Mobile App
+
 - **Framework**: React Native (Expo SDK 52+)
 - **Navigation**: Expo Router
 - **State**: Zustand
 - **API Client**: Axios + React Query
 
 ### External Services
+
 - **Voice Cloning**: ElevenLabs API
 - **Speech-to-Text**: OpenAI Whisper
 - **LLM**: OpenAI GPT-4
 - **Text-to-Speech**: ElevenLabs TTS
 
 ## Project Structure
+
 ```
 awaazai/
 ├── .claude/                 # Claude AI instructions
@@ -56,12 +62,14 @@ awaazai/
 ## Coding Standards
 
 ### TypeScript
+
 - Always use strict mode
 - No `any` types - use `unknown` if needed
 - Always define return types for functions
 - Use interfaces for objects, types for unions/primitives
 
 ### Naming Conventions
+
 - **Files**: kebab-case (e.g., `user-service.ts`)
 - **Classes**: PascalCase (e.g., `UserService`)
 - **Functions/Variables**: camelCase (e.g., `getUserById`)
@@ -69,18 +77,21 @@ awaazai/
 - **Types/Interfaces**: PascalCase with prefix (e.g., `IUser`, `TResponse`)
 
 ### API Design
+
 - RESTful endpoints
 - Versioned API (`/api/v1/...`)
 - Consistent error responses
 - Request validation with Zod
 
 ### Error Handling
+
 - Use custom error classes
 - Always log errors with context
 - Return user-friendly error messages
 - Never expose internal errors to client
 
 ### Security
+
 - Validate all inputs
 - Sanitize all outputs
 - Use parameterized queries (Prisma handles this)
@@ -91,6 +102,7 @@ awaazai/
 ## Database Schema Overview
 
 ### PostgreSQL Tables
+
 - `users` - User accounts
 - `refresh_tokens` - JWT refresh tokens
 - `subscriptions` - User subscription plans
@@ -98,6 +110,7 @@ awaazai/
 - `preferences` - User preferences
 
 ### MongoDB Collections (if needed)
+
 - `voices` - Cloned voice data
 - `chats` - Chat conversations
 - `messages` - Chat messages
@@ -106,6 +119,7 @@ awaazai/
 ## Environment Variables
 
 ### Required
+
 ```
 # Server
 NODE_ENV=development|staging|production
@@ -137,6 +151,7 @@ ELEVENLABS_API_KEY=
 ## Commands
 
 ### Development
+
 ```bash
 pnpm install          # Install dependencies
 pnpm dev              # Start all apps in dev mode
@@ -145,6 +160,7 @@ pnpm dev:mobile       # Start only mobile app
 ```
 
 ### Build & Test
+
 ```bash
 pnpm build            # Build all apps
 pnpm test             # Run all tests
@@ -153,6 +169,7 @@ pnpm typecheck        # TypeScript check
 ```
 
 ### Database
+
 ```bash
 pnpm db:generate      # Generate Prisma client
 pnpm db:migrate       # Run migrations
@@ -161,12 +178,14 @@ pnpm db:studio        # Open Prisma Studio
 ```
 
 ### Deployment
+
 ```bash
 pnpm deploy:staging   # Deploy to staging
 pnpm deploy:prod      # Deploy to production
 ```
 
 ## Git Workflow
+
 - `main` - Production branch
 - `staging` - Staging/QA branch
 - `develop` - Development branch
@@ -175,6 +194,7 @@ pnpm deploy:prod      # Deploy to production
 - Hotfixes: `hotfix/issue-description`
 
 ## Commit Message Format
+
 ```
 type(scope): description
 
@@ -183,6 +203,7 @@ Example: feat(auth): add Google OAuth login
 ```
 
 ## Important Notes
+
 1. Never commit secrets or .env files
 2. Always write tests for new features
 3. Update CLAUDE.md when architecture changes

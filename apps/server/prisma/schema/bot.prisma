@@ -1,0 +1,310 @@
+// AwaazAI Database Schema - Bot Module
+// Tables: Bot, Capability, CapabilityFunction, BotCapability, BotVoice, SampleVoice,
+//         BotTraining, BotKnowledge, BotConfig, BotRules, BotRemainder
+
+model Bot {
+  id         String    @id @default(uuid())
+  name       String?
+  purpose    String?
+  status     BotStatus @default(ACTIVE)
+  avatar     String?
+  lastUsedAt DateTime?
+  isPublic   Boolean
+
+  // User Relation
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  // Nested Relations
+  capability   BotCapability[]
+  botVoices    BotVoice[]
+  trainings    BotTraining[]
+  knowledge    BotKnowledge[]
+  config       BotConfig?
+  rules        BotRules?
+  botRemainder BotRemainder[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+// ==========================================
+// CAPABILITY SYSTEM (Plugin Architecture)
+// ==========================================
+
+model Capability {
+  id          String @id @default(uuid())
+  name        String
+  description String
+
+  // Nested Relations
+  functions     CapabilityFunction[]
+  botCapability BotCapability[]
+  trainings     BotTraining[]
+  knowledge     BotKnowledge[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model CapabilityFunction {
+  id          String @id @default(uuid())
+  name        String
+  description String
+
+  // Capability Relation
+  capabilityId String
+  capability   Capability @relation(fields: [capabilityId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model BotCapability {
+  id        String  @id @default(uuid())
+  isEnabled Boolean?
+  settings  Json
+
+  // Bot Relation
+  botId String
+  bot   Bot    @relation(fields: [botId], references: [id])
+
+  // Capability Relation
+  capabilityId String
+  capability   Capability @relation(fields: [capabilityId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+// ==========================================
+// VOICE SYSTEM
+// ==========================================
+
+model BotVoice {
+  id                   String   @id @default(uuid())
+  generatedVoiceSample String?
+  elvenlabsVoiceId     String?
+  voiceName            String?
+  relation             String?  // Mom, Dad, Friend, etc.
+  status               String
+  language             String
+  slangs               String[] @default([])
+  aiObservations       Json?    // { gender, language, accent }
+  aiCallUserAs         String?  // "beta", "bhai", etc.
+
+  // Bot Relation
+  botId String
+  bot   Bot    @relation(fields: [botId], references: [id])
+
+  // Nested Relations
+  sampleVoices SampleVoice[]
+  chat         Chat?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model SampleVoice {
+  id       String @id @default(uuid())
+  url      String?
+  status   String
+  duration Int    // in seconds
+
+  // BotVoice Relation
+  botVoiceId String
+  botVoice   BotVoice @relation(fields: [botVoiceId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+// ==========================================
+// TRAINING SYSTEM
+// ==========================================
+
+model BotTraining {
+  id              String          @id @default(uuid())
+  status          TrainingStatus  @default(QUEUED)
+  progress        Int             @default(0) // 0-100
+  startedAt       DateTime?
+  completedAt     DateTime?
+  error           String?
+  trainedModelUrl String?
+  modelVersion    String?
+  triggeredBy     TrainingTrigger @default(USER)
+  metadata        Json?           // { samplesUsed: 5, duration: 120 }
+
+  // Bot Relation
+  botId String
+  bot   Bot    @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  // Capability Relation (optional - for capability-specific training)
+  capabilityId String?
+  capability   Capability? @relation(fields: [capabilityId], references: [id])
+
+  // Nested Relations
+  knowledge BotKnowledge[] // knowledge items used in this training
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([botId])
+  @@index([status])
+}
+
+model BotKnowledge {
+  id String @id @default(uuid())
+
+  // Training Material (Input)
+  type      KnowledgeType
+  title     String
+  content   String?       // text content for notes
+  fileUrl   String?       // S3 path for documents
+  sourceUrl String?       // if type is URL
+
+  // Training Output (What AI learned)
+  percentage   Int?  // how much used in training
+  observations Json? // training se AI ne kya sikha
+
+  // Status
+  status   KnowledgeStatus @default(PENDING)
+  metadata Json?           // { pages: 5, wordCount: 1000 }
+
+  // Bot Relation
+  botId String
+  bot   Bot    @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  // Capability Relation (optional)
+  capabilityId String?
+  capability   Capability? @relation(fields: [capabilityId], references: [id])
+
+  // Training Link
+  trainingId String?
+  training   BotTraining? @relation(fields: [trainingId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([botId])
+  @@index([status])
+}
+
+// ==========================================
+// BOT CONFIGURATION & RULES
+// ==========================================
+
+model BotConfig {
+  id String @id @default(uuid())
+
+  // === Personality ===
+  tone         BotTone @default(FRIENDLY)
+  personality  Json?   // { traits: ["helpful", "patient"], style: "concise" }
+  customPrompt String? // Custom system prompt
+
+  // === Language ===
+  primaryLanguage   String  @default("en")
+  secondaryLanguage String?
+  languageMixing    Boolean @default(false) // Hinglish allowed?
+
+  // === Response ===
+  responseLength ResponseLength @default(MEDIUM)
+  responseFormat ResponseFormat @default(TEXT_ONLY)
+  useEmoji       Boolean        @default(false)
+
+  // === Greeting ===
+  welcomeMessage  String? // "Hey! Kaise ho?"
+  fallbackMessage String? // "Samajh nahi aaya, phir se bolo"
+
+  // === Voice Settings (if voice capability) ===
+  voiceSpeed  VoiceSpeed @default(NORMAL)
+  voicePitch  String?    // low, medium, high
+  voiceVolume Int?       @default(100) // 0-100
+
+  // === Behavior ===
+  typingDelay     Int?    @default(500) // ms - feels human
+  autoGreet       Boolean @default(true)
+  rememberContext Boolean @default(true) // remember past chats
+
+  // === Capability-specific (Json for flexibility) ===
+  capabilitySettings Json? // { "voice": {...}, "tools": {...} }
+
+  // Bot Relation
+  botId String @unique
+  bot   Bot    @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BotRules {
+  id String @id @default(uuid())
+
+  // === Content Moderation ===
+  profanityFilter Boolean  @default(true)
+  blockedWords    String[] @default([]) // ["gaali1", "gaali2"]
+  blockedPatterns String[] @default([]) // regex patterns
+
+  // === Topic Restrictions ===
+  avoidTopics   String[] @default([]) // ["politics", "religion"]
+  allowedTopics String[] @default([]) // empty = all allowed
+  sensitiveMode Boolean  @default(false) // extra careful responses
+
+  // === Safety Limits ===
+  maxResponseLength Int? @default(2000) // characters
+  maxMessagesPerMin Int? @default(10)   // rate limit
+  sessionTimeout    Int? @default(30)   // minutes
+
+  // === Permissions ===
+  canInitiateChat   Boolean @default(false) // bot pehle msg kar sakta?
+  canAccessUserData Boolean @default(false) // user data access?
+  canMakeToolCalls  Boolean @default(false) // tool calling allowed?
+  canShareExternal  Boolean @default(false) // share links/content?
+
+  // === Compliance ===
+  dataRetentionDays Int?    @default(90) // kitne din data rakhe
+  ageRestriction    Int?    @default(0)  // 0 = no restriction, 18 = adult only
+  gdprCompliant     Boolean @default(true)
+
+  // === Custom Rules ===
+  doList             String[] @default([]) // ["be polite", "use simple words"]
+  dontList           String[] @default([]) // ["don't give medical advice"]
+  customInstructions String?               // detailed custom rules
+
+  // === Capability-specific Rules ===
+  capabilityRules Json? // { "voice": {...}, "tools": {...} }
+
+  // Bot Relation
+  botId String @unique
+  bot   Bot    @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// BOT REMINDERS
+// ==========================================
+
+model BotRemainder {
+  id        String  @id @default(uuid())
+  isEnabled Boolean @default(true)
+
+  // Bot Relation
+  botId String
+  bot   Bot    @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  // User Relation
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Notification Relation
+  notificationId String
+  notification   Notification @relation(fields: [notificationId], references: [id])
+
+  // Scheduler Link (optional)
+  schedulerId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
