@@ -64,3 +64,35 @@ Purpose: Entry point
 ├────────┼───────────────────────────────┼───────────────┤
 │ AI │ /api/ai/_ routes │ 50 req/hour │
 └────────┴───────────────────────────────┴───────────────┘
+const ORG_PERMISSIONS = {
+OWNER: {
+canInviteMembers: true,
+canRemoveMembers: true,
+canCreateTeam: true,
+canDeleteTeam: true,
+canManageBilling: true,
+canCreateBot: true,
+canDeleteBot: true,
+canViewAnalytics: true,
+},
+ADMIN: {
+canInviteMembers: true,
+canRemoveMembers: true,
+canCreateTeam: true,
+canDeleteTeam: false,
+canManageBilling: false,
+canCreateBot: true,
+canDeleteBot: false,
+canViewAnalytics: true,
+},
+MEMBER: {
+canInviteMembers: false,
+canRemoveMembers: false,
+canCreateTeam: false,
+canDeleteTeam: false,
+canManageBilling: false,
+canCreateBot: false,
+canDeleteBot: false,
+canViewAnalytics: false,
+}
+};

@@ -17,7 +17,9 @@ module.exports = {
         'build',
         'revert',
         'setup',
-        'package'
+        'package',
+        'create',
+        'db'
       ],
     ],
     'type-case': [2, 'always', 'lower-case'],

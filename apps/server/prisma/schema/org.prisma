@@ -1,0 +1,113 @@
+// AwaazAI Database Schema - Organization Module (B2B)
+// Tables: Org, OrgVerification, OrgMember, Invitation, Team, TeamMember
+
+model Org {
+  id        String  @id @default(uuid())
+  name      String
+  email     String  @unique
+  ownerName String?
+
+  // Relations
+  orgMembers   OrgMember[]
+  invitation   Invitation[]
+  team         Team[]
+  subscription Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model OrgVerification {
+  id                 String        @id @default(uuid())
+  businessType       BusinessType?
+  gstNumber          String?       @unique
+  panNumber          String?
+  verificationStatus OrgStatus
+  verifiedAt         DateTime?
+  documentUrl        String[]      @default([])
+
+  // User Relation (who verified/owns)
+  verifiedById String @unique
+  verified     User   @relation(fields: [verifiedById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model OrgMember {
+  id          String          @id @default(uuid())
+  role        OrgMemberRole
+  permissions Json
+  status      OrgMemberStatus @default(ACTIVE)
+  joinedAt    DateTime
+
+  // User Relation
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id])
+
+  // Org Relation
+  orgId String
+  org   Org    @relation(fields: [orgId], references: [id])
+
+  // Nested Relations
+  teamMember TeamMember[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@unique([userId, orgId])
+  @@index([orgId])
+}
+
+model Invitation {
+  id        String           @id @default(uuid())
+  email     String
+  role      OrgMemberRole
+  invitedBy String
+  status    InvitationStatus
+  token     String
+  expiresAt DateTime
+
+  // Org Relation
+  orgId String
+  org   Org    @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model Team {
+  id         String     @id @default(uuid())
+  adminId    String     @unique
+  department String?
+  teamStatus TeamStatus
+
+  // Org Relation
+  orgId String
+  org   Org    @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  // Nested Relations
+  teamMember TeamMember[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+}
+
+model TeamMember {
+  id          String         @id @default(uuid())
+  role        TeamMemberRole
+  permissions Json?
+
+  // OrgMember Relation
+  memberId String
+  member   OrgMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  // Team Relation
+  teamId String
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  @@unique([teamId, memberId])
+}
