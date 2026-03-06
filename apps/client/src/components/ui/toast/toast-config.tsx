@@ -6,33 +6,33 @@ import { Ionicons } from '@expo/vector-icons';
 import type { ToastConfigParams } from 'react-native-toast-message';
 
 // ============================================
-// TOAST COLORS
+// TOAST STYLES
 // ============================================
 
 const toastStyles = {
   success: {
-    bg: '#dcfce7',
-    border: '#22c55e',
-    icon: '#16a34a',
-    iconName: 'checkmark-circle' as const,
+    iconBg: '#16a34a',
+    iconName: 'checkmark' as const,
+    accent: '#22c55e',
+    label: 'Success',
   },
   error: {
-    bg: '#fee2e2',
-    border: '#ef4444',
-    icon: '#dc2626',
-    iconName: 'close-circle' as const,
+    iconBg: '#dc2626',
+    iconName: 'close' as const,
+    accent: '#ef4444',
+    label: 'Error',
   },
   warning: {
-    bg: '#fef3c7',
-    border: '#f59e0b',
-    icon: '#d97706',
-    iconName: 'warning' as const,
+    iconBg: '#d97706',
+    iconName: 'warning-outline' as const,
+    accent: '#f59e0b',
+    label: 'Warning',
   },
   info: {
-    bg: '#dbeafe',
-    border: '#3b82f6',
-    icon: '#2563eb',
-    iconName: 'information-circle' as const,
+    iconBg: '#2563eb',
+    iconName: 'information' as const,
+    accent: '#3b82f6',
+    label: 'Info',
   },
 };
 
@@ -55,51 +55,73 @@ const BaseToast = ({ type, text1, text2, onPress, hide }: BaseToastProps) => {
     <Pressable
       onPress={onPress}
       style={{
-        width: '90%',
-        maxWidth: 400,
-        backgroundColor: style.bg,
-        borderLeftWidth: 4,
-        borderLeftColor: style.border,
-        borderRadius: 8,
-        paddingHorizontal: 16,
+        width: '92%',
+        maxWidth: 420,
+        backgroundColor: '#0f172a',
+        borderRadius: 14,
+        paddingHorizontal: 14,
         paddingVertical: 12,
         flexDirection: 'row',
-        alignItems: 'flex-start',
+        alignItems: 'center',
+        gap: 12,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.3,
+        shadowRadius: 16,
+        elevation: 10,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.07)',
       }}
     >
-      {/* Icon */}
-      <Ionicons
-        name={style.iconName}
-        size={24}
-        color={style.icon}
-        style={{ marginRight: 12, marginTop: 2 }}
-      />
+      {/* Icon Circle */}
+      <View
+        style={{
+          width: 36,
+          height: 36,
+          borderRadius: 10,
+          backgroundColor: style.iconBg,
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}
+      >
+        <Ionicons name={style.iconName} size={18} color="#fff" />
+      </View>
 
       {/* Content */}
       <View style={{ flex: 1 }}>
-        {text1 && (
+        <Text
+          style={{
+            fontSize: 14,
+            fontWeight: '600',
+            color: '#f8fafc',
+            letterSpacing: 0.1,
+          }}
+          numberOfLines={1}
+        >
+          {text1}
+        </Text>
+        {text2 && (
           <Text
             style={{
-              fontSize: 15,
-              fontWeight: '600',
-              color: '#1e293b',
-              marginBottom: text2 ? 4 : 0,
+              fontSize: 12,
+              color: '#94a3b8',
+              marginTop: 2,
+              lineHeight: 16,
             }}
+            numberOfLines={2}
           >
-            {text1}
+            {text2}
           </Text>
         )}
-        {text2 && <Text style={{ fontSize: 13, color: '#64748b' }}>{text2}</Text>}
       </View>
 
-      {/* Close Button */}
-      <Pressable onPress={hide} hitSlop={8} style={{ padding: 4 }}>
-        <Ionicons name="close" size={18} color="#94a3b8" />
+      {/* Divider */}
+      <View style={{ width: 1, height: 28, backgroundColor: 'rgba(255,255,255,0.1)' }} />
+
+      {/* Close */}
+      <Pressable onPress={hide} hitSlop={10}>
+        <Ionicons name="close" size={16} color="#64748b" />
       </Pressable>
     </Pressable>
   );

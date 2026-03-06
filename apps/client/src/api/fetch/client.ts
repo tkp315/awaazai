@@ -4,7 +4,7 @@ import { STORAGE_KEYS } from '@/shared/utils/constants';
 import { getToken } from '@/shared/utils/storage';
 
 const BASE_URL = url;
-const axiosInstance = axios.create({
+export const axiosInstance = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
 });

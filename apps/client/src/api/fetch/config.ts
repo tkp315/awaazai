@@ -14,6 +14,7 @@ const getIPAddress = () => {
 const url = () => {
   const isDev = __DEV__;
   const backendPort = Constants?.expoConfig?.extra?.BACKEND_PORT;
+  console.log(`Port :`,Constants.expoConfig?.extra);
   if (isDev) {
     const ip = getIPAddress();
     return `http://${ip}:${backendPort}/api`;

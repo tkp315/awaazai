@@ -1,10 +1,6 @@
 import { ConfigResult } from '@config/index.js';
 import { LibResult } from '@lib/index.js';
-
-interface AwaazAI {
-  config: ConfigResult;
-  libs: LibResult;
-}
+import type { AwaazAI } from './types.js';
 
 const AA: AwaazAI = {
   config: {} as ConfigResult,

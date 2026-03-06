@@ -1,3 +1,4 @@
-export { apiClient } from './fetch/client';
-export { API_CONFIG } from './fetch/config';
+export { BASE_URL } from './fetch/config'
+export {axiosInstance} from './fetch/client'
 export { queryClient, QUERY_KEYS } from './query';
+
