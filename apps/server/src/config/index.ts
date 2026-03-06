@@ -1,3 +1,4 @@
+import './app/env/index.js'; // load dotenv first before anything else
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
