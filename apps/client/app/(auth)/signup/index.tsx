@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -8,24 +8,24 @@ import {
   Platform,
   ScrollView,
   Pressable,
-} from "react-native";
-import { Link, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useForm, Controller, Control, FieldErrors } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from 'react-native';
+import { Link, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useForm, Controller, Control, FieldErrors } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useTheme } from "@/hooks";
-import { signupSchema, TSignupForm } from "@/modules/auth/auth.types";
-import { signupFormFields } from "@/modules/auth/auth.constants";
-import { signup } from "@/modules/auth/auth.service";
-import { toast } from "@/components/ui/toast";
+import { useTheme } from '@/hooks';
+import { signupSchema, TSignupForm } from '@/modules/auth/auth.types';
+import { signupFormFields } from '@/modules/auth/auth.constants';
+import { signup } from '@/modules/auth/auth.service';
+import { toast } from '@/components/ui/toast';
 
 const FIELD_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
-  fullName: "person-outline",
-  email: "mail-outline",
-  password: "lock-closed-outline",
-  confirmPassword: "lock-closed-outline",
+  fullName: 'person-outline',
+  email: 'mail-outline',
+  password: 'lock-closed-outline',
+  confirmPassword: 'lock-closed-outline',
 };
 
 interface FormFieldProps {
@@ -39,14 +39,12 @@ interface FormFieldProps {
 function FormField({ name, label, type, control, errors }: FormFieldProps) {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
-  const isPassword = type === "password";
+  const isPassword = type === 'password';
   const hasError = !!errors[name];
 
   return (
     <View style={{ gap: spacing[1] }}>
-      <Text style={{ ...textStyles.labelMedium, color: colors.text }}>
-        {label}
-      </Text>
+      <Text style={{ ...textStyles.labelMedium, color: colors.text }}>{label}</Text>
 
       <Controller
         control={control}
@@ -54,8 +52,8 @@ function FormField({ name, label, type, control, errors }: FormFieldProps) {
         render={({ field: { onChange, value } }) => (
           <View
             style={{
-              flexDirection: "row",
-              alignItems: "center",
+              flexDirection: 'row',
+              alignItems: 'center',
               borderWidth: 1,
               borderColor: hasError ? colors.error.main : colors.border,
               borderRadius: radius.input,
@@ -80,15 +78,15 @@ function FormField({ name, label, type, control, errors }: FormFieldProps) {
               placeholderTextColor={colors.textMuted}
               value={value}
               onChangeText={onChange}
-              keyboardType={type === "email" ? "email-address" : "default"}
-              autoCapitalize={name === "fullName" ? "words" : "none"}
+              keyboardType={type === 'email' ? 'email-address' : 'default'}
+              autoCapitalize={name === 'fullName' ? 'words' : 'none'}
               secureTextEntry={isPassword && !showPassword}
-              autoComplete={type === "email" ? "email" : "off"}
+              autoComplete={type === 'email' ? 'email' : 'off'}
             />
             {isPassword && (
               <Pressable onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons
-                  name={showPassword ? "eye-outline" : "eye-off-outline"}
+                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={layout.iconMedium}
                   color={colors.textMuted}
                 />
@@ -112,15 +110,15 @@ export default function SignupScreen() {
   const {
     control,
     handleSubmit,
-    
+
     formState: { errors, isSubmitting },
   } = useForm<TSignupForm>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      fullName: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
+      fullName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
     },
   });
   const router = useRouter();
@@ -128,18 +126,16 @@ export default function SignupScreen() {
   const onSubmit = async (data: TSignupForm) => {
     const { confirmPassword, ...payload } = data;
     const res = await signup(payload);
-    console.log("Signup response",res);
+    console.log('Signup response', res);
     if (!res.success) {
       toast.error({ title: 'Signup Failed', message: res.message });
       return;
     }
-    
+
     toast.success({ title: 'Account Created!', message: 'Please verify your email' });
     router.push({
-      pathname:'/(auth)/send-otp',
-      params:{email:payload.email,
-        password:payload.password
-      }
+      pathname: '/(auth)/send-otp',
+      params: { email: payload.email, password: payload.password },
     });
   };
 
@@ -150,7 +146,7 @@ export default function SignupScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
@@ -167,23 +163,21 @@ export default function SignupScreen() {
             }}
           >
             {/* Header */}
-            <View style={{ alignItems: "center", marginBottom: spacing[10] }}>
+            <View style={{ alignItems: 'center', marginBottom: spacing[10] }}>
               <View
                 style={{
                   width: spacing[16],
                   height: spacing[16],
                   backgroundColor: colors.primary[500],
                   borderRadius: radius.card,
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   marginBottom: spacing[4],
                 }}
               >
                 <Ionicons name="mic" size={32} color={colors.textInverse} />
               </View>
-              <Text style={{ ...textStyles.h1, color: colors.text }}>
-                Create Account
-              </Text>
+              <Text style={{ ...textStyles.h1, color: colors.text }}>Create Account</Text>
               <Text
                 style={{
                   ...textStyles.bodyMedium,
@@ -197,7 +191,7 @@ export default function SignupScreen() {
 
             {/* Form */}
             <View style={{ gap: spacing[4] }}>
-              {signupFormFields.map((field) => (
+              {signupFormFields.map(field => (
                 <FormField
                   key={field.name}
                   name={field.name as keyof TSignupForm}
@@ -214,7 +208,7 @@ export default function SignupScreen() {
                   backgroundColor: colors.primary[500],
                   paddingVertical: layout.buttonPaddingVertical,
                   borderRadius: radius.button,
-                  alignItems: "center",
+                  alignItems: 'center',
                   marginTop: spacing[2],
                   opacity: isSubmitting ? 0.7 : 1,
                 }}
@@ -223,7 +217,7 @@ export default function SignupScreen() {
                 disabled={isSubmitting}
               >
                 <Text style={{ ...textStyles.button, color: colors.textInverse }}>
-                  {isSubmitting ? "Signing up..." : "Sign Up"}
+                  {isSubmitting ? 'Signing up...' : 'Sign Up'}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -231,8 +225,8 @@ export default function SignupScreen() {
             {/* Divider */}
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
                 marginVertical: spacing[6],
               }}
             >
@@ -252,9 +246,9 @@ export default function SignupScreen() {
             {/* Google Button */}
             <TouchableOpacity
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
                 borderWidth: 1,
                 borderColor: colors.border,
                 paddingVertical: layout.buttonPaddingVertical,
@@ -279,20 +273,18 @@ export default function SignupScreen() {
             {/* Login Link */}
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
                 marginTop: spacing[8],
               }}
             >
               <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted }}>
-                Already have an account?{" "}
+                Already have an account?{' '}
               </Text>
               <Link href="/(auth)/login" asChild>
                 <TouchableOpacity>
-                  <Text style={{ ...textStyles.button, color: colors.primary[500] }}>
-                    Log In
-                  </Text>
+                  <Text style={{ ...textStyles.button, color: colors.primary[500] }}>Log In</Text>
                 </TouchableOpacity>
               </Link>
             </View>

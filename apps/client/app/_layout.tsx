@@ -40,13 +40,13 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
           <StatusBar style="auto" />
-          <Stack  >
-           <Stack.Screen
-           name='(auth)'
-           options={{
-            headerShown:false
-           }}
-           />
+          <Stack>
+            <Stack.Screen
+              name="(auth)"
+              options={{
+                headerShown: false,
+              }}
+            />
           </Stack>
         </QueryClientProvider>
         <Toast config={toastConfig} />

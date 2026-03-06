@@ -16,7 +16,7 @@ interface AuthState {
   loadTokens: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>(set => ({
   accessToken: null,
   refreshToken: null,
   isLoggedIn: false,

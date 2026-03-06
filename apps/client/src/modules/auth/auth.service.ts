@@ -42,7 +42,7 @@ function handleAxiosError(error: unknown, fallbackCode: string): ApiError {
   if (axios.isAxiosError(error)) {
     const axiosError = error as AxiosError<{ message?: string }>;
     const serverMessage = axiosError.response?.data?.message;
-    console.log("Server message",axiosError.response?.data.message)
+    console.log('Server message', axiosError.response?.data.message);
     return {
       message: serverMessage || axiosError.message || 'Something went wrong',
       success: false,
@@ -92,7 +92,9 @@ export const verifyOtp = async (payload: VerifyOtpPayload): Promise<ApiResponse 
   }
 };
 
-export const resetPassword = async (payload: ResetPasswordPayload): Promise<ApiResponse | ApiError> => {
+export const resetPassword = async (
+  payload: ResetPasswordPayload
+): Promise<ApiResponse | ApiError> => {
   try {
     const res = await axios.post(`${BASE_URL}/${AUTH_ENDPOINTS.RESET_PASSWORD}`, payload);
     return { data: res.data, message: res.data.message, success: true };

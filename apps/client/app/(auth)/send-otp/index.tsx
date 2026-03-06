@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -7,37 +7,37 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-} from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/hooks";
-import { toast } from "@/components/ui/toast";
-import { sendOtp } from "@/modules/auth/auth.service";
+} from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/hooks';
+import { toast } from '@/components/ui/toast';
+import { sendOtp } from '@/modules/auth/auth.service';
 
 export default function SendOTPScreen() {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
   const router = useRouter();
   const params = useLocalSearchParams();
-  console.log("Params,",params);
+  console.log('Params,', params);
   // Form state
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState('');
 
   // Handlers - logic part tu karega
-  const handleSendOTP = async() => {
-     const res = await sendOtp({email:params?.email as string});
-       if (!res.success) {
-         toast.error({ title: 'Failed to send otp', message: res.message });
-         return;
-       }
-       toast.success({ title: 'OTP sent !', message: 'Please check your email' });
-       router.push({
-        pathname:'/(auth)/verify-otp',
-        params:{
-          email:params.email,
-          password: params?.password 
-        }
-       })
+  const handleSendOTP = async () => {
+    const res = await sendOtp({ email: params?.email as string });
+    if (!res.success) {
+      toast.error({ title: 'Failed to send otp', message: res.message });
+      return;
+    }
+    toast.success({ title: 'OTP sent !', message: 'Please check your email' });
+    router.push({
+      pathname: '/(auth)/verify-otp',
+      params: {
+        email: params.email,
+        password: params?.password,
+      },
+    });
   };
 
   const handleGoBack = () => {
@@ -47,7 +47,7 @@ export default function SendOTPScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
@@ -71,17 +71,13 @@ export default function SendOTPScreen() {
                 height: spacing[10],
                 borderRadius: radius.button,
                 backgroundColor: colors.surface,
-                alignItems: "center",
-                justifyContent: "center",
+                alignItems: 'center',
+                justifyContent: 'center',
                 marginBottom: spacing[6],
               }}
               activeOpacity={0.7}
             >
-              <Ionicons
-                name="arrow-back"
-                size={layout.iconLarge}
-                color={colors.text}
-              />
+              <Ionicons name="arrow-back" size={layout.iconLarge} color={colors.text} />
             </TouchableOpacity>
 
             {/* Header */}
@@ -93,16 +89,12 @@ export default function SendOTPScreen() {
                   height: spacing[16],
                   backgroundColor: colors.primary[100],
                   borderRadius: radius.card,
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   marginBottom: spacing[4],
                 }}
               >
-                <Ionicons
-                  name="mail-outline"
-                  size={32}
-                  color={colors.primary[500]}
-                />
+                <Ionicons name="mail-outline" size={32} color={colors.primary[500]} />
               </View>
               <Text
                 style={{
@@ -119,8 +111,8 @@ export default function SendOTPScreen() {
                   marginTop: spacing[2],
                 }}
               >
-                Enter your email address and we'll send you a verification code
-                to reset your password.
+                Enter your email address and we'll send you a verification code to reset your
+                password.
               </Text>
             </View>
 
@@ -139,8 +131,8 @@ export default function SendOTPScreen() {
                 </Text>
                 <View
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
+                    flexDirection: 'row',
+                    alignItems: 'center',
                     borderWidth: 1,
                     borderColor: colors.border,
                     borderRadius: radius.input,
@@ -148,11 +140,7 @@ export default function SendOTPScreen() {
                     backgroundColor: colors.surface,
                   }}
                 >
-                  <Ionicons
-                    name="mail-outline"
-                    size={layout.iconMedium}
-                    color={colors.textMuted}
-                  />
+                  <Ionicons name="mail-outline" size={layout.iconMedium} color={colors.textMuted} />
                   <TextInput
                     style={{
                       flex: 1,
@@ -163,8 +151,7 @@ export default function SendOTPScreen() {
                     }}
                     placeholder="Enter your email"
                     placeholderTextColor={colors.textMuted}
-                    value={params?.email as string ||""}
-
+                    value={(params?.email as string) || ''}
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
@@ -179,7 +166,7 @@ export default function SendOTPScreen() {
                   backgroundColor: colors.primary[500],
                   paddingVertical: layout.buttonPaddingVertical,
                   borderRadius: radius.button,
-                  alignItems: "center",
+                  alignItems: 'center',
                   marginTop: spacing[2],
                 }}
                 onPress={handleSendOTP}
@@ -199,9 +186,9 @@ export default function SendOTPScreen() {
             {/* Info */}
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
                 marginTop: spacing[6],
                 paddingHorizontal: spacing[4],
               }}

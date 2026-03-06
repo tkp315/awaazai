@@ -10,7 +10,12 @@ type RedisClientType = 'cache' | 'queue' | 'session' | 'rateLimit';
 export interface RedisServiceType {
   // String operations
   get: (key: string, clientType?: RedisClientType) => Promise<string | null>;
-  set: (key: string, value: string, ttlSeconds?: number, clientType?: RedisClientType) => Promise<'OK'>;
+  set: (
+    key: string,
+    value: string,
+    ttlSeconds?: number,
+    clientType?: RedisClientType
+  ) => Promise<'OK'>;
   del: (key: string, clientType?: RedisClientType) => Promise<number>;
   exists: (key: string, clientType?: RedisClientType) => Promise<number>;
   expire: (key: string, seconds: number, clientType?: RedisClientType) => Promise<number>;
@@ -18,21 +23,41 @@ export interface RedisServiceType {
 
   // JSON operations
   getJson: <T>(key: string, clientType?: RedisClientType) => Promise<T | null>;
-  setJson: <T>(key: string, value: T, ttlSeconds?: number, clientType?: RedisClientType) => Promise<'OK'>;
+  setJson: <T>(
+    key: string,
+    value: T,
+    ttlSeconds?: number,
+    clientType?: RedisClientType
+  ) => Promise<'OK'>;
 
   // Hash operations
   hget: (key: string, field: string, clientType?: RedisClientType) => Promise<string | null>;
-  hset: (key: string, field: string, value: string, clientType?: RedisClientType) => Promise<number>;
+  hset: (
+    key: string,
+    field: string,
+    value: string,
+    clientType?: RedisClientType
+  ) => Promise<number>;
   hgetall: (key: string, clientType?: RedisClientType) => Promise<Record<string, string>>;
   hdel: (key: string, field: string, clientType?: RedisClientType) => Promise<number>;
-  hincrby: (key: string, field: string, increment: number, clientType?: RedisClientType) => Promise<number>;
+  hincrby: (
+    key: string,
+    field: string,
+    increment: number,
+    clientType?: RedisClientType
+  ) => Promise<number>;
 
   // List operations
   lpush: (key: string, value: string, clientType?: RedisClientType) => Promise<number>;
   rpush: (key: string, value: string, clientType?: RedisClientType) => Promise<number>;
   lpop: (key: string, clientType?: RedisClientType) => Promise<string | null>;
   rpop: (key: string, clientType?: RedisClientType) => Promise<string | null>;
-  lrange: (key: string, start: number, stop: number, clientType?: RedisClientType) => Promise<string[]>;
+  lrange: (
+    key: string,
+    start: number,
+    stop: number,
+    clientType?: RedisClientType
+  ) => Promise<string[]>;
   llen: (key: string, clientType?: RedisClientType) => Promise<number>;
 
   // Set operations

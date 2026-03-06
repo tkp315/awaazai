@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -8,19 +8,19 @@ import {
   Platform,
   ScrollView,
   Pressable,
-} from "react-native";
-import { useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useTheme } from "@/hooks";
+} from 'react-native';
+import { useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@/hooks';
 
 export default function ResetPasswordScreen() {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
   const router = useRouter();
 
   // Form state
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -36,7 +36,7 @@ export default function ResetPasswordScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
@@ -60,17 +60,13 @@ export default function ResetPasswordScreen() {
                 height: spacing[10],
                 borderRadius: radius.button,
                 backgroundColor: colors.surface,
-                alignItems: "center",
-                justifyContent: "center",
+                alignItems: 'center',
+                justifyContent: 'center',
                 marginBottom: spacing[6],
               }}
               activeOpacity={0.7}
             >
-              <Ionicons
-                name="arrow-back"
-                size={layout.iconLarge}
-                color={colors.text}
-              />
+              <Ionicons name="arrow-back" size={layout.iconLarge} color={colors.text} />
             </TouchableOpacity>
 
             {/* Header */}
@@ -82,16 +78,12 @@ export default function ResetPasswordScreen() {
                   height: spacing[16],
                   backgroundColor: colors.primary[100],
                   borderRadius: radius.card,
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   marginBottom: spacing[4],
                 }}
               >
-                <Ionicons
-                  name="key-outline"
-                  size={32}
-                  color={colors.primary[500]}
-                />
+                <Ionicons name="key-outline" size={32} color={colors.primary[500]} />
               </View>
               <Text
                 style={{
@@ -108,8 +100,7 @@ export default function ResetPasswordScreen() {
                   marginTop: spacing[2],
                 }}
               >
-                Create a new password for your account. Make sure it's strong
-                and secure.
+                Create a new password for your account. Make sure it's strong and secure.
               </Text>
             </View>
 
@@ -128,8 +119,8 @@ export default function ResetPasswordScreen() {
                 </Text>
                 <View
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
+                    flexDirection: 'row',
+                    alignItems: 'center',
                     borderWidth: 1,
                     borderColor: colors.border,
                     borderRadius: radius.input,
@@ -159,7 +150,7 @@ export default function ResetPasswordScreen() {
                   />
                   <Pressable onPress={() => setShowPassword(!showPassword)}>
                     <Ionicons
-                      name={showPassword ? "eye-outline" : "eye-off-outline"}
+                      name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                       size={layout.iconMedium}
                       color={colors.textMuted}
                     />
@@ -180,8 +171,8 @@ export default function ResetPasswordScreen() {
                 </Text>
                 <View
                   style={{
-                    flexDirection: "row",
-                    alignItems: "center",
+                    flexDirection: 'row',
+                    alignItems: 'center',
                     borderWidth: 1,
                     borderColor: colors.border,
                     borderRadius: radius.input,
@@ -209,13 +200,9 @@ export default function ResetPasswordScreen() {
                     secureTextEntry={!showConfirmPassword}
                     autoCapitalize="none"
                   />
-                  <Pressable
-                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
+                  <Pressable onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
                     <Ionicons
-                      name={
-                        showConfirmPassword ? "eye-outline" : "eye-off-outline"
-                      }
+                      name={showConfirmPassword ? 'eye-outline' : 'eye-off-outline'}
                       size={layout.iconMedium}
                       color={colors.textMuted}
                     />
@@ -242,24 +229,20 @@ export default function ResetPasswordScreen() {
                   Password must contain:
                 </Text>
                 {[
-                  "At least 8 characters",
-                  "One uppercase letter",
-                  "One lowercase letter",
-                  "One number",
+                  'At least 8 characters',
+                  'One uppercase letter',
+                  'One lowercase letter',
+                  'One number',
                 ].map((requirement, index) => (
                   <View
                     key={index}
                     style={{
-                      flexDirection: "row",
-                      alignItems: "center",
+                      flexDirection: 'row',
+                      alignItems: 'center',
                       gap: spacing[2],
                     }}
                   >
-                    <Ionicons
-                      name="ellipse"
-                      size={6}
-                      color={colors.textMuted}
-                    />
+                    <Ionicons name="ellipse" size={6} color={colors.textMuted} />
                     <Text
                       style={{
                         ...textStyles.bodySmall,
@@ -278,7 +261,7 @@ export default function ResetPasswordScreen() {
                   backgroundColor: colors.primary[500],
                   paddingVertical: layout.buttonPaddingVertical,
                   borderRadius: radius.button,
-                  alignItems: "center",
+                  alignItems: 'center',
                   marginTop: spacing[2],
                 }}
                 onPress={handleResetPassword}

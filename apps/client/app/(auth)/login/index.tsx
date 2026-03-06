@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -10,24 +10,24 @@ import {
   Pressable,
   Modal,
   ActivityIndicator,
-} from "react-native";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+} from 'react-native';
+import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { useTheme } from "@/hooks";
-import { loginSchema, TLoginForm } from "@/modules/auth/auth.types";
-import { login } from "@/modules/auth/auth.service";
-import { useAuthStore } from "@/modules/auth/auth.store";
-import { toast } from "@/components/ui/toast";
+import { useTheme } from '@/hooks';
+import { loginSchema, TLoginForm } from '@/modules/auth/auth.types';
+import { login } from '@/modules/auth/auth.service';
+import { useAuthStore } from '@/modules/auth/auth.store';
+import { toast } from '@/components/ui/toast';
 
 export default function LoginScreen() {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
   const router = useRouter();
   const params = useLocalSearchParams();
-  const isSilentLogin = params?.isSilentLogin === "true";
+  const isSilentLogin = params?.isSilentLogin === 'true';
   const { setTokens } = useAuthStore();
 
   const [showPassword, setShowPassword] = useState(false);
@@ -38,36 +38,34 @@ export default function LoginScreen() {
     formState: { errors, isSubmitting },
   } = useForm<TLoginForm>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: "", password: "" },
+    defaultValues: { email: '', password: '' },
   });
 
   const onSubmit = async (data: TLoginForm) => {
     const res = await login(data);
     if (!res.success) {
-      toast.error({ title: "Login Failed", message: res.message });
+      toast.error({ title: 'Login Failed', message: res.message });
       return;
     }
     const { accessToken, refreshToken } = (res.data as any).result ?? res.data;
     await setTokens(accessToken, refreshToken);
-    toast.success({ title: "Welcome back!" });
-    router.replace("/(tabs)/home" as any);
+    toast.success({ title: 'Welcome back!' });
+    router.replace('/(tabs)/home' as any);
   };
 
   const formContent = (
     <View style={{ gap: spacing[4] }}>
       {/* Email */}
       <View style={{ gap: spacing[1] }}>
-        <Text style={{ ...textStyles.labelMedium, color: colors.text }}>
-          Email Address
-        </Text>
+        <Text style={{ ...textStyles.labelMedium, color: colors.text }}>Email Address</Text>
         <Controller
           control={control}
           name="email"
           render={({ field: { onChange, value } }) => (
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
                 borderWidth: 1,
                 borderColor: errors.email ? colors.error.main : colors.border,
                 borderRadius: radius.input,
@@ -110,20 +108,16 @@ export default function LoginScreen() {
       <View style={{ gap: spacing[1] }}>
         <View
           style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          <Text style={{ ...textStyles.labelMedium, color: colors.text }}>
-            Password
-          </Text>
+          <Text style={{ ...textStyles.labelMedium, color: colors.text }}>Password</Text>
           {!isSilentLogin && (
             <Link href="/(auth)/send-otp" asChild>
               <TouchableOpacity>
-                <Text
-                  style={{ ...textStyles.labelSmall, color: colors.primary[500] }}
-                >
+                <Text style={{ ...textStyles.labelSmall, color: colors.primary[500] }}>
                   Forgot Password?
                 </Text>
               </TouchableOpacity>
@@ -136,8 +130,8 @@ export default function LoginScreen() {
           render={({ field: { onChange, value } }) => (
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
                 borderWidth: 1,
                 borderColor: errors.password ? colors.error.main : colors.border,
                 borderRadius: radius.input,
@@ -167,7 +161,7 @@ export default function LoginScreen() {
               />
               <Pressable onPress={() => setShowPassword(!showPassword)}>
                 <Ionicons
-                  name={showPassword ? "eye-outline" : "eye-off-outline"}
+                  name={showPassword ? 'eye-outline' : 'eye-off-outline'}
                   size={layout.iconMedium}
                   color={colors.textMuted}
                 />
@@ -188,7 +182,7 @@ export default function LoginScreen() {
           backgroundColor: colors.primary[500],
           paddingVertical: layout.buttonPaddingVertical,
           borderRadius: radius.button,
-          alignItems: "center",
+          alignItems: 'center',
           marginTop: spacing[2],
           opacity: isSubmitting ? 0.7 : 1,
         }}
@@ -199,9 +193,7 @@ export default function LoginScreen() {
         {isSubmitting ? (
           <ActivityIndicator color={colors.textInverse} />
         ) : (
-          <Text style={{ ...textStyles.button, color: colors.textInverse }}>
-            Log In
-          </Text>
+          <Text style={{ ...textStyles.button, color: colors.textInverse }}>Log In</Text>
         )}
       </TouchableOpacity>
     </View>
@@ -214,13 +206,11 @@ export default function LoginScreen() {
         <View
           style={{
             flex: 1,
-            backgroundColor: "rgba(0,0,0,0.6)",
-            justifyContent: "flex-end",
+            backgroundColor: 'rgba(0,0,0,0.6)',
+            justifyContent: 'flex-end',
           }}
         >
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-          >
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
             <View
               style={{
                 backgroundColor: colors.background,
@@ -238,17 +228,13 @@ export default function LoginScreen() {
                   height: 4,
                   backgroundColor: colors.border,
                   borderRadius: 2,
-                  alignSelf: "center",
+                  alignSelf: 'center',
                 }}
               />
 
               <View style={{ gap: spacing[1] }}>
-                <Text style={{ ...textStyles.h2, color: colors.text }}>
-                  Session Expired
-                </Text>
-                <Text
-                  style={{ ...textStyles.bodyMedium, color: colors.textMuted }}
-                >
+                <Text style={{ ...textStyles.h2, color: colors.text }}>Session Expired</Text>
+                <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted }}>
                   Please log in again to continue
                 </Text>
               </View>
@@ -265,7 +251,7 @@ export default function LoginScreen() {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView
@@ -282,23 +268,21 @@ export default function LoginScreen() {
             }}
           >
             {/* Header */}
-            <View style={{ alignItems: "center", marginBottom: spacing[10] }}>
+            <View style={{ alignItems: 'center', marginBottom: spacing[10] }}>
               <View
                 style={{
                   width: spacing[16],
                   height: spacing[16],
                   backgroundColor: colors.primary[500],
                   borderRadius: radius.card,
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   marginBottom: spacing[4],
                 }}
               >
                 <Ionicons name="mic" size={32} color={colors.textInverse} />
               </View>
-              <Text style={{ ...textStyles.h1, color: colors.text }}>
-                Welcome Back
-              </Text>
+              <Text style={{ ...textStyles.h1, color: colors.text }}>Welcome Back</Text>
               <Text
                 style={{
                   ...textStyles.bodyMedium,
@@ -315,8 +299,8 @@ export default function LoginScreen() {
             {/* Divider */}
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
                 marginVertical: spacing[6],
               }}
             >
@@ -336,9 +320,9 @@ export default function LoginScreen() {
             {/* Google Button */}
             <TouchableOpacity
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
                 borderWidth: 1,
                 borderColor: colors.border,
                 paddingVertical: layout.buttonPaddingVertical,
@@ -362,20 +346,18 @@ export default function LoginScreen() {
             {/* Signup Link */}
             <View
               style={{
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
                 marginTop: spacing[8],
               }}
             >
               <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted }}>
-                Don't have an account?{" "}
+                Don't have an account?{' '}
               </Text>
               <Link href="/(auth)/signup" asChild>
                 <TouchableOpacity>
-                  <Text style={{ ...textStyles.button, color: colors.primary[500] }}>
-                    Sign Up
-                  </Text>
+                  <Text style={{ ...textStyles.button, color: colors.primary[500] }}>Sign Up</Text>
                 </TouchableOpacity>
               </Link>
             </View>

@@ -9,6 +9,6 @@ router.get('/health', (req, res) => {
 });
 
 // Module routes
-router.use('/auth', authRoutes); 
+router.use('/auth', authRoutes);
 
 export default router;

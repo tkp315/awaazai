@@ -1,17 +1,12 @@
-import { useMemo } from "react";
-import { useColorScheme } from "react-native";
-import {
-  getThemeColors,
-  ThemeName,
-  ColorMode,
-  ThemeColors,
-} from "@/theme/colors";
-import { spacing, layout, borderRadius, radius } from "@/theme/spacing";
-import { fontFamily, fontSize, textStyles } from "@/theme/typography";
-import { shadows, componentShadows } from "@/theme/shadows";
+import { useMemo } from 'react';
+import { useColorScheme } from 'react-native';
+import { getThemeColors, ThemeName, ColorMode, ThemeColors } from '@/theme/colors';
+import { spacing, layout, borderRadius, radius } from '@/theme/spacing';
+import { fontFamily, fontSize, textStyles } from '@/theme/typography';
+import { shadows, componentShadows } from '@/theme/shadows';
 
 // Default theme - baad mein Zustand store se dynamic kar sakte hai
-const DEFAULT_THEME: ThemeName = "indigo";
+const DEFAULT_THEME: ThemeName = 'indigo';
 
 interface UseThemeReturn {
   // Theme identity
@@ -39,12 +34,9 @@ interface UseThemeReturn {
 
 export const useTheme = (themeName: ThemeName = DEFAULT_THEME): UseThemeReturn => {
   const systemColorScheme = useColorScheme();
-  const colorMode: ColorMode = systemColorScheme === "dark" ? "dark" : "light";
+  const colorMode: ColorMode = systemColorScheme === 'dark' ? 'dark' : 'light';
 
-  const colors = useMemo(
-    () => getThemeColors(themeName, colorMode),
-    [themeName, colorMode]
-  );
+  const colors = useMemo(() => getThemeColors(themeName, colorMode), [themeName, colorMode]);
 
   return {
     themeName,

@@ -31,18 +31,10 @@ export const loginSchema = z.object({
     .toLowerCase()
     .trim(),
 
-  password: z
-    .string({ message: 'Password is required' })
-    .min(1, 'Password is required'),
- deviceId: z
-    .string()
-    .trim()
-    .optional(),
+  password: z.string({ message: 'Password is required' }).min(1, 'Password is required'),
+  deviceId: z.string().trim().optional(),
 
-  deviceInfo: z
-    .string()
-    .trim()
-    .optional(),
+  deviceInfo: z.string().trim().optional(),
 });
 
 // Send OTP validation
@@ -52,9 +44,7 @@ export const sendOtpSchema = z.object({
     .email('Invalid email address')
     .toLowerCase()
     .trim(),
-  verificationType: z
-                .string()
-                .optional()  
+  verificationType: z.string().optional(),
 });
 
 // Verify OTP validation

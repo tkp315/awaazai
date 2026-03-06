@@ -15,8 +15,8 @@ export const authMiddleware = async (req: Request, res: Response, next: NextFunc
     if (!valid || !payload) {
       throw new ApiError(401, 'Invalid or expired token');
     }
-   console.log("Payload",payload)
-    req.user = payload as { id: string;};
+    console.log('Payload', payload);
+    req.user = payload as { id: string };
     next();
   } catch (error) {
     next(error);

@@ -40,7 +40,8 @@ export async function sendMail(options: SendMailOptions): Promise<boolean> {
 
 // Send OTP mail
 export async function sendOTPMail(options: OTPMailOptions): Promise<boolean> {
-  const subject = options.type === 'SIGNUP' ? 'Verify Your Email - AwaazAI' : 'Reset Your Password - AwaazAI';
+  const subject =
+    options.type === 'SIGNUP' ? 'Verify Your Email - AwaazAI' : 'Reset Your Password - AwaazAI';
 
   const html = getOTPTemplate({
     otp: options.otp,

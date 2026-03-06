@@ -26,39 +26,38 @@ export default function VerifyOTPScreen() {
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''));
   const params = useLocalSearchParams();
   console.log('Params', params);
-  const [resendOtp,setResendOtp] = useState(false);
+  const [resendOtp, setResendOtp] = useState(false);
   const inputRefs = useRef<(TextInput | null)[]>([]);
 
   // Handlers - logic part tu karega
-  const handleVerifyOTP = async() => {
+  const handleVerifyOTP = async () => {
     // TODO: Implement verify OTP logic
     const otpCode = otp.join('');
     console.log('OTP:', otpCode);
-    
-      const res = await verifyOtp({
-        code:otpCode,
-        email:params?.email  as string,
-      });
+
+    const res = await verifyOtp({
+      code: otpCode,
+      email: params?.email as string,
+    });
 
     if (!res.success) {
       toast.error({ title: 'Verification Failed', message: res.message });
       return;
     }
     toast.success({ title: 'Account Verified!', message: 'Please verify your email' });
-    // silent login 
-    const payload = {email:params.email as string,password:params?.password as string}
+    // silent login
+    const payload = { email: params.email as string, password: params?.password as string };
     const loginResponse = await login(payload);
-    if(!loginResponse.success){
-
+    if (!loginResponse.success) {
     }
     router.push({
-      pathname:'/(auth)/login',
-      params:{
-        email:params?.email,
-        password:params?.password,
-        isSilentLogin:'Yes'
-      }
-    })
+      pathname: '/(auth)/login',
+      params: {
+        email: params?.email,
+        password: params?.password,
+        isSilentLogin: 'Yes',
+      },
+    });
   };
 
   const handleResendOTP = async () => {
@@ -94,7 +93,6 @@ export default function VerifyOTPScreen() {
       inputRefs.current[index - 1]?.focus();
     }
   };
- 
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
