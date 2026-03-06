@@ -12,7 +12,15 @@ interface MenuItemProps {
   danger?: boolean;
 }
 
-function MenuItem({ icon, label, iconBg, iconColor, value, onPress, danger }: MenuItemProps): React.JSX.Element {
+function MenuItem({
+  icon,
+  label,
+  iconBg,
+  iconColor,
+  value,
+  onPress,
+  danger,
+}: MenuItemProps): React.JSX.Element {
   return (
     <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.7}>
       <View style={[styles.menuIcon, { backgroundColor: iconBg }]}>
