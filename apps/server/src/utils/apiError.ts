@@ -3,7 +3,7 @@ import { HTTP_STATUS } from 'globals/constants.js';
 export interface ErrorDetails {
   field?: string;
   code?: string;
-  [key: string]: any;
+  cause?: any;
 }
 
 export class ApiError extends Error {

@@ -117,7 +117,7 @@ model RefreshToken {
   deviceId   String?
   deviceInfo String?
   isRevoked  Boolean
-  revokedAt  DateTime
+  revokedAt  DateTime?
 
   // User Relation
   userId String @unique

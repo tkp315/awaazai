@@ -3,9 +3,11 @@ import initHelpers from './helper/index.js';
 import type { ConfigResult } from '../config/index.js';
 import { Application } from 'express';
 import initApps from './app/index.js';
+import type { ServicesType, HelperType } from '../globals/types.js';
+
 export interface LibResult {
-  services: Record<string, unknown>;
-  helper: Record<string, unknown>;
+  services: ServicesType;
+  helper: HelperType;
 }
 
 async function initLibs(config: ConfigResult, appObj: Application): Promise<LibResult> {

@@ -13,6 +13,9 @@ export interface RedisConfig {
 
 async function redisConfig(): Promise<RedisConfig> {
   const isProduction = process.env.NODE_ENV === 'production';
+  console.log(`REDIS HOST ${process.env.REDIS_HOST}`);
+  console.log(`REDIS PASSWORD ${process.env.REDIS_HOST}`);
+  // console.log(`REDIS HOST ${process.env.REDIS_HOST}`);
 
   return {
     host: process.env.REDIS_HOST || 'localhost',
