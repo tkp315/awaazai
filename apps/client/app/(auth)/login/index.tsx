@@ -22,7 +22,7 @@ import { loginSchema, TLoginForm } from '@/modules/auth/auth.types';
 import { googleLogin, login } from '@/modules/auth/auth.service';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { toast } from '@/components/ui/toast';
-import {GoogleSignin} from '@react-native-google-signin/google-signin'
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import useGoogleAuth from '@/hooks/useGoogleAuth';
 
 export default function LoginScreen() {
@@ -31,7 +31,7 @@ export default function LoginScreen() {
   const params = useLocalSearchParams();
   const isSilentLogin = params?.isSilentLogin === 'true';
   const { setTokens } = useAuthStore();
-  const {getGoogleIdToken} = useGoogleAuth()
+  const { getGoogleIdToken } = useGoogleAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -45,17 +45,17 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (isSilentLogin) {
-      const payload= {
-        email:params?.email as string,
-        password:params?.password as string
-      }
-      onSubmit(payload)
+      const payload = {
+        email: params?.email as string,
+        password: params?.password as string,
+      };
+      onSubmit(payload);
     }
   }, []);
 
   const onSubmit = async (data: TLoginForm) => {
     // const deviceId = getDeviceId()||"";
-    let payload ={
+    let payload = {
       ...data,
       // deviceId
     };
@@ -70,14 +70,14 @@ export default function LoginScreen() {
     toast.success({ title: 'Welcome back!' });
     router.replace('/(tabs)');
   };
-  const handleSigninWithGoogle = async()=>{
-   const idToken = await getGoogleIdToken();
-   console.log(`Google id token`,idToken)
-   const payload = {
-    idToken:idToken||""
-   }
-   const res = await googleLogin(payload);
-   if (!res.success) {
+  const handleSigninWithGoogle = async () => {
+    const idToken = await getGoogleIdToken();
+    console.log(`Google id token`, idToken);
+    const payload = {
+      idToken: idToken || '',
+    };
+    const res = await googleLogin(payload);
+    if (!res.success) {
       toast.error({ title: 'Login Failed', message: res.message });
       return;
     }
@@ -85,18 +85,17 @@ export default function LoginScreen() {
     await setTokens(accessToken, refreshToken);
     toast.success({ title: 'Welcome back!' });
     router.replace('/(tabs)');
-
-  }
-  const handleForgetPassword = () =>{
+  };
+  const handleForgetPassword = () => {
     router.push({
-      pathname:'/(auth)/send-otp',
-      params:{
-        isForgetPassword:'true',
-        email:null,
-        password:null
-      }
-    })
-  }
+      pathname: '/(auth)/send-otp',
+      params: {
+        isForgetPassword: 'true',
+        email: null,
+        password: null,
+      },
+    });
+  };
 
   const formContent = (
     <View style={{ gap: spacing[4] }}>
@@ -160,16 +159,11 @@ export default function LoginScreen() {
         >
           <Text style={{ ...textStyles.labelMedium, color: colors.text }}>Password</Text>
           {!isSilentLogin && (
-            
-              <TouchableOpacity
-              onPress={handleForgetPassword}
-              >
-              
-                <Text style={{ ...textStyles.labelSmall, color: colors.primary[500] }}>
-                  Forgot Password?
-                </Text>
-              </TouchableOpacity>
-            
+            <TouchableOpacity onPress={handleForgetPassword}>
+              <Text style={{ ...textStyles.labelSmall, color: colors.primary[500] }}>
+                Forgot Password?
+              </Text>
+            </TouchableOpacity>
           )}
         </View>
         <Controller

@@ -31,7 +31,7 @@ export default function SendOTPScreen() {
     let verifyOtpParams = {
       email: params.email,
       password: params?.password,
-      isForgetPassword:"false"
+      isForgetPassword: 'false',
     };
     if (isForgetPassword) {
       payload = {
@@ -40,7 +40,7 @@ export default function SendOTPScreen() {
       verifyOtpParams = {
         email,
         password: '',
-        isForgetPassword:"true"
+        isForgetPassword: 'true',
       };
     }
     const res = await sendOtp(payload);

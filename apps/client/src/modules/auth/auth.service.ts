@@ -39,7 +39,7 @@ interface ResetPasswordPayload {
 }
 
 interface GoogleLoginPayload {
-  idToken:string
+  idToken: string;
 }
 function handleAxiosError(error: unknown, fallbackCode: string): ApiError {
   if (axios.isAxiosError(error)) {
@@ -106,11 +106,11 @@ export const resetPassword = async (
   }
 };
 
-export const googleLogin = async (payload:GoogleLoginPayload):Promise<ApiResponse | ApiError>=>{
-try {
+export const googleLogin = async (payload: GoogleLoginPayload): Promise<ApiResponse | ApiError> => {
+  try {
     const res = await axios.post(`${BASE_URL}/${AUTH_ENDPOINTS.GOOGLE_LOGIN}`, payload);
     return { data: res.data, message: res.data.message, success: true };
   } catch (error) {
     return handleAxiosError(error, 'GOOGLE_LOGIN_ERROR');
   }
-}
+};

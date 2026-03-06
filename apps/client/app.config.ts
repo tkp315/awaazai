@@ -4,7 +4,7 @@ export default ({ config }: { config: Record<string, unknown> }) => {
     extra: {
       ...(config.extra as Record<string, unknown>),
       BACKEND_PORT: process.env.BACKEND_PORT,
-      GOOGLE_CLIENT_ID:process.env.GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     },
   };
 };

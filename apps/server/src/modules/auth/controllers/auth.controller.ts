@@ -30,7 +30,7 @@ export const signup = asyncHandler(async (req, res) => {
   const validatedData = signupSchema.safeParse(payload);
   const { data, success, error } = validatedData;
 
-  console.log("Error at auth",error);
+  console.log('Error at auth', error);
   if (!success) {
     throw new ApiError(400, `Validation failed:${error}`);
   }

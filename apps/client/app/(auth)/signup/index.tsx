@@ -109,8 +109,8 @@ function FormField({ name, label, type, control, errors }: FormFieldProps) {
 
 export default function SignupScreen() {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
-  const {getGoogleIdToken} = useGoogleAuth()
-  const {setTokens} = useAuthStore()
+  const { getGoogleIdToken } = useGoogleAuth();
+  const { setTokens } = useAuthStore();
 
   const {
     control,
@@ -140,20 +140,18 @@ export default function SignupScreen() {
     toast.success({ title: 'Account Created!', message: 'Please verify your email' });
     router.push({
       pathname: '/(auth)/send-otp',
-      params: { email: payload.email, password: payload.password, isForgetPassword:'false'},
+      params: { email: payload.email, password: payload.password, isForgetPassword: 'false' },
     });
   };
 
-  
-  
-   const handleGoogleSignup = async()=>{
-   const idToken = await getGoogleIdToken();
-   console.log(`Google id token`,idToken)
-   const payload = {
-    idToken:idToken||""
-   }
-   const res = await googleLogin(payload);
-   if (!res.success) {
+  const handleGoogleSignup = async () => {
+    const idToken = await getGoogleIdToken();
+    console.log(`Google id token`, idToken);
+    const payload = {
+      idToken: idToken || '',
+    };
+    const res = await googleLogin(payload);
+    if (!res.success) {
       toast.error({ title: 'Login Failed', message: res.message });
       return;
     }
@@ -161,9 +159,7 @@ export default function SignupScreen() {
     await setTokens(accessToken, refreshToken);
     toast.success({ title: 'Welcome back!' });
     router.replace('/(tabs)');
-
-  }
-  
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>

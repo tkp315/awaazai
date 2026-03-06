@@ -27,23 +27,23 @@ export default function ResetPasswordScreen() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const params = useLocalSearchParams();
   // Handlers - logic part tu karega
-  const handleResetPassword = async() => {
-  const payload = {
-    email:params?.email as string, 
-    newPassword:password
-  }
-      const res = await resetPassword(payload);
-      console.log('Signup response', res);
-      if (!res.success) {
-        toast.error({ title: 'Signup Failed', message: res.message });
-        return;
-      }
-  
-      toast.success({ title: 'Account Created!', message: 'Please verify your email' });
-      router.push({
-        pathname: '/(auth)/login',
-        params:{isSilentLogin:'false'}
-      });
+  const handleResetPassword = async () => {
+    const payload = {
+      email: params?.email as string,
+      newPassword: password,
+    };
+    const res = await resetPassword(payload);
+    console.log('Signup response', res);
+    if (!res.success) {
+      toast.error({ title: 'Signup Failed', message: res.message });
+      return;
+    }
+
+    toast.success({ title: 'Account Created!', message: 'Please verify your email' });
+    router.push({
+      pathname: '/(auth)/login',
+      params: { isSilentLogin: 'false' },
+    });
   };
 
   const handleGoBack = () => {

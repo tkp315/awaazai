@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { saveToken, getToken, deleteToken } from '@/shared/utils/storage';
 import { STORAGE_KEYS } from '@/shared';
 
-
 interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;

@@ -82,7 +82,7 @@ axiosInstance.interceptors.response.use(
         const refreshToken = await getToken(STORAGE_KEYS.REFRESH_TOKEN);
 
         if (!refreshToken) {
-         await redirectToLogin()
+          await redirectToLogin();
           console.error('Refresh Token not found');
           return Promise.reject(err);
         }

@@ -49,25 +49,24 @@ export default function VerifyOTPScreen() {
     const loginResponse = await login(payload);
     if (!loginResponse.success) {
     }
-    const isResetPassword =params?.isForgetPassword==='true'
-    if(isResetPassword){
+    const isResetPassword = params?.isForgetPassword === 'true';
+    if (isResetPassword) {
       router.push({
-        pathname:'/(auth)/reset-password',
-        params:{
-          email:params?.email
-        }
-      })
+        pathname: '/(auth)/reset-password',
+        params: {
+          email: params?.email,
+        },
+      });
+    } else {
+      router.push({
+        pathname: '/(auth)/login',
+        params: {
+          email: params?.email,
+          password: params?.password,
+          isSilentLogin: 'true',
+        },
+      });
     }
-  else {
-      router.push({
-      pathname: '/(auth)/login',
-      params: {
-        email: params?.email,
-        password: params?.password,
-        isSilentLogin: 'true',
-      },
-    });
-  }
   };
 
   const handleResendOTP = async () => {
