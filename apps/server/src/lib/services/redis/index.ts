@@ -2,8 +2,17 @@ import { Application } from 'express';
 import { createClients, getClient, getAllClients, disconnectAll, RedisConfig } from './client.js';
 import * as redisService from './service.js';
 
-export async function init(config: RedisConfig, appObj: Application) {
-  return createClients(config);
+export async function init(config: RedisConfig, appObj?: Application) {
+  await createClients(config);
+
+  return {
+    // Service functions
+    ...redisService,
+    // Client functions
+    getClient,
+    getAllClients,
+    disconnectAll,
+  };
 }
 
 // Export client functions
