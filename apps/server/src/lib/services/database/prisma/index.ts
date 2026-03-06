@@ -1,14 +1,18 @@
 import { PrismaClient } from 'generated/prisma/client.js';
-import pgConfig, { PostgresConfig } from '@config/services/database/pg/index.js';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PostgresConfig } from '@config/services/database/prisma/index.js';
 import { getLogger } from '@lib/helper/logger/index.js';
 import { Application } from 'express';
 
 let prisma: PrismaClient;
+
 async function initPrisma(config: PostgresConfig, appObj: Application) {
   const logger = getLogger();
 
+  const adapter = new PrismaPg({ connectionString: config.url });
+
   prisma = new PrismaClient({
-    accelerateUrl: config.url,
+    adapter,
     log: config.logging
       ? [
           { level: 'query', emit: 'event' },
@@ -43,4 +47,6 @@ export async function disconnectPrisma() {
   }
 }
 
-export default { initPrisma, getPrisma, disconnectPrisma };
+export const init = initPrisma;
+
+export default { init, initPrisma, getPrisma, disconnectPrisma };
