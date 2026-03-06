@@ -1,4 +1,6 @@
 // Helper Functions
+// import * as Application from 'expo-application'
+import { Platform } from 'react-native';
 
 /**
  * Format date to readable string
@@ -81,3 +83,11 @@ export const isEmpty = (value: unknown): boolean => {
   if (typeof value === 'object') return Object.keys(value).length === 0;
   return false;
 };
+
+// export const getDeviceId = async() =>{
+
+//   if(Platform.OS==='ios'){
+//     return await Application.getIosIdForVendorAsync();
+//   }
+//   return Application.getAndroidId();
+// }

@@ -9,7 +9,7 @@ import {
   refreshToken,
   googleLogin,
   guestLogin,
-} from '../controllers/auth.cotroller.js';
+} from '../controllers/auth.controller.js';
 import { authMiddleware } from '@middlewares/auth.middleware.js';
 
 const router = Router();

@@ -22,21 +22,37 @@ export default function SendOTPScreen() {
   console.log('Params,', params);
   // Form state
   const [email, setEmail] = useState('');
-
+  const isForgetPassword = params.isForgetPassword === 'true';
   // Handlers - logic part tu karega
   const handleSendOTP = async () => {
-    const res = await sendOtp({ email: params?.email as string });
+    let payload = {
+      email: params?.email as string,
+    };
+    let verifyOtpParams = {
+      email: params.email,
+      password: params?.password,
+      isForgetPassword:"false"
+    };
+    if (isForgetPassword) {
+      payload = {
+        email,
+      };
+      verifyOtpParams = {
+        email,
+        password: '',
+        isForgetPassword:"true"
+      };
+    }
+    const res = await sendOtp(payload);
     if (!res.success) {
       toast.error({ title: 'Failed to send otp', message: res.message });
       return;
     }
     toast.success({ title: 'OTP sent !', message: 'Please check your email' });
+
     router.push({
       pathname: '/(auth)/verify-otp',
-      params: {
-        email: params.email,
-        password: params?.password,
-      },
+      params: verifyOtpParams,
     });
   };
 
@@ -102,7 +118,7 @@ export default function SendOTPScreen() {
                   color: colors.text,
                 }}
               >
-                Veriy Email?
+                {isForgetPassword ? `Forgot Password ?` : `Verify Email`}
               </Text>
               <Text
                 style={{
@@ -111,8 +127,8 @@ export default function SendOTPScreen() {
                   marginTop: spacing[2],
                 }}
               >
-                Enter your email address and we'll send you a verification code to reset your
-                password.
+                Enter your email address and we'll send you a verification code to{' '}
+                {isForgetPassword ? 'reset your password.' : 'veriy email'}
               </Text>
             </View>
 
@@ -151,7 +167,7 @@ export default function SendOTPScreen() {
                     }}
                     placeholder="Enter your email"
                     placeholderTextColor={colors.textMuted}
-                    value={(params?.email as string) || ''}
+                    value={params?.email as string}
                     onChangeText={setEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"

@@ -1,10 +1,7 @@
 import { create } from 'zustand';
 import { saveToken, getToken, deleteToken } from '@/shared/utils/storage';
+import { STORAGE_KEYS } from '@/shared';
 
-const KEYS = {
-  ACCESS_TOKEN: 'accessToken',
-  REFRESH_TOKEN: 'refreshToken',
-};
 
 interface AuthState {
   accessToken: string | null;
@@ -23,21 +20,21 @@ export const useAuthStore = create<AuthState>(set => ({
   isLoading: false,
 
   setTokens: async (accessToken, refreshToken) => {
-    await saveToken(KEYS.ACCESS_TOKEN, accessToken);
-    await saveToken(KEYS.REFRESH_TOKEN, refreshToken);
+    await saveToken(STORAGE_KEYS.AUTH_TOKEN, accessToken);
+    await saveToken(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
     set({ accessToken, refreshToken, isLoggedIn: true });
   },
 
   clearTokens: async () => {
-    await deleteToken(KEYS.ACCESS_TOKEN);
-    await deleteToken(KEYS.REFRESH_TOKEN);
+    await deleteToken(STORAGE_KEYS.AUTH_TOKEN);
+    await deleteToken(STORAGE_KEYS.REFRESH_TOKEN);
     set({ accessToken: null, refreshToken: null, isLoggedIn: false });
   },
 
   loadTokens: async () => {
     set({ isLoading: true });
-    const accessToken = await getToken(KEYS.ACCESS_TOKEN);
-    const refreshToken = await getToken(KEYS.REFRESH_TOKEN);
+    const accessToken = await getToken(STORAGE_KEYS.AUTH_TOKEN);
+    const refreshToken = await getToken(STORAGE_KEYS.REFRESH_TOKEN);
     set({
       accessToken,
       refreshToken,

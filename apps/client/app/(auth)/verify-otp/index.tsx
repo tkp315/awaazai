@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks';
 import { login, sendOtp, verifyOtp } from '@/modules/auth/auth.service';
 import { toast } from '@/components/ui/toast';
-import { string } from 'zod';
+import { email, string } from 'zod';
 
 const OTP_LENGTH = 6;
 
@@ -34,7 +34,6 @@ export default function VerifyOTPScreen() {
     // TODO: Implement verify OTP logic
     const otpCode = otp.join('');
     console.log('OTP:', otpCode);
-
     const res = await verifyOtp({
       code: otpCode,
       email: params?.email as string,
@@ -44,20 +43,31 @@ export default function VerifyOTPScreen() {
       toast.error({ title: 'Verification Failed', message: res.message });
       return;
     }
-    toast.success({ title: 'Account Verified!', message: 'Please verify your email' });
+    toast.success({ title: 'Account Verified!', message: '' });
     // silent login
     const payload = { email: params.email as string, password: params?.password as string };
     const loginResponse = await login(payload);
     if (!loginResponse.success) {
     }
-    router.push({
+    const isResetPassword =params?.isForgetPassword==='true'
+    if(isResetPassword){
+      router.push({
+        pathname:'/(auth)/reset-password',
+        params:{
+          email:params?.email
+        }
+      })
+    }
+  else {
+      router.push({
       pathname: '/(auth)/login',
       params: {
         email: params?.email,
         password: params?.password,
-        isSilentLogin: 'Yes',
+        isSilentLogin: 'true',
       },
     });
+  }
   };
 
   const handleResendOTP = async () => {

@@ -18,8 +18,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTheme } from '@/hooks';
 import { signupSchema, TSignupForm } from '@/modules/auth/auth.types';
 import { signupFormFields } from '@/modules/auth/auth.constants';
-import { signup } from '@/modules/auth/auth.service';
+import { googleLogin, signup } from '@/modules/auth/auth.service';
 import { toast } from '@/components/ui/toast';
+import useGoogleAuth from '@/hooks/useGoogleAuth';
+import { useAuthStore } from '@/modules/auth/auth.store';
 
 const FIELD_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
   fullName: 'person-outline',
@@ -107,6 +109,9 @@ function FormField({ name, label, type, control, errors }: FormFieldProps) {
 
 export default function SignupScreen() {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
+  const {getGoogleIdToken} = useGoogleAuth()
+  const {setTokens} = useAuthStore()
+
   const {
     control,
     handleSubmit,
@@ -135,13 +140,30 @@ export default function SignupScreen() {
     toast.success({ title: 'Account Created!', message: 'Please verify your email' });
     router.push({
       pathname: '/(auth)/send-otp',
-      params: { email: payload.email, password: payload.password },
+      params: { email: payload.email, password: payload.password, isForgetPassword:'false'},
     });
   };
 
-  const handleGoogleSignup = () => {
-    // TODO: Implement Google signup
-  };
+  
+  
+   const handleGoogleSignup = async()=>{
+   const idToken = await getGoogleIdToken();
+   console.log(`Google id token`,idToken)
+   const payload = {
+    idToken:idToken||""
+   }
+   const res = await googleLogin(payload);
+   if (!res.success) {
+      toast.error({ title: 'Login Failed', message: res.message });
+      return;
+    }
+    const { accessToken, refreshToken } = (res.data as any).data;
+    await setTokens(accessToken, refreshToken);
+    toast.success({ title: 'Welcome back!' });
+    router.replace('/(tabs)');
+
+  }
+  
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>

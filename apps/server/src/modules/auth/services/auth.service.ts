@@ -49,13 +49,23 @@ export const authServices = {
       },
     });
   },
-
+  findVerifiedUserByEmail: async (email: string) => {
+    if (!email) {
+      throw new Error('Email required');
+    }
+    return await getPrisma().user.findFirst({
+      where: {
+        email,
+        isVerified: true,
+      },
+    });
+  },
   createUser: async (payload: CreateUserPayload) => {
     const user = await getPrisma().user.create({
       data: {
         fullName: payload.fullName,
         email: payload.email,
-        password: payload.password,
+        password: payload.password!,
         isVerified: payload.isVerified ?? false,
         userStatus: payload.userStatus ?? 'ACTIVE',
         accountType: payload.accountType ?? 'INDIVIDUAL',

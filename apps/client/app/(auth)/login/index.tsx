@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -19,9 +19,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useTheme } from '@/hooks';
 import { loginSchema, TLoginForm } from '@/modules/auth/auth.types';
-import { login } from '@/modules/auth/auth.service';
+import { googleLogin, login } from '@/modules/auth/auth.service';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { toast } from '@/components/ui/toast';
+import {GoogleSignin} from '@react-native-google-signin/google-signin'
+import useGoogleAuth from '@/hooks/useGoogleAuth';
 
 export default function LoginScreen() {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
@@ -29,7 +31,7 @@ export default function LoginScreen() {
   const params = useLocalSearchParams();
   const isSilentLogin = params?.isSilentLogin === 'true';
   const { setTokens } = useAuthStore();
-
+  const {getGoogleIdToken} = useGoogleAuth()
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -41,17 +43,60 @@ export default function LoginScreen() {
     defaultValues: { email: '', password: '' },
   });
 
+  useEffect(() => {
+    if (isSilentLogin) {
+      const payload= {
+        email:params?.email as string,
+        password:params?.password as string
+      }
+      onSubmit(payload)
+    }
+  }, []);
+
   const onSubmit = async (data: TLoginForm) => {
-    const res = await login(data);
+    // const deviceId = getDeviceId()||"";
+    let payload ={
+      ...data,
+      // deviceId
+    };
+    const res = await login(payload);
     if (!res.success) {
       toast.error({ title: 'Login Failed', message: res.message });
       return;
     }
-    const { accessToken, refreshToken } = (res.data as any).result ?? res.data;
+    // console.log("response login",res);
+    const { accessToken, refreshToken } = (res.data as any).data;
     await setTokens(accessToken, refreshToken);
     toast.success({ title: 'Welcome back!' });
-    router.replace('/(tabs)/home' as any);
+    router.replace('/(tabs)');
   };
+  const handleSigninWithGoogle = async()=>{
+   const idToken = await getGoogleIdToken();
+   console.log(`Google id token`,idToken)
+   const payload = {
+    idToken:idToken||""
+   }
+   const res = await googleLogin(payload);
+   if (!res.success) {
+      toast.error({ title: 'Login Failed', message: res.message });
+      return;
+    }
+    const { accessToken, refreshToken } = (res.data as any).data;
+    await setTokens(accessToken, refreshToken);
+    toast.success({ title: 'Welcome back!' });
+    router.replace('/(tabs)');
+
+  }
+  const handleForgetPassword = () =>{
+    router.push({
+      pathname:'/(auth)/send-otp',
+      params:{
+        isForgetPassword:'true',
+        email:null,
+        password:null
+      }
+    })
+  }
 
   const formContent = (
     <View style={{ gap: spacing[4] }}>
@@ -115,13 +160,16 @@ export default function LoginScreen() {
         >
           <Text style={{ ...textStyles.labelMedium, color: colors.text }}>Password</Text>
           {!isSilentLogin && (
-            <Link href="/(auth)/send-otp" asChild>
-              <TouchableOpacity>
+            
+              <TouchableOpacity
+              onPress={handleForgetPassword}
+              >
+              
                 <Text style={{ ...textStyles.labelSmall, color: colors.primary[500] }}>
                   Forgot Password?
                 </Text>
               </TouchableOpacity>
-            </Link>
+            
           )}
         </View>
         <Controller
@@ -202,48 +250,18 @@ export default function LoginScreen() {
   // ─── Silent Login Mode ───────────────────────────────────────────────
   if (isSilentLogin) {
     return (
-      <Modal transparent animationType="fade" visible>
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: 'rgba(0,0,0,0.6)',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <View
-              style={{
-                backgroundColor: colors.background,
-                borderTopLeftRadius: 24,
-                borderTopRightRadius: 24,
-                padding: spacing[6],
-                paddingBottom: spacing[10],
-                gap: spacing[6],
-              }}
-            >
-              {/* Handle bar */}
-              <View
-                style={{
-                  width: 40,
-                  height: 4,
-                  backgroundColor: colors.border,
-                  borderRadius: 2,
-                  alignSelf: 'center',
-                }}
-              />
-
-              <View style={{ gap: spacing[1] }}>
-                <Text style={{ ...textStyles.h2, color: colors.text }}>Session Expired</Text>
-                <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted }}>
-                  Please log in again to continue
-                </Text>
-              </View>
-
-              {formContent}
-            </View>
-          </KeyboardAvoidingView>
-        </View>
-      </Modal>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: colors.background,
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: spacing[4],
+        }}
+      >
+        <ActivityIndicator size="large" color={colors.primary[500]} />
+        <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted }}>Logging in...</Text>
+      </View>
     );
   }
 
@@ -319,6 +337,7 @@ export default function LoginScreen() {
 
             {/* Google Button */}
             <TouchableOpacity
+              onPress={handleSigninWithGoogle}
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',

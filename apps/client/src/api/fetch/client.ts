@@ -2,6 +2,8 @@ import axios from 'axios';
 import { BASE_URL as url } from './config';
 import { STORAGE_KEYS } from '@/shared/utils/constants';
 import { getToken } from '@/shared/utils/storage';
+import { router } from 'expo-router';
+import { useAuthStore } from '@/modules/auth/auth.store';
 
 const BASE_URL = url;
 export const axiosInstance = axios.create({
@@ -20,6 +22,10 @@ response
 */
 
 // request interceptor
+const redirectToLogin = async () => {
+  await useAuthStore.getState().clearTokens();
+  router.replace('/(auth)/login');
+};
 axiosInstance.interceptors.request.use(
   async config => {
     const accessToken = await getToken(STORAGE_KEYS.AUTH_TOKEN);
@@ -76,7 +82,7 @@ axiosInstance.interceptors.response.use(
         const refreshToken = await getToken(STORAGE_KEYS.REFRESH_TOKEN);
 
         if (!refreshToken) {
-          // call logout api
+         await redirectToLogin()
           console.error('Refresh Token not found');
           return Promise.reject(err);
         }
@@ -95,7 +101,7 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (error) {
         processQueue(error, null);
-        // logout
+        await redirectToLogin();
         return Promise.reject(error);
       } finally {
         isRefreshing = false;

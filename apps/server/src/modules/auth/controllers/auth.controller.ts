@@ -30,6 +30,7 @@ export const signup = asyncHandler(async (req, res) => {
   const validatedData = signupSchema.safeParse(payload);
   const { data, success, error } = validatedData;
 
+  console.log("Error at auth",error);
   if (!success) {
     throw new ApiError(400, `Validation failed:${error}`);
   }
@@ -119,7 +120,7 @@ export const login = asyncHandler(async (req, res) => {
     throw new ApiError(400, `Validation Error: ${JSON.stringify(error, null, 2)}`);
   }
   const { email, password } = data;
-  const user = await authServices.findUserByEmail(email);
+  const user = await authServices.findVerifiedUserByEmail(email);
 
   if (!user) {
     throw new ApiError(401, 'User is not registered');
@@ -216,7 +217,7 @@ export const resetPassword = asyncHandler(async (req, res) => {
   const { success, data, error } = validatedData;
 
   if (!success) {
-    throw new ApiError(400, `Validation Error: ${error}`);
+    throw new ApiError(400, `Validation Error: ${error.message}`);
   }
   const user = await authServices.findUserByEmail(data.email);
 

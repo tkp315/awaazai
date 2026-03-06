@@ -9,10 +9,12 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks';
+import { resetPassword } from '@/modules/auth/auth.service';
+import { toast } from '@/components/ui/toast';
 
 export default function ResetPasswordScreen() {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
@@ -23,10 +25,25 @@ export default function ResetPasswordScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const params = useLocalSearchParams();
   // Handlers - logic part tu karega
-  const handleResetPassword = () => {
-    // TODO: Implement reset password logic
+  const handleResetPassword = async() => {
+  const payload = {
+    email:params?.email as string, 
+    newPassword:password
+  }
+      const res = await resetPassword(payload);
+      console.log('Signup response', res);
+      if (!res.success) {
+        toast.error({ title: 'Signup Failed', message: res.message });
+        return;
+      }
+  
+      toast.success({ title: 'Account Created!', message: 'Please verify your email' });
+      router.push({
+        pathname: '/(auth)/login',
+        params:{isSilentLogin:'false'}
+      });
   };
 
   const handleGoBack = () => {
