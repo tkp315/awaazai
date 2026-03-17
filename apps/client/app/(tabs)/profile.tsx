@@ -46,11 +46,19 @@ function MenuItem({ icon, label, iconBg, iconColor, value, onPress, danger }: Me
       >
         <Ionicons name={icon} size={20} color={iconColor} />
       </View>
-      <Text style={{ flex: 1, ...textStyles.bodyMedium, color: danger ? colors.error.main : colors.text }}>
+      <Text
+        style={{
+          flex: 1,
+          ...textStyles.bodyMedium,
+          color: danger ? colors.error.main : colors.text,
+        }}
+      >
         {label}
       </Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[1] }}>
-        {value ? <Text style={{ ...textStyles.bodySmall, color: colors.textMuted }}>{value}</Text> : null}
+        {value ? (
+          <Text style={{ ...textStyles.bodySmall, color: colors.textMuted }}>{value}</Text>
+        ) : null}
         <Ionicons name="chevron-forward" size={16} color={colors.border} />
       </View>
     </TouchableOpacity>
@@ -68,7 +76,8 @@ export default function ProfileScreen(): React.JSX.Element {
   const router = useRouter();
   const { user, preferences, fetchMe, fetchPreferences, clearUser } = useProfileStore();
   const { clearTokens } = useAuthStore();
-  const { subscription, limits, fetchSubscription, fetchLimits, getPlanName, isFreePlan } = useSubscriptionStore();
+  const { subscription, limits, fetchSubscription, fetchLimits, getPlanName, isFreePlan } =
+    useSubscriptionStore();
 
   const handleLogout = () => {
     Alert.alert('Log Out', 'Are you sure you want to log out?', [
@@ -99,11 +108,21 @@ export default function ProfileScreen(): React.JSX.Element {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: layout.screenPaddingHorizontal, paddingBottom: spacing[8] }}
+        contentContainerStyle={{
+          paddingHorizontal: layout.screenPaddingHorizontal,
+          paddingBottom: spacing[8],
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing[5] }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingVertical: spacing[5],
+          }}
+        >
           <Text style={{ ...textStyles.h3, color: colors.text }}>Profile</Text>
           <TouchableOpacity
             style={{
@@ -149,7 +168,9 @@ export default function ProfileScreen(): React.JSX.Element {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ ...textStyles.labelLarge, color: colors.text }}>{displayName}</Text>
-            <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[0.5] }}>
+            <Text
+              style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[0.5] }}
+            >
               {displayEmail}
             </Text>
           </View>
@@ -194,13 +215,21 @@ export default function ProfileScreen(): React.JSX.Element {
                 marginBottom: spacing[2],
               }}
             >
-              <Ionicons name={isFreePlan() ? 'star-outline' : 'star'} size={11} color={colors.textInverse} />
+              <Ionicons
+                name={isFreePlan() ? 'star-outline' : 'star'}
+                size={11}
+                color={colors.textInverse}
+              />
               <Text style={{ ...textStyles.labelSmall, color: colors.textInverse }}>
                 {getPlanName().toUpperCase()}
               </Text>
             </View>
-            <Text style={{ ...textStyles.labelLarge, color: colors.textInverse }}>{getPlanName()} Plan</Text>
-            <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[0.5] }}>
+            <Text style={{ ...textStyles.labelLarge, color: colors.textInverse }}>
+              {getPlanName()} Plan
+            </Text>
+            <Text
+              style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[0.5] }}
+            >
               {isFreePlan() ? 'Upgrade to unlock unlimited voices' : 'Active subscription'}
             </Text>
           </View>
@@ -221,7 +250,9 @@ export default function ProfileScreen(): React.JSX.Element {
         </View>
 
         {/* Usage Stats */}
-        <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}>
+        <Text
+          style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}
+        >
           USAGE
         </Text>
         <View
@@ -238,61 +269,189 @@ export default function ProfileScreen(): React.JSX.Element {
         >
           {[
             {
-              value: limits ? `${limits.VOICE_CLONES.used}${limits.VOICE_CLONES.limit === -1 ? '' : `/${limits.VOICE_CLONES.limit}`}` : '—',
+              value: limits
+                ? `${limits.VOICE_CLONES.used}${limits.VOICE_CLONES.limit === -1 ? '' : `/${limits.VOICE_CLONES.limit}`}`
+                : '—',
               label: 'Voices',
             },
             {
-              value: limits ? `${limits.VOICE_CHATS.used}${limits.VOICE_CHATS.limit === -1 ? '' : `/${limits.VOICE_CHATS.limit}`}` : '—',
+              value: limits
+                ? `${limits.VOICE_CHATS.used}${limits.VOICE_CHATS.limit === -1 ? '' : `/${limits.VOICE_CHATS.limit}`}`
+                : '—',
               label: 'Chats',
             },
             {
-              value: limits ? `${limits.AI_BOTS.used}${limits.AI_BOTS.limit === -1 ? '' : `/${limits.AI_BOTS.limit}`}` : '—',
+              value: limits
+                ? `${limits.AI_BOTS.used}${limits.AI_BOTS.limit === -1 ? '' : `/${limits.AI_BOTS.limit}`}`
+                : '—',
               label: 'Bots',
             },
           ].map((stat, i, arr) => (
             <View key={stat.label} style={{ flex: 1, flexDirection: 'row' }}>
               <View style={{ flex: 1, alignItems: 'center' }}>
                 <Text style={{ ...textStyles.h3, color: colors.text }}>{stat.value}</Text>
-                <Text style={{ ...textStyles.caption, color: colors.textMuted, marginTop: spacing[1], textAlign: 'center' }}>
+                <Text
+                  style={{
+                    ...textStyles.caption,
+                    color: colors.textMuted,
+                    marginTop: spacing[1],
+                    textAlign: 'center',
+                  }}
+                >
                   {stat.label}
                 </Text>
               </View>
               {i < arr.length - 1 && (
-                <View style={{ width: 1, height: 36, backgroundColor: colors.border, alignSelf: 'center' }} />
+                <View
+                  style={{
+                    width: 1,
+                    height: 36,
+                    backgroundColor: colors.border,
+                    alignSelf: 'center',
+                  }}
+                />
               )}
             </View>
           ))}
         </View>
 
         {/* Account */}
-        <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}>ACCOUNT</Text>
-        <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', marginBottom: spacing[5] }}>
-          <MenuItem icon="card-outline" label="Subscription" iconBg={colors.primary[100]} iconColor={colors.primary[600]} value={getPlanName()} onPress={() => router.push('/(routes)/subscription/plans')} />
-          <MenuItem icon="bar-chart-outline" label="Usage & Limits" iconBg={colors.secondary[100]} iconColor={colors.secondary[600]} onPress={() => router.push('/(routes)/subscription/usage')} />
-          <MenuItem icon="shield-checkmark-outline" label="Privacy & Security" iconBg={colors.success.light} iconColor={colors.success.dark} />
+        <Text
+          style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}
+        >
+          ACCOUNT
+        </Text>
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: radius.card,
+            borderWidth: 1,
+            borderColor: colors.border,
+            overflow: 'hidden',
+            marginBottom: spacing[5],
+          }}
+        >
+          <MenuItem
+            icon="card-outline"
+            label="Subscription"
+            iconBg={colors.primary[100]}
+            iconColor={colors.primary[600]}
+            value={getPlanName()}
+            onPress={() => router.push('/(routes)/subscription/plans')}
+          />
+          <MenuItem
+            icon="bar-chart-outline"
+            label="Usage & Limits"
+            iconBg={colors.secondary[100]}
+            iconColor={colors.secondary[600]}
+            onPress={() => router.push('/(routes)/subscription/usage')}
+          />
+          <MenuItem
+            icon="shield-checkmark-outline"
+            label="Privacy & Security"
+            iconBg={colors.success.light}
+            iconColor={colors.success.dark}
+          />
         </View>
 
         {/* Preferences */}
-        <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}>PREFERENCES</Text>
-        <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', marginBottom: spacing[5] }}>
-          <MenuItem icon="mic-outline" label="Voice Preferences" iconBg={colors.primary[100]} iconColor={colors.primary[600]} value={toLabel(preferences?.talkType) ?? 'Set up'} onPress={() => router.push('/(routes)/profile/voice-preferences')} />
-          <MenuItem icon="bookmark-outline" label="Topics" iconBg={colors.secondary[100]} iconColor={colors.secondary[600]} value={preferences?.topicsOfInterest?.length ? `${preferences.topicsOfInterest.length} topics` : 'Set up'} onPress={() => router.push('/(routes)/profile/topics')} />
+        <Text
+          style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}
+        >
+          PREFERENCES
+        </Text>
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: radius.card,
+            borderWidth: 1,
+            borderColor: colors.border,
+            overflow: 'hidden',
+            marginBottom: spacing[5],
+          }}
+        >
+          <MenuItem
+            icon="mic-outline"
+            label="Voice Preferences"
+            iconBg={colors.primary[100]}
+            iconColor={colors.primary[600]}
+            value={toLabel(preferences?.talkType) ?? 'Set up'}
+            onPress={() => router.push('/(routes)/profile/voice-preferences')}
+          />
+          <MenuItem
+            icon="bookmark-outline"
+            label="Topics"
+            iconBg={colors.secondary[100]}
+            iconColor={colors.secondary[600]}
+            value={
+              preferences?.topicsOfInterest?.length
+                ? `${preferences.topicsOfInterest.length} topics`
+                : 'Set up'
+            }
+            onPress={() => router.push('/(routes)/profile/topics')}
+          />
         </View>
 
         {/* App */}
-        <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}>APP</Text>
-        <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', marginBottom: spacing[5] }}>
-          <MenuItem icon="notifications-outline" label="Notifications" iconBg={colors.warning.light} iconColor={colors.warning.dark} />
-          <MenuItem icon="help-circle-outline" label="Help & Support" iconBg={colors.surfaceHover} iconColor={colors.textMuted} />
-          <MenuItem icon="information-circle-outline" label="About AwaazAI" iconBg={colors.surfaceHover} iconColor={colors.textMuted} />
+        <Text
+          style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}
+        >
+          APP
+        </Text>
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: radius.card,
+            borderWidth: 1,
+            borderColor: colors.border,
+            overflow: 'hidden',
+            marginBottom: spacing[5],
+          }}
+        >
+          <MenuItem
+            icon="notifications-outline"
+            label="Notifications"
+            iconBg={colors.warning.light}
+            iconColor={colors.warning.dark}
+          />
+          <MenuItem
+            icon="help-circle-outline"
+            label="Help & Support"
+            iconBg={colors.surfaceHover}
+            iconColor={colors.textMuted}
+          />
+          <MenuItem
+            icon="information-circle-outline"
+            label="About AwaazAI"
+            iconBg={colors.surfaceHover}
+            iconColor={colors.textMuted}
+          />
         </View>
 
         {/* Logout */}
-        <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', marginBottom: spacing[5] }}>
-          <MenuItem icon="log-out-outline" label="Log Out" iconBg={colors.error.light} iconColor={colors.error.main} danger onPress={handleLogout} />
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: radius.card,
+            borderWidth: 1,
+            borderColor: colors.border,
+            overflow: 'hidden',
+            marginBottom: spacing[5],
+          }}
+        >
+          <MenuItem
+            icon="log-out-outline"
+            label="Log Out"
+            iconBg={colors.error.light}
+            iconColor={colors.error.main}
+            danger
+            onPress={handleLogout}
+          />
         </View>
 
-        <Text style={{ ...textStyles.caption, color: colors.border, textAlign: 'center' }}>AwaazAI v1.0.0</Text>
+        <Text style={{ ...textStyles.caption, color: colors.border, textAlign: 'center' }}>
+          AwaazAI v1.0.0
+        </Text>
       </ScrollView>
     </SafeAreaView>
   );

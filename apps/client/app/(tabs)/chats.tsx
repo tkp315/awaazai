@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import {
-  ScrollView, Text, TouchableOpacity, View, ActivityIndicator,
-  Modal, FlatList, Pressable,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  Modal,
+  FlatList,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -60,7 +66,8 @@ function ChatCard({ chat }: { chat: IChat }): React.JSX.Element {
           {chat.name ?? chat.botVoice.voiceName ?? 'Chat'}
         </Text>
         <Text style={{ ...textStyles.caption, color: colors.textMuted, marginTop: 2 }}>
-          {chat.botVoice.relation ?? '—'} · {chat._count.chatSession} session{chat._count.chatSession !== 1 ? 's' : ''}
+          {chat.botVoice.relation ?? '—'} · {chat._count.chatSession} session
+          {chat._count.chatSession !== 1 ? 's' : ''}
         </Text>
       </View>
 
@@ -73,9 +80,7 @@ function ChatCard({ chat }: { chat: IChat }): React.JSX.Element {
             backgroundColor: '#ecfdf5',
           }}
         >
-          <Text style={{ ...textStyles.caption, color: '#059669', fontWeight: '700' }}>
-            Ready
-          </Text>
+          <Text style={{ ...textStyles.caption, color: '#059669', fontWeight: '700' }}>Ready</Text>
         </View>
       )}
 
@@ -119,7 +124,9 @@ function NewChatModal({
         >
           {/* Handle */}
           <View style={{ alignItems: 'center', paddingVertical: spacing[3] }}>
-            <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border }} />
+            <View
+              style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border }}
+            />
           </View>
 
           <Text
@@ -138,10 +145,23 @@ function NewChatModal({
               <ActivityIndicator size="large" color={colors.primary[500]} />
             </View>
           ) : voices.length === 0 ? (
-            <View style={{ alignItems: 'center', paddingVertical: spacing[8], paddingHorizontal: spacing[5] }}>
+            <View
+              style={{
+                alignItems: 'center',
+                paddingVertical: spacing[8],
+                paddingHorizontal: spacing[5],
+              }}
+            >
               <Text style={{ fontSize: 40, marginBottom: spacing[3] }}>🎙️</Text>
               <Text style={{ ...textStyles.labelMedium, color: colors.text }}>No ready voices</Text>
-              <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, textAlign: 'center', marginTop: spacing[2] }}>
+              <Text
+                style={{
+                  ...textStyles.bodySmall,
+                  color: colors.textMuted,
+                  textAlign: 'center',
+                  marginTop: spacing[2],
+                }}
+              >
                 Clone a voice first before starting a chat
               </Text>
             </View>
@@ -202,7 +222,8 @@ function NewChatModal({
 export default function ChatsScreen(): React.JSX.Element {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
   const router = useRouter();
-  const { chats, loadingChats, fetchChats, createChat, limitReached, clearLimitReached } = useMessageStore();
+  const { chats, loadingChats, fetchChats, createChat, limitReached, clearLimitReached } =
+    useMessageStore();
   const { readyVoices, loadingReadyVoices, fetchReadyVoices } = useVoiceStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [creating, setCreating] = useState(false);

@@ -15,7 +15,12 @@ function VoiceCard({ voice }: { voice: IBotVoice }): React.JSX.Element {
 
   return (
     <TouchableOpacity
-      onPress={() => router.push({ pathname: '/(routes)/voices/[botId]/[voiceId]', params: { botId: voice.botId, voiceId: voice.id } })}
+      onPress={() =>
+        router.push({
+          pathname: '/(routes)/voices/[botId]/[voiceId]',
+          params: { botId: voice.botId, voiceId: voice.id },
+        })
+      }
       activeOpacity={0.8}
       style={{
         flexDirection: 'row',
@@ -47,7 +52,8 @@ function VoiceCard({ voice }: { voice: IBotVoice }): React.JSX.Element {
           {voice.voiceName ?? 'Unnamed Voice'}
         </Text>
         <Text style={{ ...textStyles.caption, color: colors.textMuted, marginTop: 2 }}>
-          {voice.relation ? `${voice.relation} · ` : ''}{voice.language.toUpperCase()}
+          {voice.relation ? `${voice.relation} · ` : ''}
+          {voice.language.toUpperCase()}
         </Text>
       </View>
 
@@ -114,11 +120,21 @@ export default function HomeScreen(): React.JSX.Element {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: layout.screenPaddingHorizontal, paddingBottom: spacing[8] }}
+        contentContainerStyle={{
+          paddingHorizontal: layout.screenPaddingHorizontal,
+          paddingBottom: spacing[8],
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing[5] }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            paddingVertical: spacing[5],
+          }}
+        >
           <View>
             <Text style={{ ...textStyles.bodySmall, color: colors.textMuted }}>{greeting}</Text>
             <Text style={{ ...textStyles.h3, color: colors.text, marginTop: spacing[0.5] }}>
@@ -170,7 +186,13 @@ export default function HomeScreen(): React.JSX.Element {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={{ ...textStyles.h4, color: '#fff' }}>Start a Conversation</Text>
-            <Text style={{ ...textStyles.bodySmall, color: 'rgba(255,255,255,0.75)', marginTop: spacing[0.5] }}>
+            <Text
+              style={{
+                ...textStyles.bodySmall,
+                color: 'rgba(255,255,255,0.75)',
+                marginTop: spacing[0.5],
+              }}
+            >
               Chat with a cloned voice
             </Text>
           </View>
@@ -178,7 +200,9 @@ export default function HomeScreen(): React.JSX.Element {
         </TouchableOpacity>
 
         {/* Quick Actions */}
-        <Text style={{ ...textStyles.labelLarge, color: colors.text, marginBottom: spacing[3] }}>Quick Actions</Text>
+        <Text style={{ ...textStyles.labelLarge, color: colors.text, marginBottom: spacing[3] }}>
+          Quick Actions
+        </Text>
         <View style={{ flexDirection: 'row', gap: spacing[3], marginBottom: spacing[7] }}>
           {quickActions.map(item => (
             <TouchableOpacity
@@ -208,13 +232,22 @@ export default function HomeScreen(): React.JSX.Element {
               >
                 <Ionicons name={item.icon} size={24} color={item.color} />
               </View>
-              <Text style={{ ...textStyles.labelSmall, color: colors.text, textAlign: 'center' }}>{item.label}</Text>
+              <Text style={{ ...textStyles.labelSmall, color: colors.text, textAlign: 'center' }}>
+                {item.label}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
 
         {/* Recent Voices */}
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing[3] }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: spacing[3],
+          }}
+        >
           <Text style={{ ...textStyles.labelLarge, color: colors.text }}>Recent Voices</Text>
           <TouchableOpacity onPress={() => router.push('/(tabs)/voices')}>
             <Text style={{ ...textStyles.labelSmall, color: colors.primary[500] }}>See all</Text>
@@ -237,8 +270,17 @@ export default function HomeScreen(): React.JSX.Element {
             }}
           >
             <Ionicons name="mic-outline" size={48} color={colors.border} />
-            <Text style={{ ...textStyles.labelLarge, color: colors.text, marginTop: spacing[3] }}>No voices yet</Text>
-            <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[1], textAlign: 'center' }}>
+            <Text style={{ ...textStyles.labelLarge, color: colors.text, marginTop: spacing[3] }}>
+              No voices yet
+            </Text>
+            <Text
+              style={{
+                ...textStyles.bodySmall,
+                color: colors.textMuted,
+                marginTop: spacing[1],
+                textAlign: 'center',
+              }}
+            >
               Clone your first voice to get started
             </Text>
             <TouchableOpacity

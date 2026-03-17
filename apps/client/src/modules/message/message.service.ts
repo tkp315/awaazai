@@ -3,11 +3,11 @@ import { AxiosError } from 'axios';
 import type { IChat, ISession, IMessage } from './message.types';
 
 const CHAT_ENDPOINTS = {
-  CHATS:           'chats',
-  CHAT:            (chatId: string) => `chats/${chatId}`,
-  SESSIONS:        (chatId: string) => `chats/${chatId}/sessions`,
-  END_SESSION:     (chatId: string, sessionId: string) => `chats/${chatId}/sessions/${sessionId}/end`,
-  MESSAGES:        (chatId: string, sessionId: string) => `chats/${chatId}/sessions/${sessionId}/messages`,
+  CHATS: 'chats',
+  CHAT: (chatId: string) => `chats/${chatId}`,
+  SESSIONS: (chatId: string) => `chats/${chatId}/sessions`,
+  END_SESSION: (chatId: string, sessionId: string) => `chats/${chatId}/sessions/${sessionId}/end`,
+  MESSAGES: (chatId: string, sessionId: string) => `chats/${chatId}/sessions/${sessionId}/messages`,
 };
 
 export function handleError(error: unknown, fallback: string): string {
@@ -44,7 +44,7 @@ export const startSession = async (chatId: string): Promise<ISession> => {
 export const endSession = async (
   chatId: string,
   sessionId: string,
-  feedback?: { rating?: number; comment?: string },
+  feedback?: { rating?: number; comment?: string }
 ): Promise<ISession> => {
   const res = await axiosInstance.patch(CHAT_ENDPOINTS.END_SESSION(chatId, sessionId), {
     userFeedback: feedback,
@@ -56,7 +56,7 @@ export const getMessages = async (
   chatId: string,
   sessionId: string,
   limit = 50,
-  before?: string,
+  before?: string
 ): Promise<IMessage[]> => {
   const res = await axiosInstance.get(CHAT_ENDPOINTS.MESSAGES(chatId, sessionId), {
     params: { limit, before },

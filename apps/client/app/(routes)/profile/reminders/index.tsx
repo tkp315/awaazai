@@ -285,9 +285,7 @@ export default function RemindersScreen() {
           {isSaving ? (
             <ActivityIndicator color={colors.textInverse} />
           ) : (
-            <Text style={{ ...textStyles.buttonMedium, color: colors.textInverse }}>
-              Save
-            </Text>
+            <Text style={{ ...textStyles.buttonMedium, color: colors.textInverse }}>Save</Text>
           )}
         </TouchableOpacity>
       </ScrollView>

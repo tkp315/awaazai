@@ -65,13 +65,23 @@ function BotCard({ bot }: { bot: IBot }): React.JSX.Element {
           </View>
 
           {bot.purpose && (
-            <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: 2 }} numberOfLines={1}>
+            <Text
+              style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: 2 }}
+              numberOfLines={1}
+            >
               {bot.purpose}
             </Text>
           )}
 
           {enabledCaps.length > 0 && (
-            <View style={{ flexDirection: 'row', gap: spacing[1.5], marginTop: spacing[2], flexWrap: 'wrap' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: spacing[1.5],
+                marginTop: spacing[2],
+                flexWrap: 'wrap',
+              }}
+            >
               {enabledCaps.slice(0, 3).map(bc => {
                 const display = getCapabilityDisplay(bc.capability.name);
                 return (
@@ -88,7 +98,9 @@ function BotCard({ bot }: { bot: IBot }): React.JSX.Element {
                     }}
                   >
                     <Ionicons name={display.icon as any} size={10} color={display.color} />
-                    <Text style={{ ...textStyles.caption, color: display.color, fontWeight: '600' }}>
+                    <Text
+                      style={{ ...textStyles.caption, color: display.color, fontWeight: '600' }}
+                    >
                       {bc.capability.name}
                     </Text>
                   </View>
@@ -130,7 +142,9 @@ function BotCard({ bot }: { bot: IBot }): React.JSX.Element {
             }}
             activeOpacity={0.7}
           >
-            <Text style={{ ...textStyles.caption, color: colors.primary[600], fontWeight: '600' }}>Train</Text>
+            <Text style={{ ...textStyles.caption, color: colors.primary[600], fontWeight: '600' }}>
+              Train
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => router.push(`/(routes)/bots/${bot.id}/use`)}
@@ -142,7 +156,9 @@ function BotCard({ bot }: { bot: IBot }): React.JSX.Element {
             }}
             activeOpacity={0.7}
           >
-            <Text style={{ ...textStyles.caption, color: colors.textInverse, fontWeight: '600' }}>Use</Text>
+            <Text style={{ ...textStyles.caption, color: colors.textInverse, fontWeight: '600' }}>
+              Use
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -240,7 +256,9 @@ export default function MyBotsScreen(): React.JSX.Element {
             }}
           >
             <Text style={{ fontSize: 40 }}>🤖</Text>
-            <Text style={{ ...textStyles.h4, color: colors.text, marginTop: spacing[3] }}>No bots yet</Text>
+            <Text style={{ ...textStyles.h4, color: colors.text, marginTop: spacing[3] }}>
+              No bots yet
+            </Text>
             <Text
               style={{
                 ...textStyles.bodyMedium,

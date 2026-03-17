@@ -13,7 +13,12 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks';
-import { BOT_AVATAR_EMOJIS, getCapabilityDisplay, useBotsStore, getAwaazBotVoices } from '@/modules/bots';
+import {
+  BOT_AVATAR_EMOJIS,
+  getCapabilityDisplay,
+  useBotsStore,
+  getAwaazBotVoices,
+} from '@/modules/bots';
 import type { IAvailableBot, IBotVoice } from '@/modules/bots';
 import { AWAAZBOT_AVAILABLE_BOT_ID } from '@/shared/constants';
 import { PaywallModal } from '@/components/ui/paywall';
@@ -24,7 +29,15 @@ export default function CreateBotScreen(): React.JSX.Element {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
   const router = useRouter();
   const { availableBotId: preselectedId } = useLocalSearchParams<{ availableBotId?: string }>();
-  const { availableBots, loadingAvailable, isCreating, limitReached, clearLimitReached, fetchAvailableBots, createBot } = useBotsStore();
+  const {
+    availableBots,
+    loadingAvailable,
+    isCreating,
+    limitReached,
+    clearLimitReached,
+    fetchAvailableBots,
+    createBot,
+  } = useBotsStore();
 
   const [step, setStep] = useState<StepId>('identity');
   const [name, setName] = useState('');
@@ -151,11 +164,7 @@ export default function CreateBotScreen(): React.JSX.Element {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
-      <PaywallModal
-        visible={limitReached}
-        limitKey="AI_BOTS"
-        onClose={clearLimitReached}
-      />
+      <PaywallModal visible={limitReached} limitKey="AI_BOTS" onClose={clearLimitReached} />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -224,8 +233,12 @@ export default function CreateBotScreen(): React.JSX.Element {
             keyboardShouldPersistTaps="handled"
           >
             <View>
-              <Text style={{ ...textStyles.h4, color: colors.text }}>Give your bot an identity</Text>
-              <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[1] }}>
+              <Text style={{ ...textStyles.h4, color: colors.text }}>
+                Give your bot an identity
+              </Text>
+              <Text
+                style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[1] }}
+              >
                 Choose a name and avatar for your bot
               </Text>
             </View>
@@ -252,7 +265,14 @@ export default function CreateBotScreen(): React.JSX.Element {
               >
                 <Text style={{ fontSize: 48 }}>{avatar}</Text>
               </View>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], justifyContent: 'center' }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  flexWrap: 'wrap',
+                  gap: spacing[2],
+                  justifyContent: 'center',
+                }}
+              >
                 {BOT_AVATAR_EMOJIS.map(emoji => (
                   <TouchableOpacity
                     key={emoji}
@@ -291,7 +311,11 @@ export default function CreateBotScreen(): React.JSX.Element {
                   gap: spacing[3],
                 }}
               >
-                <Ionicons name="hardware-chip-outline" size={layout.iconMedium} color={colors.textMuted} />
+                <Ionicons
+                  name="hardware-chip-outline"
+                  size={layout.iconMedium}
+                  color={colors.textMuted}
+                />
                 <TextInput
                   style={{ flex: 1, ...textStyles.bodyMedium, color: colors.text }}
                   placeholder="e.g. Study Buddy, Voice Mom"
@@ -384,7 +408,9 @@ export default function CreateBotScreen(): React.JSX.Element {
           >
             <View>
               <Text style={{ ...textStyles.h4, color: colors.text }}>Choose bot type</Text>
-              <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[1] }}>
+              <Text
+                style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[1] }}
+              >
                 Select what kind of bot you want to create
               </Text>
             </View>
@@ -429,8 +455,12 @@ export default function CreateBotScreen(): React.JSX.Element {
                       </View>
 
                       <View style={{ flex: 1 }}>
-                        <Text style={{ ...textStyles.labelLarge, color: colors.text }}>{bot.name}</Text>
-                        <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: 2 }}>
+                        <Text style={{ ...textStyles.labelLarge, color: colors.text }}>
+                          {bot.name}
+                        </Text>
+                        <Text
+                          style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: 2 }}
+                        >
                           {bot.description}
                         </Text>
                       </View>
@@ -447,7 +477,9 @@ export default function CreateBotScreen(): React.JSX.Element {
                           justifyContent: 'center',
                         }}
                       >
-                        {isSelected && <Ionicons name="checkmark" size={14} color={colors.textInverse} />}
+                        {isSelected && (
+                          <Ionicons name="checkmark" size={14} color={colors.textInverse} />
+                        )}
                       </View>
                     </View>
 
@@ -473,7 +505,13 @@ export default function CreateBotScreen(): React.JSX.Element {
                               backgroundColor: display.bg,
                             }}
                           >
-                            <Text style={{ ...textStyles.caption, color: display.color, fontWeight: '600' }}>
+                            <Text
+                              style={{
+                                ...textStyles.caption,
+                                color: display.color,
+                                fontWeight: '600',
+                              }}
+                            >
                               {cap.name}
                             </Text>
                           </View>
@@ -490,7 +528,8 @@ export default function CreateBotScreen(): React.JSX.Element {
               disabled={!canProceedBotType || isCreating || loadingVoices}
               activeOpacity={0.85}
               style={{
-                backgroundColor: canProceedBotType && !isCreating ? colors.primary[500] : colors.primary[200],
+                backgroundColor:
+                  canProceedBotType && !isCreating ? colors.primary[500] : colors.primary[200],
                 borderRadius: radius.button,
                 height: layout.buttonHeight,
                 alignItems: 'center',
@@ -537,7 +576,9 @@ export default function CreateBotScreen(): React.JSX.Element {
           >
             <View>
               <Text style={{ ...textStyles.h4, color: colors.text }}>Select a cloned voice</Text>
-              <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[1] }}>
+              <Text
+                style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[1] }}
+              >
                 Choose a voice from your AwaazBot library for this bot to speak in
               </Text>
             </View>
@@ -558,7 +599,9 @@ export default function CreateBotScreen(): React.JSX.Element {
                 <Text style={{ ...textStyles.labelLarge, color: colors.text, textAlign: 'center' }}>
                   No cloned voices yet
                 </Text>
-                <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, textAlign: 'center' }}>
+                <Text
+                  style={{ ...textStyles.bodySmall, color: colors.textMuted, textAlign: 'center' }}
+                >
                   Clone a voice using AwaazBot first, then come back to assign it to this bot.
                 </Text>
               </View>
@@ -624,7 +667,9 @@ export default function CreateBotScreen(): React.JSX.Element {
                         justifyContent: 'center',
                       }}
                     >
-                      {isSelected && <Ionicons name="checkmark" size={14} color={colors.textInverse} />}
+                      {isSelected && (
+                        <Ionicons name="checkmark" size={14} color={colors.textInverse} />
+                      )}
                     </View>
                   </TouchableOpacity>
                 );
@@ -684,14 +729,16 @@ export default function CreateBotScreen(): React.JSX.Element {
                 lineHeight: 22,
               }}
             >
-              Your {selectedBotTemplate?.name} bot has been created. Start training it to make it smarter.
+              Your {selectedBotTemplate?.name} bot has been created. Start training it to make it
+              smarter.
             </Text>
 
             <View style={{ width: '100%', gap: spacing[3], marginTop: spacing[4] }}>
               <TouchableOpacity
-                onPress={() => createdBotId
-                  ? router.replace(`/(routes)/bots/${createdBotId}/train`)
-                  : router.replace('/(tabs)/bots')
+                onPress={() =>
+                  createdBotId
+                    ? router.replace(`/(routes)/bots/${createdBotId}/train`)
+                    : router.replace('/(tabs)/bots')
                 }
                 style={{
                   backgroundColor: colors.primary[500],
@@ -763,7 +810,10 @@ function SelectedTemplateChip({ bot }: { bot: IAvailableBot }): React.JSX.Elemen
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{ ...textStyles.labelMedium, color: display.color }}>{bot.name}</Text>
-        <Text style={{ ...textStyles.caption, color: display.color, opacity: 0.8 }} numberOfLines={1}>
+        <Text
+          style={{ ...textStyles.caption, color: display.color, opacity: 0.8 }}
+          numberOfLines={1}
+        >
           {bot.description}
         </Text>
       </View>

@@ -1,7 +1,12 @@
 import axiosInstance from '@/api/fetch/client';
 import { ApiError, ApiResponse } from '@/shared';
 import axios, { AxiosError } from 'axios';
-import type { IMe, IPreferences, UpdateProfilePayload, UpsertPreferencesPayload } from './profile.types';
+import type {
+  IMe,
+  IPreferences,
+  UpdateProfilePayload,
+  UpsertPreferencesPayload,
+} from './profile.types';
 
 const PROFILE_ENDPOINTS = {
   ME: 'profile/me',
@@ -47,9 +52,7 @@ export const updateProfile = async (
   }
 };
 
-export const updateAvatar = async (
-  imageUri: string
-): Promise<ApiResponse | ApiError> => {
+export const updateAvatar = async (imageUri: string): Promise<ApiResponse | ApiError> => {
   try {
     const formData = new FormData();
     const filename = imageUri.split('/').pop() ?? 'avatar.jpg';

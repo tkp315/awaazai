@@ -14,7 +14,9 @@ function AvailableBotCard({ bot }: { bot: IAvailableBot }): React.JSX.Element {
 
   return (
     <TouchableOpacity
-      onPress={() => router.push({ pathname: '/(routes)/bots/create', params: { availableBotId: bot.id } })}
+      onPress={() =>
+        router.push({ pathname: '/(routes)/bots/create', params: { availableBotId: bot.id } })
+      }
       activeOpacity={0.8}
       style={{
         backgroundColor: colors.surface,
@@ -56,7 +58,14 @@ function AvailableBotCard({ bot }: { bot: IAvailableBot }): React.JSX.Element {
 
           {/* Capability chips */}
           {bot.capabilities.length > 0 && (
-            <View style={{ flexDirection: 'row', gap: spacing[1.5], marginTop: spacing[2], flexWrap: 'wrap' }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                gap: spacing[1.5],
+                marginTop: spacing[2],
+                flexWrap: 'wrap',
+              }}
+            >
               {bot.capabilities.map(cap => (
                 <View
                   key={cap.id}
@@ -164,7 +173,9 @@ export default function BotsScreen(): React.JSX.Element {
             <Text style={{ ...textStyles.labelLarge, color: colors.text, marginTop: spacing[3] }}>
               No bots available
             </Text>
-            <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[1] }}>
+            <Text
+              style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[1] }}
+            >
               Check back later
             </Text>
           </View>

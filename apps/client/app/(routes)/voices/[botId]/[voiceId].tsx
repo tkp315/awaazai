@@ -5,11 +5,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { Audio } from 'expo-av';
 import { useTheme } from '@/hooks';
-import {
-  useVoiceStore,
-  VOICE_STATUS_DISPLAY,
-  SAMPLE_STATUS_DISPLAY,
-} from '@/modules/voice';
+import { useVoiceStore, VOICE_STATUS_DISPLAY, SAMPLE_STATUS_DISPLAY } from '@/modules/voice';
 import type { IBotVoice } from '@/modules/voice';
 
 function StatusBadge({ status }: { status: IBotVoice['status'] }): React.JSX.Element {
@@ -87,7 +83,7 @@ export default function VoiceDetailScreen(): React.JSX.Element {
           { shouldPlay: true }
         );
         soundRef.current = sound;
-        sound.setOnPlaybackStatusUpdate((status) => {
+        sound.setOnPlaybackStatusUpdate(status => {
           if (status.isLoaded && status.didJustFinish) {
             setIsPlaying(false);
           }
@@ -248,7 +244,9 @@ export default function VoiceDetailScreen(): React.JSX.Element {
                   borderRightColor: colors.border,
                 }}
               >
-                <Text style={{ ...textStyles.labelLarge, color: colors.primary[500] }}>{s.value}</Text>
+                <Text style={{ ...textStyles.labelLarge, color: colors.primary[500] }}>
+                  {s.value}
+                </Text>
                 <Text style={{ ...textStyles.caption, color: colors.textMuted }}>{s.label}</Text>
               </View>
             ))}
@@ -321,7 +319,14 @@ export default function VoiceDetailScreen(): React.JSX.Element {
                   if (!val) return null;
                   return (
                     <View key={item.key}>
-                      <Text style={{ ...textStyles.caption, color: colors.textMuted, fontWeight: '600', marginBottom: 2 }}>
+                      <Text
+                        style={{
+                          ...textStyles.caption,
+                          color: colors.textMuted,
+                          fontWeight: '600',
+                          marginBottom: 2,
+                        }}
+                      >
                         {item.label}
                       </Text>
                       <Text style={{ ...textStyles.bodySmall, color: colors.text }}>
@@ -331,30 +336,40 @@ export default function VoiceDetailScreen(): React.JSX.Element {
                   );
                 })}
 
-                {Array.isArray(observations.commonPhrases) && observations.commonPhrases.length > 0 && (
-                  <View>
-                    <Text style={{ ...textStyles.caption, color: colors.textMuted, fontWeight: '600', marginBottom: spacing[2] }}>
-                      Common Phrases
-                    </Text>
-                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] }}>
-                      {(observations.commonPhrases as string[]).map(p => (
-                        <View
-                          key={p}
-                          style={{
-                            paddingHorizontal: spacing[2.5],
-                            paddingVertical: spacing[1],
-                            borderRadius: radius.badge,
-                            backgroundColor: colors.primary[50],
-                            borderWidth: 1,
-                            borderColor: colors.primary[200],
-                          }}
-                        >
-                          <Text style={{ ...textStyles.caption, color: colors.primary[600] }}>"{p}"</Text>
-                        </View>
-                      ))}
+                {Array.isArray(observations.commonPhrases) &&
+                  observations.commonPhrases.length > 0 && (
+                    <View>
+                      <Text
+                        style={{
+                          ...textStyles.caption,
+                          color: colors.textMuted,
+                          fontWeight: '600',
+                          marginBottom: spacing[2],
+                        }}
+                      >
+                        Common Phrases
+                      </Text>
+                      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2] }}>
+                        {(observations.commonPhrases as string[]).map(p => (
+                          <View
+                            key={p}
+                            style={{
+                              paddingHorizontal: spacing[2.5],
+                              paddingVertical: spacing[1],
+                              borderRadius: radius.badge,
+                              backgroundColor: colors.primary[50],
+                              borderWidth: 1,
+                              borderColor: colors.primary[200],
+                            }}
+                          >
+                            <Text style={{ ...textStyles.caption, color: colors.primary[600] }}>
+                              "{p}"
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
                     </View>
-                  </View>
-                )}
+                  )}
               </View>
             )}
           </>
@@ -453,7 +468,13 @@ export default function VoiceDetailScreen(): React.JSX.Element {
                 <Ionicons name="musical-note" size={18} color={colors.textMuted} />
               </View>
               <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
                   <Text style={{ ...textStyles.labelSmall, color: colors.text }}>
                     Sample {i + 1} · {s.duration}s
                   </Text>
@@ -463,7 +484,11 @@ export default function VoiceDetailScreen(): React.JSX.Element {
                 </View>
                 {s.transcription && (
                   <Text
-                    style={{ ...textStyles.caption, color: colors.textMuted, marginTop: spacing[1] }}
+                    style={{
+                      ...textStyles.caption,
+                      color: colors.textMuted,
+                      marginTop: spacing[1],
+                    }}
                     numberOfLines={2}
                   >
                     "{s.transcription}"
@@ -487,7 +512,14 @@ export default function VoiceDetailScreen(): React.JSX.Element {
             >
               Slangs / Keywords
             </Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[4] }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                flexWrap: 'wrap',
+                gap: spacing[2],
+                marginBottom: spacing[4],
+              }}
+            >
               {voice.slangs.map(s => (
                 <View
                   key={s}
@@ -525,7 +557,9 @@ export default function VoiceDetailScreen(): React.JSX.Element {
             <Ionicons name="person-outline" size={20} color={colors.textMuted} />
             <View>
               <Text style={{ ...textStyles.caption, color: colors.textMuted }}>Calls you as</Text>
-              <Text style={{ ...textStyles.labelMedium, color: colors.text }}>{voice.aiCallUserAs}</Text>
+              <Text style={{ ...textStyles.labelMedium, color: colors.text }}>
+                {voice.aiCallUserAs}
+              </Text>
             </View>
           </View>
         )}

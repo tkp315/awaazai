@@ -41,7 +41,7 @@ export default function UpdateProfileScreen() {
   const [localAvatarUri, setLocalAvatarUri] = useState<string | null>(null);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
-  const displayAvatar =  user?.profile?.avatar ?? localAvatarUri ?? null;
+  const displayAvatar = user?.profile?.avatar ?? localAvatarUri ?? null;
   const avatarLetter = (user?.fullName || 'U').charAt(0).toUpperCase();
 
   const handlePickAvatar = async () => {
@@ -215,9 +215,7 @@ export default function UpdateProfileScreen() {
               )}
             </TouchableOpacity>
 
-            <Text
-              style={{ ...textStyles.caption, color: colors.textMuted, marginTop: spacing[2] }}
-            >
+            <Text style={{ ...textStyles.caption, color: colors.textMuted, marginTop: spacing[2] }}>
               Tap to change photo
             </Text>
           </View>

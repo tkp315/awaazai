@@ -1,8 +1,16 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
-  View, Text, TouchableOpacity, TextInput, ScrollView,
-  ActivityIndicator, KeyboardAvoidingView, Platform,
-  Modal, FlatList, Pressable,
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Modal,
+  FlatList,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -18,36 +26,39 @@ function useAudioPlayer() {
   const soundRef = useRef<Audio.Sound | null>(null);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
-  const play = useCallback(async (messageId: string, url: string) => {
-    // Stop previous
-    if (soundRef.current) {
-      await soundRef.current.stopAsync().catch(() => {});
-      await soundRef.current.unloadAsync().catch(() => {});
-      soundRef.current = null;
-    }
+  const play = useCallback(
+    async (messageId: string, url: string) => {
+      // Stop previous
+      if (soundRef.current) {
+        await soundRef.current.stopAsync().catch(() => {});
+        await soundRef.current.unloadAsync().catch(() => {});
+        soundRef.current = null;
+      }
 
-    if (playingId === messageId) {
-      setPlayingId(null);
-      return;
-    }
+      if (playingId === messageId) {
+        setPlayingId(null);
+        return;
+      }
 
-    try {
-      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-      const { sound } = await Audio.Sound.createAsync({ uri: url });
-      soundRef.current = sound;
-      setPlayingId(messageId);
-      await sound.playAsync();
-      sound.setOnPlaybackStatusUpdate(status => {
-        if (status.isLoaded && status.didJustFinish) {
-          setPlayingId(null);
-          sound.unloadAsync().catch(() => {});
-          soundRef.current = null;
-        }
-      });
-    } catch {
-      setPlayingId(null);
-    }
-  }, [playingId]);
+      try {
+        await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+        const { sound } = await Audio.Sound.createAsync({ uri: url });
+        soundRef.current = sound;
+        setPlayingId(messageId);
+        await sound.playAsync();
+        sound.setOnPlaybackStatusUpdate(status => {
+          if (status.isLoaded && status.didJustFinish) {
+            setPlayingId(null);
+            sound.unloadAsync().catch(() => {});
+            soundRef.current = null;
+          }
+        });
+      } catch {
+        setPlayingId(null);
+      }
+    },
+    [playingId]
+  );
 
   useEffect(() => {
     return () => {
@@ -142,11 +153,7 @@ function MessageBubble({
                 justifyContent: 'center',
               }}
             >
-              <Ionicons
-                name={isPlaying ? 'pause' : 'play'}
-                size={14}
-                color={colors.primary[500]}
-              />
+              <Ionicons name={isPlaying ? 'pause' : 'play'} size={14} color={colors.primary[500]} />
             </View>
             <Text style={{ ...textStyles.caption, color: colors.primary[500], fontWeight: '600' }}>
               {isPlaying ? 'Playing...' : 'Play voice'}
@@ -155,8 +162,13 @@ function MessageBubble({
         )}
       </View>
 
-      <Text style={{ ...textStyles.caption, color: colors.border, marginTop: spacing[1], fontSize: 10 }}>
-        {new Date(message.createdAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+      <Text
+        style={{ ...textStyles.caption, color: colors.border, marginTop: spacing[1], fontSize: 10 }}
+      >
+        {new Date(message.createdAt).toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+        })}
       </Text>
     </View>
   );
@@ -167,7 +179,9 @@ function MessageBubble({
 function ThinkingBubble(): React.JSX.Element {
   const { colors, spacing, radius, textStyles } = useTheme();
   return (
-    <View style={{ alignItems: 'flex-start', marginBottom: spacing[3], paddingHorizontal: spacing[1] }}>
+    <View
+      style={{ alignItems: 'flex-start', marginBottom: spacing[3], paddingHorizontal: spacing[1] }}
+    >
       <View
         style={{
           backgroundColor: colors.surface,
@@ -222,15 +236,26 @@ function ChatHistoryModal({
           onPress={() => {}}
         >
           <View style={{ alignItems: 'center', paddingVertical: spacing[3] }}>
-            <View style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border }} />
+            <View
+              style={{ width: 40, height: 4, borderRadius: 2, backgroundColor: colors.border }}
+            />
           </View>
-          <Text style={{ ...textStyles.labelLarge, color: colors.text, paddingHorizontal: spacing[5], marginBottom: spacing[3] }}>
+          <Text
+            style={{
+              ...textStyles.labelLarge,
+              color: colors.text,
+              paddingHorizontal: spacing[5],
+              marginBottom: spacing[3],
+            }}
+          >
             Chat History
           </Text>
 
           {chats.length === 0 ? (
             <View style={{ alignItems: 'center', paddingVertical: spacing[8] }}>
-              <Text style={{ ...textStyles.bodySmall, color: colors.textMuted }}>No previous chats</Text>
+              <Text style={{ ...textStyles.bodySmall, color: colors.textMuted }}>
+                No previous chats
+              </Text>
             </View>
           ) : (
             <FlatList
@@ -241,7 +266,10 @@ function ChatHistoryModal({
                 const isActive = chat.id === activeChatId;
                 return (
                   <TouchableOpacity
-                    onPress={() => { onSelect(chat.id); onClose(); }}
+                    onPress={() => {
+                      onSelect(chat.id);
+                      onClose();
+                    }}
                     activeOpacity={0.8}
                     style={{
                       flexDirection: 'row',
@@ -262,12 +290,17 @@ function ChatHistoryModal({
                       color={isActive ? colors.primary[500] : colors.textMuted}
                     />
                     <View style={{ flex: 1 }}>
-                      <Text style={{ ...textStyles.labelMedium, color: colors.text }} numberOfLines={1}>
+                      <Text
+                        style={{ ...textStyles.labelMedium, color: colors.text }}
+                        numberOfLines={1}
+                      >
                         {chat.title ?? 'Chat'}
                       </Text>
                       <Text style={{ ...textStyles.caption, color: colors.textMuted }}>
                         {new Date(chat.createdAt).toLocaleDateString('en-IN', {
-                          day: 'numeric', month: 'short', year: 'numeric',
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
                         })}
                       </Text>
                     </View>
@@ -280,7 +313,13 @@ function ChatHistoryModal({
                           backgroundColor: colors.primary[100],
                         }}
                       >
-                        <Text style={{ ...textStyles.caption, color: colors.primary[600], fontWeight: '700' }}>
+                        <Text
+                          style={{
+                            ...textStyles.caption,
+                            color: colors.primary[600],
+                            fontWeight: '700',
+                          }}
+                        >
                           Active
                         </Text>
                       </View>
@@ -304,10 +343,15 @@ export default function UseBotScreen(): React.JSX.Element {
   const { botId } = useLocalSearchParams<{ botId: string }>();
 
   const {
-    activeBot, fetchBotById,
-    botChats, fetchBotChats, createBotChat,
-    activeMessages, openBotChat,
-    sendBotMessage, isSendingMessage,
+    activeBot,
+    fetchBotById,
+    botChats,
+    fetchBotChats,
+    createBotChat,
+    activeMessages,
+    openBotChat,
+    sendBotMessage,
+    isSendingMessage,
     clearChatState,
   } = useBotsStore();
 
@@ -332,7 +376,10 @@ export default function UseBotScreen(): React.JSX.Element {
         chatId = existing[0].id;
       } else {
         const newChat = await createBotChat(botId);
-        if (!newChat) { setLoading(false); return; }
+        if (!newChat) {
+          setLoading(false);
+          return;
+        }
         chatId = newChat.id;
       }
 
@@ -341,7 +388,9 @@ export default function UseBotScreen(): React.JSX.Element {
       setLoading(false);
     };
     init();
-    return () => { clearChatState(); };
+    return () => {
+      clearChatState();
+    };
   }, [botId]);
 
   // Auto scroll on new messages
@@ -380,7 +429,9 @@ export default function UseBotScreen(): React.JSX.Element {
       <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: spacing[3] }}>
           <ActivityIndicator size="large" color={colors.primary[500]} />
-          <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted }}>Starting chat...</Text>
+          <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted }}>
+            Starting chat...
+          </Text>
         </View>
       </SafeAreaView>
     );
@@ -407,11 +458,14 @@ export default function UseBotScreen(): React.JSX.Element {
           <TouchableOpacity
             onPress={() => router.back()}
             style={{
-              width: spacing[10], height: spacing[10],
+              width: spacing[10],
+              height: spacing[10],
               borderRadius: radius.avatar,
               backgroundColor: colors.surface,
-              alignItems: 'center', justifyContent: 'center',
-              borderWidth: 1, borderColor: colors.border,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: colors.border,
             }}
             activeOpacity={0.7}
           >
@@ -420,11 +474,14 @@ export default function UseBotScreen(): React.JSX.Element {
 
           <View
             style={{
-              width: spacing[10], height: spacing[10],
+              width: spacing[10],
+              height: spacing[10],
               borderRadius: radius.avatar,
               backgroundColor: colors.primary[100],
-              alignItems: 'center', justifyContent: 'center',
-              marginLeft: spacing[3], marginRight: spacing[2],
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginLeft: spacing[3],
+              marginRight: spacing[2],
             }}
           >
             <Text style={{ fontSize: 20 }}>{botAvatar}</Text>
@@ -433,13 +490,27 @@ export default function UseBotScreen(): React.JSX.Element {
           <View style={{ flex: 1 }}>
             <Text style={{ ...textStyles.labelLarge, color: colors.text }}>{botName}</Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[2] }}>
-              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: colors.success.main }} />
+              <View
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: 3,
+                  backgroundColor: colors.success.main,
+                }}
+              />
               <Text style={{ ...textStyles.caption, color: colors.textMuted }}>
                 {activeBot?.knowledgeMode === 'AI_ONLY' ? 'AI Mode' : 'RAG Mode'}
               </Text>
               {hasVoice && (
                 <>
-                  <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: colors.textMuted }} />
+                  <View
+                    style={{
+                      width: 3,
+                      height: 3,
+                      borderRadius: 1.5,
+                      backgroundColor: colors.textMuted,
+                    }}
+                  />
                   <Ionicons name="mic" size={11} color={colors.primary[400]} />
                   <Text style={{ ...textStyles.caption, color: colors.primary[400] }}>Voice</Text>
                 </>
@@ -451,11 +522,14 @@ export default function UseBotScreen(): React.JSX.Element {
           <TouchableOpacity
             onPress={() => setHistoryVisible(true)}
             style={{
-              width: spacing[10], height: spacing[10],
+              width: spacing[10],
+              height: spacing[10],
               borderRadius: radius.avatar,
               backgroundColor: colors.surface,
-              alignItems: 'center', justifyContent: 'center',
-              borderWidth: 1, borderColor: colors.border,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: colors.border,
               marginRight: spacing[2],
             }}
             activeOpacity={0.7}
@@ -467,11 +541,14 @@ export default function UseBotScreen(): React.JSX.Element {
           <TouchableOpacity
             onPress={handleNewChat}
             style={{
-              width: spacing[10], height: spacing[10],
+              width: spacing[10],
+              height: spacing[10],
               borderRadius: radius.avatar,
               backgroundColor: colors.surface,
-              alignItems: 'center', justifyContent: 'center',
-              borderWidth: 1, borderColor: colors.border,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: colors.border,
             }}
             activeOpacity={0.7}
           >
@@ -562,7 +639,8 @@ export default function UseBotScreen(): React.JSX.Element {
               width: spacing[12],
               height: spacing[12],
               borderRadius: radius.avatar,
-              backgroundColor: text.trim() && !isSendingMessage ? colors.primary[500] : colors.border,
+              backgroundColor:
+                text.trim() && !isSendingMessage ? colors.primary[500] : colors.border,
               alignItems: 'center',
               justifyContent: 'center',
             }}

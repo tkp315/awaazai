@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView,
-  ActivityIndicator, Alert, Animated,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+  Alert,
+  Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -27,13 +32,15 @@ function Waveform({ active, color }: { active: boolean; color: string }): React.
             Animated.delay(i * 80),
             Animated.timing(anim, { toValue: 1, duration: 350, useNativeDriver: true }),
             Animated.timing(anim, { toValue: 0.3, duration: 350, useNativeDriver: true }),
-          ]),
-        ),
+          ])
+        )
       );
       loops.forEach(l => l.start());
       return () => loops.forEach(l => l.stop());
     } else {
-      anims.forEach(anim => Animated.timing(anim, { toValue: 0.3, duration: 200, useNativeDriver: true }).start());
+      anims.forEach(anim =>
+        Animated.timing(anim, { toValue: 0.3, duration: 200, useNativeDriver: true }).start()
+      );
     }
   }, [active]);
 
@@ -162,12 +169,14 @@ function LiveTranscript(): React.JSX.Element | null {
     <View style={{ paddingHorizontal: spacing[4], gap: spacing[2], marginBottom: spacing[3] }}>
       {currentTranscription ? (
         <View style={{ alignItems: 'flex-end' }}>
-          <View style={{
-            backgroundColor: colors.primary[100],
-            borderRadius: radius.card,
-            padding: spacing[3],
-            maxWidth: '80%',
-          }}>
+          <View
+            style={{
+              backgroundColor: colors.primary[100],
+              borderRadius: radius.card,
+              padding: spacing[3],
+              maxWidth: '80%',
+            }}
+          >
             <Text style={{ ...textStyles.caption, color: colors.primary[700] }}>
               {currentTranscription}
             </Text>
@@ -177,15 +186,17 @@ function LiveTranscript(): React.JSX.Element | null {
 
       {aiSpeaking ? (
         <View style={{ alignItems: 'flex-start' }}>
-          <View style={{
-            backgroundColor: colors.surface,
-            borderRadius: radius.card,
-            borderWidth: 1,
-            borderColor: colors.border,
-            padding: spacing[3],
-            maxWidth: '85%',
-            gap: spacing[2],
-          }}>
+          <View
+            style={{
+              backgroundColor: colors.surface,
+              borderRadius: radius.card,
+              borderWidth: 1,
+              borderColor: colors.border,
+              padding: spacing[3],
+              maxWidth: '85%',
+              gap: spacing[2],
+            }}
+          >
             <Waveform active={aiSpeaking} color={colors.primary[500]} />
             {currentAiText ? (
               <Text style={{ ...textStyles.bodyMedium, color: colors.text, lineHeight: 24 }}>
@@ -196,16 +207,18 @@ function LiveTranscript(): React.JSX.Element | null {
         </View>
       ) : isProcessing ? (
         <View style={{ alignItems: 'flex-start' }}>
-          <View style={{
-            backgroundColor: colors.surface,
-            borderRadius: radius.card,
-            borderWidth: 1,
-            borderColor: colors.border,
-            padding: spacing[3],
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: spacing[2],
-          }}>
+          <View
+            style={{
+              backgroundColor: colors.surface,
+              borderRadius: radius.card,
+              borderWidth: 1,
+              borderColor: colors.border,
+              padding: spacing[3],
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: spacing[2],
+            }}
+          >
             <ActivityIndicator size="small" color={colors.primary[500]} />
             <Text style={{ ...textStyles.caption, color: colors.textMuted }}>Thinking...</Text>
           </View>
@@ -223,10 +236,18 @@ export default function SessionScreen(): React.JSX.Element {
   const { chatId } = useLocalSearchParams<{ chatId: string }>();
 
   const {
-    activeChat, activeSession, messages,
-    isProcessing, aiSpeaking, isRecording,
-    openChat, startSession, endSession,
-    sendVoice, interrupt, cleanup,
+    activeChat,
+    activeSession,
+    messages,
+    isProcessing,
+    aiSpeaking,
+    isRecording,
+    openChat,
+    startSession,
+    endSession,
+    sendVoice,
+    interrupt,
+    cleanup,
   } = useMessageStore();
 
   const scrollRef = useRef<ScrollView>(null);
@@ -237,7 +258,8 @@ export default function SessionScreen(): React.JSX.Element {
   useEffect(() => {
     const init = async (): Promise<void> => {
       const { granted } = await Audio.requestPermissionsAsync();
-      if (!granted) Alert.alert('Permission required', 'Microphone permission is needed to use this feature.');
+      if (!granted)
+        Alert.alert('Permission required', 'Microphone permission is needed to use this feature.');
       await openChat(chatId);
       await startSession(chatId);
       setLoadingSession(false);
@@ -248,7 +270,9 @@ export default function SessionScreen(): React.JSX.Element {
         recordingRef.current.stopAndUnloadAsync().catch(() => {});
         recordingRef.current = null;
       }
-      Audio.setAudioModeAsync({ allowsRecordingIOS: false, playsInSilentModeIOS: true }).catch(() => {});
+      Audio.setAudioModeAsync({ allowsRecordingIOS: false, playsInSilentModeIOS: true }).catch(
+        () => {}
+      );
       cleanup();
     };
   }, [chatId]);
@@ -274,7 +298,7 @@ export default function SessionScreen(): React.JSX.Element {
             Animated.timing(pulseOpacity, { toValue: 0, duration: 700, useNativeDriver: true }),
             Animated.timing(pulseOpacity, { toValue: 0.5, duration: 700, useNativeDriver: true }),
           ]),
-        ]),
+        ])
       ).start();
     } else {
       pulseScale.stopAnimation();
@@ -316,14 +340,17 @@ export default function SessionScreen(): React.JSX.Element {
   }, [sendVoice]);
 
   const handleEndSession = (): void => {
-    Alert.alert(
-      'End Session',
-      'End this conversation?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'End', style: 'destructive', onPress: () => { endSession(); router.back(); } },
-      ]
-    );
+    Alert.alert('End Session', 'End this conversation?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'End',
+        style: 'destructive',
+        onPress: () => {
+          endSession();
+          router.back();
+        },
+      },
+    ]);
   };
 
   if (loadingSession) {
@@ -341,7 +368,6 @@ export default function SessionScreen(): React.JSX.Element {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
-
       {/* Header */}
       <View
         style={{
@@ -356,11 +382,14 @@ export default function SessionScreen(): React.JSX.Element {
         <TouchableOpacity
           onPress={() => router.back()}
           style={{
-            width: spacing[10], height: spacing[10],
+            width: spacing[10],
+            height: spacing[10],
             borderRadius: radius.avatar,
             backgroundColor: colors.surface,
-            alignItems: 'center', justifyContent: 'center',
-            borderWidth: 1, borderColor: colors.border,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderWidth: 1,
+            borderColor: colors.border,
           }}
           activeOpacity={0.7}
         >
@@ -388,9 +417,7 @@ export default function SessionScreen(): React.JSX.Element {
             borderColor: '#fecdd3',
           }}
         >
-          <Text style={{ ...textStyles.caption, color: '#dc2626', fontWeight: '700' }}>
-            End
-          </Text>
+          <Text style={{ ...textStyles.caption, color: '#dc2626', fontWeight: '700' }}>End</Text>
         </TouchableOpacity>
       </View>
 
@@ -407,7 +434,9 @@ export default function SessionScreen(): React.JSX.Element {
         {messages.length === 0 && !isProcessing ? (
           <View style={{ alignItems: 'center', paddingVertical: spacing[10], gap: spacing[3] }}>
             <Text style={{ fontSize: 48 }}>🎙️</Text>
-            <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted, textAlign: 'center' }}>
+            <Text
+              style={{ ...textStyles.bodyMedium, color: colors.textMuted, textAlign: 'center' }}
+            >
               Hold the mic button and start talking
             </Text>
           </View>
@@ -479,8 +508,8 @@ export default function SessionScreen(): React.JSX.Element {
               backgroundColor: isRecording
                 ? '#dc2626'
                 : isProcessing
-                ? colors.border
-                : colors.primary[500],
+                  ? colors.border
+                  : colors.primary[500],
               alignItems: 'center',
               justifyContent: 'center',
               shadowColor: isRecording ? '#dc2626' : colors.primary[500],
@@ -502,8 +531,8 @@ export default function SessionScreen(): React.JSX.Element {
           {isRecording
             ? 'Recording... release to send'
             : isProcessing
-            ? 'Processing...'
-            : 'Hold to speak'}
+              ? 'Processing...'
+              : 'Hold to speak'}
         </Text>
       </View>
     </SafeAreaView>

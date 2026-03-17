@@ -9,19 +9,34 @@ import type { LimitKey } from '@/modules/subscription';
 
 const LIMIT_META: Record<LimitKey, { label: string; icon: string }> = {
   VOICE_CLONES: { label: 'Voice Clones', icon: 'mic' },
-  VOICE_CHATS:  { label: 'Voice Chats',  icon: 'chatbubbles' },
-  AI_BOTS:      { label: 'AI Bots',      icon: 'hardware-chip' },
+  VOICE_CHATS: { label: 'Voice Chats', icon: 'chatbubbles' },
+  AI_BOTS: { label: 'AI Bots', icon: 'hardware-chip' },
 };
 
 function UsageBar({ used, limit }: { used: number; limit: number }) {
   const { colors, spacing, radius } = useTheme();
   if (limit === -1) return null;
   const pct = Math.min(used / limit, 1);
-  const barColor = pct >= 1 ? colors.error.main : pct >= 0.8 ? colors.warning.dark : colors.primary[500];
+  const barColor =
+    pct >= 1 ? colors.error.main : pct >= 0.8 ? colors.warning.dark : colors.primary[500];
 
   return (
-    <View style={{ height: 6, backgroundColor: colors.surfaceHover, borderRadius: radius.full, marginTop: spacing[2] }}>
-      <View style={{ height: 6, width: `${pct * 100}%` as any, backgroundColor: barColor, borderRadius: radius.full }} />
+    <View
+      style={{
+        height: 6,
+        backgroundColor: colors.surfaceHover,
+        borderRadius: radius.full,
+        marginTop: spacing[2],
+      }}
+    >
+      <View
+        style={{
+          height: 6,
+          width: `${pct * 100}%` as any,
+          backgroundColor: barColor,
+          borderRadius: radius.full,
+        }}
+      />
     </View>
   );
 }
@@ -64,7 +79,9 @@ function LimitCard({ limitKey }: { limitKey: LimitKey }) {
         </View>
         <View style={{ flex: 1 }}>
           <Text style={{ ...textStyles.labelMedium, color: colors.text }}>{meta.label}</Text>
-          <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: 2 }}>{subLabel}</Text>
+          <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: 2 }}>
+            {subLabel}
+          </Text>
         </View>
         <Text style={{ ...textStyles.labelLarge, color: colors.text }}>{limitLabel}</Text>
       </View>
@@ -86,7 +103,9 @@ function HistorySection() {
     if (!grouped[record.period]) grouped[record.period] = [];
     grouped[record.period].push(record);
   }
-  const periods = Object.keys(grouped).sort((a, b) => b.localeCompare(a)).slice(0, 6);
+  const periods = Object.keys(grouped)
+    .sort((a, b) => b.localeCompare(a))
+    .slice(0, 6);
 
   return (
     <View style={{ marginTop: spacing[6] }}>
@@ -105,7 +124,9 @@ function HistorySection() {
             marginBottom: spacing[3],
           }}
         >
-          <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}>
+          <Text
+            style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}
+          >
             {period}
           </Text>
           {grouped[period].map(record => {
@@ -113,10 +134,18 @@ function HistorySection() {
             return (
               <View
                 key={record.id}
-                style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: spacing[1] }}
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingVertical: spacing[1],
+                }}
               >
-                <Text style={{ ...textStyles.bodySmall, color: colors.text }}>{meta?.label ?? record.limitKey}</Text>
-                <Text style={{ ...textStyles.labelSmall, color: colors.primary[500] }}>{record.used} used</Text>
+                <Text style={{ ...textStyles.bodySmall, color: colors.text }}>
+                  {meta?.label ?? record.limitKey}
+                </Text>
+                <Text style={{ ...textStyles.labelSmall, color: colors.primary[500] }}>
+                  {record.used} used
+                </Text>
               </View>
             );
           })}
@@ -131,7 +160,9 @@ export default function UsageScreen(): React.JSX.Element {
   const router = useRouter();
   const { usage, loadingUsage, fetchUsage } = useSubscriptionStore();
 
-  useEffect(() => { fetchUsage(); }, []);
+  useEffect(() => {
+    fetchUsage();
+  }, []);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
@@ -156,7 +187,10 @@ export default function UsageScreen(): React.JSX.Element {
         </View>
       ) : (
         <ScrollView
-          contentContainerStyle={{ paddingHorizontal: layout.screenPaddingHorizontal, paddingBottom: spacing[8] }}
+          contentContainerStyle={{
+            paddingHorizontal: layout.screenPaddingHorizontal,
+            paddingBottom: spacing[8],
+          }}
           showsVerticalScrollIndicator={false}
         >
           {/* Plan info */}
@@ -170,18 +204,35 @@ export default function UsageScreen(): React.JSX.Element {
                 marginTop: spacing[2],
               }}
             >
-              <Text style={{ ...textStyles.labelSmall, color: colors.textMuted }}>CURRENT PLAN</Text>
-              <Text style={{ ...textStyles.labelLarge, color: colors.textInverse, marginTop: spacing[1] }}>
+              <Text style={{ ...textStyles.labelSmall, color: colors.textMuted }}>
+                CURRENT PLAN
+              </Text>
+              <Text
+                style={{
+                  ...textStyles.labelLarge,
+                  color: colors.textInverse,
+                  marginTop: spacing[1],
+                }}
+              >
                 {usage.plan.name} · {usage.plan.billingCycle === 'YEARLY' ? 'Yearly' : 'Monthly'}
               </Text>
-              <Text style={{ ...textStyles.caption, color: colors.textMuted, marginTop: spacing[0.5] }}>
-                Renews {new Date(usage.plan.currentPeriodEnd).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+              <Text
+                style={{ ...textStyles.caption, color: colors.textMuted, marginTop: spacing[0.5] }}
+              >
+                Renews{' '}
+                {new Date(usage.plan.currentPeriodEnd).toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
               </Text>
             </View>
           )}
 
           {/* Current limits */}
-          <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[3] }}>
+          <Text
+            style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[3] }}
+          >
             CURRENT USAGE
           </Text>
           {(['VOICE_CLONES', 'VOICE_CHATS', 'AI_BOTS'] as LimitKey[]).map(key => (
@@ -200,7 +251,9 @@ export default function UsageScreen(): React.JSX.Element {
             }}
             activeOpacity={0.8}
           >
-            <Text style={{ ...textStyles.labelMedium, color: colors.primary[500] }}>Upgrade Plan</Text>
+            <Text style={{ ...textStyles.labelMedium, color: colors.primary[500] }}>
+              Upgrade Plan
+            </Text>
           </TouchableOpacity>
 
           <HistorySection />

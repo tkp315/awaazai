@@ -1,8 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import {
-  View, Text, TouchableOpacity, ScrollView,
-  ActivityIndicator, Alert,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -85,7 +82,12 @@ function MessageBubble({ message }: { message: IMessage }): React.JSX.Element {
               size={20}
               color={isUser ? 'rgba(255,255,255,0.8)' : colors.primary[500]}
             />
-            <Text style={{ ...textStyles.caption, color: isUser ? 'rgba(255,255,255,0.8)' : colors.textMuted }}>
+            <Text
+              style={{
+                ...textStyles.caption,
+                color: isUser ? 'rgba(255,255,255,0.8)' : colors.textMuted,
+              }}
+            >
               {playing ? 'Playing...' : 'Play'}
             </Text>
           </TouchableOpacity>
@@ -111,18 +113,23 @@ function SessionSection({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getMessages(chatId, session.id).then(msgs => {
-      setMessages(msgs);
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    getMessages(chatId, session.id)
+      .then(msgs => {
+        setMessages(msgs);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, [chatId, session.id]);
 
   const startDate = new Date(session.startedAt);
   const dateStr = startDate.toLocaleDateString('en-IN', {
-    day: 'numeric', month: 'short', year: 'numeric',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
   });
   const timeStr = startDate.toLocaleTimeString('en-IN', {
-    hour: '2-digit', minute: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 
   return (
@@ -144,9 +151,20 @@ function SessionSection({
       </View>
 
       {loading ? (
-        <ActivityIndicator size="small" color={colors.primary[500]} style={{ marginVertical: spacing[4] }} />
+        <ActivityIndicator
+          size="small"
+          color={colors.primary[500]}
+          style={{ marginVertical: spacing[4] }}
+        />
       ) : messages.length === 0 ? (
-        <Text style={{ ...textStyles.caption, color: colors.textMuted, textAlign: 'center', paddingVertical: spacing[2] }}>
+        <Text
+          style={{
+            ...textStyles.caption,
+            color: colors.textMuted,
+            textAlign: 'center',
+            paddingVertical: spacing[2],
+          }}
+        >
           No messages in this session
         </Text>
       ) : (
@@ -210,7 +228,6 @@ export default function ChatDetailScreen(): React.JSX.Element {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
-
       {/* Header */}
       <View
         style={{
@@ -226,11 +243,14 @@ export default function ChatDetailScreen(): React.JSX.Element {
           onPress={() => router.back()}
           activeOpacity={0.7}
           style={{
-            width: spacing[10], height: spacing[10],
+            width: spacing[10],
+            height: spacing[10],
             borderRadius: radius.avatar,
             backgroundColor: colors.surface,
-            alignItems: 'center', justifyContent: 'center',
-            borderWidth: 1, borderColor: colors.border,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderWidth: 1,
+            borderColor: colors.border,
           }}
         >
           <Ionicons name="arrow-back" size={20} color={colors.text} />
@@ -241,11 +261,16 @@ export default function ChatDetailScreen(): React.JSX.Element {
             {activeChat?.name ?? activeChat?.botVoice.voiceName ?? 'Chat'}
           </Text>
           <Text style={{ ...textStyles.caption, color: colors.textMuted }}>
-            {activeChat?.botVoice.relation ?? '—'} · {sessions.length} session{sessions.length !== 1 ? 's' : ''}
+            {activeChat?.botVoice.relation ?? '—'} · {sessions.length} session
+            {sessions.length !== 1 ? 's' : ''}
           </Text>
         </View>
 
-        <TouchableOpacity onPress={handleDelete} activeOpacity={0.7} style={{ padding: spacing[2] }}>
+        <TouchableOpacity
+          onPress={handleDelete}
+          activeOpacity={0.7}
+          style={{ padding: spacing[2] }}
+        >
           <Ionicons name="trash-outline" size={20} color={colors.textMuted} />
         </TouchableOpacity>
       </View>
@@ -262,7 +287,9 @@ export default function ChatDetailScreen(): React.JSX.Element {
         {!hasHistory ? (
           <View style={{ alignItems: 'center', paddingVertical: spacing[12], gap: spacing[3] }}>
             <Text style={{ fontSize: 48 }}>🎙️</Text>
-            <Text style={{ ...textStyles.labelLarge, color: colors.text }}>No conversations yet</Text>
+            <Text style={{ ...textStyles.labelLarge, color: colors.text }}>
+              No conversations yet
+            </Text>
             <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, textAlign: 'center' }}>
               Tap the mic below to start talking
             </Text>

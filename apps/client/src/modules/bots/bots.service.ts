@@ -56,7 +56,10 @@ export const getBotById = async (botId: string): Promise<IBot> => {
   return res.data.data;
 };
 
-export const updateBotConfig = async (botId: string, config: Partial<IBotConfig>): Promise<IBotConfig> => {
+export const updateBotConfig = async (
+  botId: string,
+  config: Partial<IBotConfig>
+): Promise<IBotConfig> => {
   const res = await axiosInstance.patch(`bots/${botId}/config`, config);
   return res.data.data;
 };
@@ -77,7 +80,10 @@ export const getKnowledge = async (botId: string): Promise<IBotKnowledge[]> => {
   return res.data.data;
 };
 
-export const addKnowledge = async (botId: string, payload: AddKnowledgePayload): Promise<IBotKnowledge> => {
+export const addKnowledge = async (
+  botId: string,
+  payload: AddKnowledgePayload
+): Promise<IBotKnowledge> => {
   const res = await axiosInstance.post(BOTS_ENDPOINTS.KNOWLEDGE(botId), payload);
   return res.data.data;
 };
@@ -93,7 +99,10 @@ export const getTrainings = async (botId: string): Promise<IBotTraining[]> => {
   return res.data.data;
 };
 
-export const triggerTraining = async (botId: string, capabilityId?: string): Promise<IBotTraining> => {
+export const triggerTraining = async (
+  botId: string,
+  capabilityId?: string
+): Promise<IBotTraining> => {
   const res = await axiosInstance.post(BOTS_ENDPOINTS.TRAIN(botId), { capabilityId });
   return res.data.data;
 };
@@ -118,7 +127,10 @@ export const getAwaazBotVoices = async (awaazBotAvailableId: string): Promise<IB
 
 // ─── Bot Chats ────────────────────────────────────────────────────────────────
 
-export const createBotChat = async (botId: string, payload?: CreateBotChatPayload): Promise<IBotChat> => {
+export const createBotChat = async (
+  botId: string,
+  payload?: CreateBotChatPayload
+): Promise<IBotChat> => {
   const res = await axiosInstance.post(BOTS_ENDPOINTS.CHATS(botId), payload ?? {});
   return res.data.data;
 };

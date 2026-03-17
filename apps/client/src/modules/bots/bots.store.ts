@@ -65,7 +65,11 @@ interface BotsState {
   createBotChat: (botId: string, payload?: CreateBotChatPayload) => Promise<IBotChat | null>;
   openBotChat: (botId: string, chatId: string) => Promise<void>;
   deleteBotChat: (botId: string, chatId: string) => Promise<void>;
-  sendBotMessage: (botId: string, chatId: string, content: string) => Promise<SendBotMessageResponse | null>;
+  sendBotMessage: (
+    botId: string,
+    chatId: string,
+    content: string
+  ) => Promise<SendBotMessageResponse | null>;
   fetchBotMessages: (botId: string, chatId: string) => Promise<void>;
   endBotSession: (botId: string, chatId: string) => Promise<void>;
   setActiveChat: (chat: IBotChat | null) => void;
@@ -124,7 +128,7 @@ export const useBotsStore = create<BotsState>((set, get) => ({
     }
   },
 
-  fetchBotById: async (botId) => {
+  fetchBotById: async botId => {
     set({ loadingBot: true, error: null });
     try {
       const bot = await botsService.getBotById(botId);
@@ -136,7 +140,7 @@ export const useBotsStore = create<BotsState>((set, get) => ({
     }
   },
 
-  fetchKnowledge: async (botId) => {
+  fetchKnowledge: async botId => {
     set({ loadingKnowledge: true, error: null });
     try {
       const knowledge = await botsService.getKnowledge(botId);
@@ -148,7 +152,7 @@ export const useBotsStore = create<BotsState>((set, get) => ({
     }
   },
 
-  fetchTrainings: async (botId) => {
+  fetchTrainings: async botId => {
     set({ loadingTrainings: true, error: null });
     try {
       const trainings = await botsService.getTrainings(botId);
@@ -160,7 +164,7 @@ export const useBotsStore = create<BotsState>((set, get) => ({
     }
   },
 
-  createBot: async (payload) => {
+  createBot: async payload => {
     set({ isCreating: true, error: null, limitReached: false });
     try {
       const bot = await botsService.createBot(payload);
@@ -178,7 +182,7 @@ export const useBotsStore = create<BotsState>((set, get) => ({
     }
   },
 
-  deleteBot: async (botId) => {
+  deleteBot: async botId => {
     try {
       await botsService.deleteBot(botId);
       set(state => ({ bots: state.bots.filter(b => b.id !== botId) }));
@@ -242,7 +246,7 @@ export const useBotsStore = create<BotsState>((set, get) => ({
 
   // ─── Chat Actions ────────────────────────────────────────────────────────────
 
-  fetchBotChats: async (botId) => {
+  fetchBotChats: async botId => {
     set({ loadingChats: true, error: null });
     try {
       const chats = await botsService.getBotChats(botId);
@@ -331,13 +335,14 @@ export const useBotsStore = create<BotsState>((set, get) => ({
     }
   },
 
-  setActiveChat: (chat) => set({ activeChat: chat }),
+  setActiveChat: chat => set({ activeChat: chat }),
 
-  clearChatState: () => set({
-    activeChat: null,
-    activeMessages: [],
-    activeSessionId: null,
-  }),
+  clearChatState: () =>
+    set({
+      activeChat: null,
+      activeMessages: [],
+      activeSessionId: null,
+    }),
 
   clearError: () => set({ error: null }),
   clearLimitReached: () => set({ limitReached: false }),

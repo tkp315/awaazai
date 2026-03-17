@@ -1,11 +1,5 @@
 import { useState } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -88,11 +82,22 @@ function Chip({
         marginBottom: spacing[2],
       }}
     >
-      <Text style={{ ...textStyles.labelSmall, color: selected ? colors.primary[600] : colors.textMuted }}>
+      <Text
+        style={{
+          ...textStyles.labelSmall,
+          color: selected ? colors.primary[600] : colors.textMuted,
+        }}
+      >
         {label}
       </Text>
       {desc ? (
-        <Text style={{ ...textStyles.caption, color: selected ? colors.primary[400] : colors.border, marginTop: 1 }}>
+        <Text
+          style={{
+            ...textStyles.caption,
+            color: selected ? colors.primary[400] : colors.border,
+            marginTop: 1,
+          }}
+        >
           {desc}
         </Text>
       ) : null}
@@ -120,7 +125,9 @@ export default function VoicePreferencesScreen() {
   const [talkType, setTalkType] = useState<TalkType>(preferences?.talkType ?? 'FRIENDLY');
   const [talkingTone, setTalkingTone] = useState<TalkingTone>(preferences?.talkingTone ?? 'WARM');
   const [emotion, setEmotion] = useState<Emotion>(preferences?.emotion ?? 'NEUTRAL');
-  const [responseLength, setResponseLength] = useState<ResponseLength>(preferences?.responseLength ?? 'MEDIUM');
+  const [responseLength, setResponseLength] = useState<ResponseLength>(
+    preferences?.responseLength ?? 'MEDIUM'
+  );
   const [voiceSpeed, setVoiceSpeed] = useState<VoiceSpeed>(preferences?.voiceSpeed ?? 'NORMAL');
   const [language, setLanguage] = useState(preferences?.preferredLanguage ?? 'en');
   const [isSaving, setIsSaving] = useState(false);

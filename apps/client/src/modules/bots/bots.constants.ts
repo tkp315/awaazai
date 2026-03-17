@@ -90,7 +90,12 @@ export const TRAINING_STATUS_DISPLAY: Record<
 > = {
   QUEUED: { label: 'Queued', color: '#64748b', bg: '#f1f5f9', icon: 'time-outline' },
   PROCESSING: { label: 'Processing', color: '#f59e0b', bg: '#fffbeb', icon: 'sync-outline' },
-  COMPLETED: { label: 'Completed', color: '#10b981', bg: '#ecfdf5', icon: 'checkmark-circle-outline' },
+  COMPLETED: {
+    label: 'Completed',
+    color: '#10b981',
+    bg: '#ecfdf5',
+    icon: 'checkmark-circle-outline',
+  },
   FAILED: { label: 'Failed', color: '#ef4444', bg: '#fee2e2', icon: 'close-circle-outline' },
 };
 
@@ -181,7 +186,24 @@ export const MOCK_CAPABILITIES: ICapability[] = [
 // ==========================================
 
 export const BOT_AVATAR_EMOJIS = [
-  '🤖', '🧠', '✨', '🌟', '🎯', '🚀', '💡', '🎓',
-  '📚', '🎤', '🦋', '🌈', '🔮', '⚡', '🌙', '🦁',
-  '🐉', '🦄', '🌺', '🏆',
+  '🤖',
+  '🧠',
+  '✨',
+  '🌟',
+  '🎯',
+  '🚀',
+  '💡',
+  '🎓',
+  '📚',
+  '🎤',
+  '🦋',
+  '🌈',
+  '🔮',
+  '⚡',
+  '🌙',
+  '🦁',
+  '🐉',
+  '🦄',
+  '🌺',
+  '🏆',
 ];

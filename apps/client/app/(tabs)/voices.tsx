@@ -215,9 +215,7 @@ export default function VoicesScreen(): React.JSX.Element {
           >
             <Text style={{ fontSize: 48 }}>🎙️</Text>
             <Text style={{ ...textStyles.labelLarge, color: colors.text }}>No AwaazBot yet</Text>
-            <Text
-              style={{ ...textStyles.bodySmall, color: colors.textMuted, textAlign: 'center' }}
-            >
+            <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, textAlign: 'center' }}>
               Create an AwaazBot first, then clone voices for it
             </Text>
           </View>

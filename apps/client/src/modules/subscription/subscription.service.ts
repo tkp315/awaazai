@@ -28,7 +28,9 @@ export function isLimitReached(error: unknown): boolean {
 // ── API Calls ─────────────────────────────────────────────────────────────────
 
 export const getMySubscription = async (): Promise<ISubscription> => {
-  const res = await axiosInstance.get<{ success: boolean; data: ISubscription }>('/subscriptions/me');
+  const res = await axiosInstance.get<{ success: boolean; data: ISubscription }>(
+    '/subscriptions/me'
+  );
   return res.data.data;
 };
 
@@ -38,17 +40,25 @@ export const getPlans = async (): Promise<IPlan[]> => {
 };
 
 export const getMyLimits = async (): Promise<IMyLimits> => {
-  const res = await axiosInstance.get<{ success: boolean; data: IMyLimits }>('/subscriptions/limits');
+  const res = await axiosInstance.get<{ success: boolean; data: IMyLimits }>(
+    '/subscriptions/limits'
+  );
   return res.data.data;
 };
 
 export const createOrder = async (payload: ICreateOrderPayload): Promise<ICreateOrderResponse> => {
-  const res = await axiosInstance.post<{ success: boolean; data: ICreateOrderResponse }>('/subscriptions/create-order', payload);
+  const res = await axiosInstance.post<{ success: boolean; data: ICreateOrderResponse }>(
+    '/subscriptions/create-order',
+    payload
+  );
   return res.data.data;
 };
 
 export const verifyPayment = async (payload: IVerifyPaymentPayload): Promise<ISubscription> => {
-  const res = await axiosInstance.post<{ success: boolean; data: ISubscription }>('/subscriptions/verify', payload);
+  const res = await axiosInstance.post<{ success: boolean; data: ISubscription }>(
+    '/subscriptions/verify',
+    payload
+  );
   return res.data.data;
 };
 
@@ -57,11 +67,15 @@ export const cancelSubscription = async (): Promise<void> => {
 };
 
 export const getMyUsage = async (): Promise<IUsageData> => {
-  const res = await axiosInstance.get<{ success: boolean; data: IUsageData }>('/subscriptions/usage');
+  const res = await axiosInstance.get<{ success: boolean; data: IUsageData }>(
+    '/subscriptions/usage'
+  );
   return res.data.data;
 };
 
 export const getMyPayments = async (): Promise<IPaymentRecord[]> => {
-  const res = await axiosInstance.get<{ success: boolean; data: IPaymentRecord[] }>('/subscriptions/payments');
+  const res = await axiosInstance.get<{ success: boolean; data: IPaymentRecord[] }>(
+    '/subscriptions/payments'
+  );
   return res.data.data;
 };

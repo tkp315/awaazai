@@ -6,9 +6,13 @@ import * as messageService from './message.service';
 import { isLimitReached } from '@/modules/subscription';
 import { connectSocket, disconnectSocket, getSocket } from '@/lib/socket';
 import type {
-  IChat, ISession, IMessage,
-  TranscribingPayload, TextChunkPayload,
-  AudioChunkPayload, MessageSavedPayload,
+  IChat,
+  ISession,
+  IMessage,
+  TranscribingPayload,
+  TextChunkPayload,
+  AudioChunkPayload,
+  MessageSavedPayload,
 } from './message.types';
 
 interface MessageState {
@@ -23,11 +27,11 @@ interface MessageState {
   loadingMessages: boolean;
 
   // Live state
-  isProcessing: boolean;       // pipeline chal rahi hai
-  isRecording: boolean;        // user record kar raha hai
+  isProcessing: boolean; // pipeline chal rahi hai
+  isRecording: boolean; // user record kar raha hai
   currentTranscription: string; // user ki awaaz ka text
-  currentAiText: string;       // AI ka live text
-  aiSpeaking: boolean;         // AI bol raha hai
+  currentAiText: string; // AI ka live text
+  aiSpeaking: boolean; // AI bol raha hai
 
   // Actions
   fetchChats: () => Promise<void>;
@@ -86,7 +90,7 @@ export const useMessageStore = create<MessageState>((set, get) => ({
     }
   },
 
-  openChat: async (chatId) => {
+  openChat: async chatId => {
     try {
       const chat = await messageService.getChatById(chatId);
       set({ activeChat: chat });
@@ -95,7 +99,7 @@ export const useMessageStore = create<MessageState>((set, get) => ({
     }
   },
 
-  startSession: async (chatId) => {
+  startSession: async chatId => {
     try {
       const session = await messageService.startSession(chatId);
       set({ activeSession: session, messages: [], currentAiText: '', currentTranscription: '' });
@@ -161,23 +165,25 @@ export const useMessageStore = create<MessageState>((set, get) => ({
           // Audio load karo — duration milte hi typewriter start karo
           const { sound, status } = await Audio.Sound.createAsync(
             { uri: payload.audioUrl },
-            { shouldPlay: true },
+            { shouldPlay: true }
           );
           currentSound = sound;
           set({ aiSpeaking: true });
 
-          const durationMs = status.isLoaded && status.durationMillis
-            ? status.durationMillis
-            : 3000;
+          const durationMs =
+            status.isLoaded && status.durationMillis ? status.durationMillis : 3000;
 
           if (payload.aiText) startTypewriter(payload.aiText, durationMs);
 
-          sound.setOnPlaybackStatusUpdate((s) => {
+          sound.setOnPlaybackStatusUpdate(s => {
             if (s.isLoaded && s.didJustFinish) {
               sound.unloadAsync().catch(() => {});
               currentSound = null;
               set({ aiSpeaking: false, currentAiText: '' });
-              if (typewriterTimer) { clearInterval(typewriterTimer); typewriterTimer = null; }
+              if (typewriterTimer) {
+                clearInterval(typewriterTimer);
+                typewriterTimer = null;
+              }
             }
           });
         } catch (e) {
@@ -220,13 +226,12 @@ export const useMessageStore = create<MessageState>((set, get) => ({
         console.error('Socket error:', payload.message);
         set({ isProcessing: false, aiSpeaking: false });
       });
-
     } catch (e) {
       console.error('startSession', e);
     }
   },
 
-  endSession: async (feedback) => {
+  endSession: async feedback => {
     const { activeChat, activeSession } = get();
     if (!activeChat || !activeSession) return;
 
@@ -257,7 +262,7 @@ export const useMessageStore = create<MessageState>((set, get) => ({
     }
   },
 
-  sendVoice: async (audioUri) => {
+  sendVoice: async audioUri => {
     const { activeChat, activeSession, isProcessing } = get();
     if (!activeChat || !activeSession) {
       console.error('sendVoice: no activeChat or activeSession');
@@ -298,7 +303,7 @@ export const useMessageStore = create<MessageState>((set, get) => ({
     set({ aiSpeaking: false, isProcessing: false });
   },
 
-  deleteChat: async (chatId) => {
+  deleteChat: async chatId => {
     try {
       await messageService.deleteChat(chatId);
       set(state => ({ chats: state.chats.filter(c => c.id !== chatId) }));

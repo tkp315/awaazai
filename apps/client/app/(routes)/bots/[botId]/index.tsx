@@ -203,9 +203,7 @@ export default function BotProfileScreen(): React.JSX.Element {
   const bot = activeBot;
   const enabledCaps = bot.capability.filter(c => c.isEnabled !== false);
   const latestTraining = bot.trainings[0];
-  const trainingDisplay = latestTraining
-    ? TRAINING_STATUS_DISPLAY[latestTraining.status]
-    : null;
+  const trainingDisplay = latestTraining ? TRAINING_STATUS_DISPLAY[latestTraining.status] : null;
 
   const handleDelete = (): void => {
     setShowOptions(false);
@@ -379,7 +377,9 @@ export default function BotProfileScreen(): React.JSX.Element {
                 }}
               >
                 <Text style={{ ...textStyles.h3, color: colors.primary[500] }}>{stat.value}</Text>
-                <Text style={{ ...textStyles.caption, color: colors.textMuted, textAlign: 'center' }}>
+                <Text
+                  style={{ ...textStyles.caption, color: colors.textMuted, textAlign: 'center' }}
+                >
                   {stat.label}
                 </Text>
               </View>
@@ -405,7 +405,9 @@ export default function BotProfileScreen(): React.JSX.Element {
                 size={14}
                 color={trainingDisplay.color}
               />
-              <Text style={{ ...textStyles.caption, color: trainingDisplay.color, fontWeight: '600' }}>
+              <Text
+                style={{ ...textStyles.caption, color: trainingDisplay.color, fontWeight: '600' }}
+              >
                 Last training: {trainingDisplay.label}
               </Text>
             </View>
@@ -413,16 +415,12 @@ export default function BotProfileScreen(): React.JSX.Element {
         </View>
 
         {/* Capabilities Section */}
-        <Text
-          style={{ ...textStyles.labelLarge, color: colors.text, marginBottom: spacing[3] }}
-        >
+        <Text style={{ ...textStyles.labelLarge, color: colors.text, marginBottom: spacing[3] }}>
           Capabilities
         </Text>
 
         {enabledCaps.length > 0 ? (
-          enabledCaps.map(bc => (
-            <CapabilityCard key={bc.id} botCapability={bc} botId={bot.id} />
-          ))
+          enabledCaps.map(bc => <CapabilityCard key={bc.id} botCapability={bc} botId={bot.id} />)
         ) : (
           <View
             style={{
@@ -523,7 +521,9 @@ export default function BotProfileScreen(): React.JSX.Element {
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{ ...textStyles.labelMedium, color: colors.text }}>{item.label}</Text>
-                <Text style={{ ...textStyles.caption, color: colors.textMuted }}>{item.sublabel}</Text>
+                <Text style={{ ...textStyles.caption, color: colors.textMuted }}>
+                  {item.sublabel}
+                </Text>
               </View>
               <Ionicons
                 name={item.route ? 'chevron-forward' : 'lock-closed-outline'}
@@ -618,17 +618,23 @@ export default function BotProfileScreen(): React.JSX.Element {
               {
                 icon: 'create-outline',
                 label: 'Edit Bot',
-                action: () => { setShowOptions(false); },
+                action: () => {
+                  setShowOptions(false);
+                },
               },
               {
                 icon: bot.status === 'ACTIVE' ? 'pause-circle-outline' : 'play-circle-outline',
                 label: bot.status === 'ACTIVE' ? 'Deactivate Bot' : 'Activate Bot',
-                action: () => { setShowOptions(false); },
+                action: () => {
+                  setShowOptions(false);
+                },
               },
               {
                 icon: 'share-outline',
                 label: 'Share Bot',
-                action: () => { setShowOptions(false); },
+                action: () => {
+                  setShowOptions(false);
+                },
               },
             ].map(item => (
               <TouchableOpacity
@@ -648,7 +654,9 @@ export default function BotProfileScreen(): React.JSX.Element {
               </TouchableOpacity>
             ))}
 
-            <View style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing[2] }} />
+            <View
+              style={{ height: 1, backgroundColor: colors.border, marginVertical: spacing[2] }}
+            />
 
             <TouchableOpacity
               onPress={handleDelete}

@@ -31,8 +31,14 @@ export const connectSocket = async (): Promise<Socket> => {
   // Wait for connection before returning
   await new Promise<void>((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Socket connection timeout')), 10000);
-    socket!.once('connect', () => { clearTimeout(timeout); resolve(); });
-    socket!.once('connect_error', (err) => { clearTimeout(timeout); reject(err); });
+    socket!.once('connect', () => {
+      clearTimeout(timeout);
+      resolve();
+    });
+    socket!.once('connect_error', err => {
+      clearTimeout(timeout);
+      reject(err);
+    });
   });
 
   return socket;

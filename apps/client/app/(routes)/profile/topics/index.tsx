@@ -16,13 +16,19 @@ import { useProfileStore, upsertPreferences } from '@/modules/profile';
 import { toast } from '@/components/ui/toast';
 
 const SUGGESTED_INTERESTS = [
-  'Motivation', 'Stories', 'Jokes', 'Music', 'Travel',
-  'Health', 'Tech', 'Food', 'Books', 'Sports',
+  'Motivation',
+  'Stories',
+  'Jokes',
+  'Music',
+  'Travel',
+  'Health',
+  'Tech',
+  'Food',
+  'Books',
+  'Sports',
 ];
 
-const SUGGESTED_AVOID = [
-  'Politics', 'Religion', 'Violence', 'News', 'Gossip',
-];
+const SUGGESTED_AVOID = ['Politics', 'Religion', 'Violence', 'News', 'Gossip'];
 
 function TagInput({
   label,
@@ -208,9 +214,7 @@ export default function TopicsScreen() {
         >
           <Ionicons name="arrow-back" size={layout.iconMedium} color={colors.text} />
         </TouchableOpacity>
-        <Text style={{ ...textStyles.h4, color: colors.text, marginLeft: spacing[3] }}>
-          Topics
-        </Text>
+        <Text style={{ ...textStyles.h4, color: colors.text, marginLeft: spacing[3] }}>Topics</Text>
       </View>
 
       <ScrollView

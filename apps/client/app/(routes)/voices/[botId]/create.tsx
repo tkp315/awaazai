@@ -1,19 +1,21 @@
 import { useState, useCallback, useEffect } from 'react';
 import {
-  View, Text, TouchableOpacity, ScrollView,
-  TextInput, ActivityIndicator, Alert,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+  TextInput,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as DocumentPicker from 'expo-document-picker';
 import { useTheme } from '@/hooks';
-import {
-  useVoiceStore, LANGUAGE_OPTIONS, RELATION_SUGGESTIONS,
-} from '@/modules/voice';
+import { useVoiceStore, LANGUAGE_OPTIONS, RELATION_SUGGESTIONS } from '@/modules/voice';
 import type { ISampleVoice } from '@/modules/voice';
 import { PaywallModal } from '@/components/ui/paywall';
-
 
 // ─── Step 1: Upload Samples ──────────────────────────────────────────────────
 
@@ -78,9 +80,19 @@ function UploadStep({
             'Quiet background, natural speech',
             'Use mp3, wav, m4a, or webm',
           ].map(tip => (
-            <View key={tip} style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2] }}>
-              <Ionicons name="checkmark-circle" size={14} color={colors.primary[500]} style={{ marginTop: 2 }} />
-              <Text style={{ ...textStyles.bodySmall, color: colors.primary[700], flex: 1 }}>{tip}</Text>
+            <View
+              key={tip}
+              style={{ flexDirection: 'row', alignItems: 'flex-start', gap: spacing[2] }}
+            >
+              <Ionicons
+                name="checkmark-circle"
+                size={14}
+                color={colors.primary[500]}
+                style={{ marginTop: 2 }}
+              />
+              <Text style={{ ...textStyles.bodySmall, color: colors.primary[700], flex: 1 }}>
+                {tip}
+              </Text>
             </View>
           ))}
         </View>
@@ -146,9 +158,7 @@ function UploadStep({
               <Ionicons name="musical-note" size={18} color="#059669" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={{ ...textStyles.labelSmall, color: colors.text }}>
-                Sample {i + 1}
-              </Text>
+              <Text style={{ ...textStyles.labelSmall, color: colors.text }}>Sample {i + 1}</Text>
               <Text style={{ ...textStyles.caption, color: colors.textMuted }}>
                 {s.duration}s · Uploaded
               </Text>
@@ -181,9 +191,7 @@ function UploadStep({
             alignItems: 'center',
           }}
         >
-          <Text style={{ ...textStyles.labelLarge, color: '#fff' }}>
-            Next — Set Voice Details
-          </Text>
+          <Text style={{ ...textStyles.labelLarge, color: '#fff' }}>Next — Set Voice Details</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -234,21 +242,15 @@ function MetadataStep({
       sessionId,
     });
     if (voice) {
-      Alert.alert(
-        'Cloning Started!',
-        'Your voice is being processed. We\'ll have it ready soon.',
-        [{ text: 'OK', onPress: () => router.replace('/(tabs)/voices') }]
-      );
+      Alert.alert('Cloning Started!', "Your voice is being processed. We'll have it ready soon.", [
+        { text: 'OK', onPress: () => router.replace('/(tabs)/voices') },
+      ]);
     }
   };
 
   return (
     <View style={{ flex: 1 }}>
-      <PaywallModal
-        visible={limitReached}
-        limitKey="VOICE_CLONES"
-        onClose={clearLimitReached}
-      />
+      <PaywallModal visible={limitReached} limitKey="VOICE_CLONES" onClose={clearLimitReached} />
       <ScrollView
         contentContainerStyle={{
           paddingHorizontal: layout.screenPaddingHorizontal,
@@ -283,7 +285,14 @@ function MetadataStep({
         <Text style={{ ...textStyles.labelMedium, color: colors.text, marginBottom: spacing[2] }}>
           Relation *
         </Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[3] }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: spacing[2],
+            marginBottom: spacing[3],
+          }}
+        >
           {RELATION_SUGGESTIONS.map(r => (
             <TouchableOpacity
               key={r}
@@ -332,7 +341,14 @@ function MetadataStep({
         <Text style={{ ...textStyles.labelMedium, color: colors.text, marginBottom: spacing[2] }}>
           Primary Language
         </Text>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[5] }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: spacing[2],
+            marginBottom: spacing[5],
+          }}
+        >
           {LANGUAGE_OPTIONS.map(l => (
             <TouchableOpacity
               key={l.value}
@@ -434,7 +450,14 @@ function MetadataStep({
         </View>
 
         {slangs.length > 0 && (
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing[2], marginBottom: spacing[5] }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              gap: spacing[2],
+              marginBottom: spacing[5],
+            }}
+          >
             {slangs.map(s => (
               <TouchableOpacity
                 key={s}
@@ -452,7 +475,11 @@ function MetadataStep({
                   borderColor: colors.primary[200],
                 }}
               >
-                <Text style={{ ...textStyles.caption, color: colors.primary[600], fontWeight: '600' }}>{s}</Text>
+                <Text
+                  style={{ ...textStyles.caption, color: colors.primary[600], fontWeight: '600' }}
+                >
+                  {s}
+                </Text>
                 <Ionicons name="close" size={12} color={colors.primary[400]} />
               </TouchableOpacity>
             ))}
@@ -524,7 +551,9 @@ export default function CreateVoiceScreen(): React.JSX.Element {
   const { botId } = useLocalSearchParams<{ botId: string }>();
   const { samples, clearSamples } = useVoiceStore();
   const [step, setStep] = useState<1 | 2>(1);
-  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).slice(2)}`);
+  const [sessionId] = useState(
+    () => `session_${Date.now()}_${Math.random().toString(36).slice(2)}`
+  );
 
   const STEPS = ['Upload Samples', 'Voice Details'];
 
@@ -598,7 +627,13 @@ export default function CreateVoiceScreen(): React.JSX.Element {
                   {done ? (
                     <Ionicons name="checkmark" size={14} color="#fff" />
                   ) : (
-                    <Text style={{ ...textStyles.caption, color: active ? '#fff' : colors.textMuted, fontWeight: '700' }}>
+                    <Text
+                      style={{
+                        ...textStyles.caption,
+                        color: active ? '#fff' : colors.textMuted,
+                        fontWeight: '700',
+                      }}
+                    >
                       {idx}
                     </Text>
                   )}
@@ -614,7 +649,14 @@ export default function CreateVoiceScreen(): React.JSX.Element {
                 </Text>
               </View>
               {i < STEPS.length - 1 && (
-                <View style={{ flex: 1, height: 1.5, backgroundColor: done ? colors.primary[300] : colors.border, marginLeft: spacing[2] }} />
+                <View
+                  style={{
+                    flex: 1,
+                    height: 1.5,
+                    backgroundColor: done ? colors.primary[300] : colors.border,
+                    marginLeft: spacing[2],
+                  }}
+                />
               )}
             </View>
           );
@@ -622,7 +664,12 @@ export default function CreateVoiceScreen(): React.JSX.Element {
       </View>
 
       {step === 1 ? (
-        <UploadStep botId={botId} sessionId={sessionId} samples={samples} onNext={() => setStep(2)} />
+        <UploadStep
+          botId={botId}
+          sessionId={sessionId}
+          samples={samples}
+          onNext={() => setStep(2)}
+        />
       ) : (
         <MetadataStep botId={botId} sessionId={sessionId} onBack={() => setStep(1)} />
       )}

@@ -1,12 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-} from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -19,7 +12,14 @@ import type { IPlan, BillingCycle } from '@/modules/subscription';
 function FeatureRow({ label, included }: { label: string; included: boolean }) {
   const { colors, spacing, textStyles } = useTheme();
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[2], marginBottom: spacing[1.5] }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: spacing[2],
+        marginBottom: spacing[1.5],
+      }}
+    >
       <Ionicons
         name={included ? 'checkmark-circle' : 'close-circle-outline'}
         size={16}
@@ -42,15 +42,26 @@ function planFeatures(plan: IPlan): { label: string; included: boolean }[] {
 
   return [
     {
-      label: voices === -1 ? 'Unlimited voice clones' : `${voices} voice clone${voices !== 1 ? 's' : ''}`,
+      label:
+        voices === -1
+          ? 'Unlimited voice clones'
+          : `${voices} voice clone${voices !== 1 ? 's' : ''}`,
       included: voices !== 0,
     },
     {
-      label: chats === -1 ? 'Unlimited voice chats' : `${chats} voice chat${chats !== 1 ? 's' : ''} / month`,
+      label:
+        chats === -1
+          ? 'Unlimited voice chats'
+          : `${chats} voice chat${chats !== 1 ? 's' : ''} / month`,
       included: chats !== 0,
     },
     {
-      label: bots === -1 ? 'Unlimited AI bots' : bots === 0 ? 'No AI bots' : `${bots} AI bot${bots !== 1 ? 's' : ''}`,
+      label:
+        bots === -1
+          ? 'Unlimited AI bots'
+          : bots === 0
+            ? 'No AI bots'
+            : `${bots} AI bot${bots !== 1 ? 's' : ''}`,
       included: bots !== 0,
     },
     { label: 'Priority support', included: plan.slug !== 'free' },
@@ -107,11 +118,23 @@ function PlanCard({
         </View>
       )}
 
-      <Text style={{ ...textStyles.labelLarge, color: isPro ? colors.textInverse : colors.text, marginBottom: spacing[1] }}>
+      <Text
+        style={{
+          ...textStyles.labelLarge,
+          color: isPro ? colors.textInverse : colors.text,
+          marginBottom: spacing[1],
+        }}
+      >
         {plan.name}
       </Text>
       {plan.description && (
-        <Text style={{ ...textStyles.bodySmall, color: isPro ? colors.textMuted : colors.textMuted, marginBottom: spacing[3] }}>
+        <Text
+          style={{
+            ...textStyles.bodySmall,
+            color: isPro ? colors.textMuted : colors.textMuted,
+            marginBottom: spacing[3],
+          }}
+        >
           {plan.description}
         </Text>
       )}
@@ -121,7 +144,9 @@ function PlanCard({
           <Text style={{ ...textStyles.h2, color: isPro ? colors.textInverse : colors.text }}>
             ₹{price}
           </Text>
-          <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginLeft: spacing[1] }}>
+          <Text
+            style={{ ...textStyles.bodySmall, color: colors.textMuted, marginLeft: spacing[1] }}
+          >
             /{billingCycle === 'YEARLY' ? 'yr' : 'mo'}
           </Text>
           {billingCycle === 'YEARLY' && (
@@ -176,7 +201,8 @@ function PlanCard({
 export default function PlansScreen(): React.JSX.Element {
   const { colors, spacing, layout, textStyles, radius } = useTheme();
   const router = useRouter();
-  const { subscription, plans, loadingPlans, fetchPlans, fetchSubscription } = useSubscriptionStore();
+  const { subscription, plans, loadingPlans, fetchPlans, fetchSubscription } =
+    useSubscriptionStore();
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('MONTHLY');
   const [selecting, setSelecting] = useState<string | null>(null);
 
@@ -224,11 +250,16 @@ export default function PlansScreen(): React.JSX.Element {
       </View>
 
       <ScrollView
-        contentContainerStyle={{ paddingHorizontal: layout.screenPaddingHorizontal, paddingBottom: spacing[8] }}
+        contentContainerStyle={{
+          paddingHorizontal: layout.screenPaddingHorizontal,
+          paddingBottom: spacing[8],
+        }}
         showsVerticalScrollIndicator={false}
       >
         {/* Subtitle */}
-        <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted, marginBottom: spacing[5] }}>
+        <Text
+          style={{ ...textStyles.bodyMedium, color: colors.textMuted, marginBottom: spacing[5] }}
+        >
           Unlock unlimited voices, chats, and AI bots.
         </Text>
 

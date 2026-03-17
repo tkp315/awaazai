@@ -200,7 +200,9 @@ export default function TrainBotScreen(): React.JSX.Element {
               <Text style={{ ...textStyles.labelLarge, color: colors.textInverse }}>
                 {isTraining ? 'Starting Training...' : 'Start Training Session'}
               </Text>
-              <Text style={{ ...textStyles.bodySmall, color: 'rgba(255,255,255,0.75)', marginTop: 2 }}>
+              <Text
+                style={{ ...textStyles.bodySmall, color: 'rgba(255,255,255,0.75)', marginTop: 2 }}
+              >
                 {pendingCount} item{pendingCount !== 1 ? 's' : ''} pending
               </Text>
             </View>
@@ -312,15 +314,34 @@ export default function TrainBotScreen(): React.JSX.Element {
                   </View>
 
                   <View style={{ flex: 1 }}>
-                    <Text style={{ ...textStyles.labelMedium, color: colors.text }} numberOfLines={1}>
+                    <Text
+                      style={{ ...textStyles.labelMedium, color: colors.text }}
+                      numberOfLines={1}
+                    >
                       {item.title}
                     </Text>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[2], marginTop: 2 }}>
-                      <Text style={{ ...textStyles.caption, color: typeDisplay.color, fontWeight: '600' }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: spacing[2],
+                        marginTop: 2,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          ...textStyles.caption,
+                          color: typeDisplay.color,
+                          fontWeight: '600',
+                        }}
+                      >
                         {typeDisplay.label}
                       </Text>
                       <Text style={{ ...textStyles.caption, color: colors.textMuted }}>
-                        {new Date(item.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
+                        {new Date(item.createdAt).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                        })}
                       </Text>
                     </View>
                   </View>
@@ -331,15 +352,23 @@ export default function TrainBotScreen(): React.JSX.Element {
                         paddingHorizontal: spacing[2],
                         paddingVertical: 2,
                         borderRadius: radius.badge,
-                        backgroundColor: item.status === 'PROCESSED' ? '#ecfdf5'
-                          : item.status === 'FAILED' ? '#fee2e2' : '#fef3c7',
+                        backgroundColor:
+                          item.status === 'PROCESSED'
+                            ? '#ecfdf5'
+                            : item.status === 'FAILED'
+                              ? '#fee2e2'
+                              : '#fef3c7',
                       }}
                     >
                       <Text
                         style={{
                           ...textStyles.caption,
-                          color: item.status === 'PROCESSED' ? '#059669'
-                            : item.status === 'FAILED' ? '#ef4444' : '#d97706',
+                          color:
+                            item.status === 'PROCESSED'
+                              ? '#059669'
+                              : item.status === 'FAILED'
+                                ? '#ef4444'
+                                : '#d97706',
                           fontWeight: '600',
                         }}
                       >
@@ -428,13 +457,21 @@ export default function TrainBotScreen(): React.JSX.Element {
                           backgroundColor: tDisplay.bg,
                         }}
                       >
-                        <Text style={{ ...textStyles.caption, color: tDisplay.color, fontWeight: '600' }}>
+                        <Text
+                          style={{
+                            ...textStyles.caption,
+                            color: tDisplay.color,
+                            fontWeight: '600',
+                          }}
+                        >
                           {tDisplay.label}
                         </Text>
                       </View>
                     </View>
                     {training.startedAt && (
-                      <Text style={{ ...textStyles.caption, color: colors.textMuted, marginTop: 2 }}>
+                      <Text
+                        style={{ ...textStyles.caption, color: colors.textMuted, marginTop: 2 }}
+                      >
                         {new Date(training.startedAt).toLocaleString('en-IN', {
                           day: 'numeric',
                           month: 'short',
@@ -445,7 +482,9 @@ export default function TrainBotScreen(): React.JSX.Element {
                     )}
                   </View>
 
-                  <Text style={{ ...textStyles.labelLarge, color: tDisplay.color, fontWeight: '700' }}>
+                  <Text
+                    style={{ ...textStyles.labelLarge, color: tDisplay.color, fontWeight: '700' }}
+                  >
                     {training.progress}%
                   </Text>
                 </View>
@@ -456,12 +495,7 @@ export default function TrainBotScreen(): React.JSX.Element {
       </ScrollView>
 
       {/* Add Knowledge Modal */}
-      <Modal
-        visible={showAddModal}
-        transparent
-        animationType="slide"
-        onRequestClose={resetModal}
-      >
+      <Modal visible={showAddModal} transparent animationType="slide" onRequestClose={resetModal}>
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
@@ -532,8 +566,12 @@ export default function TrainBotScreen(): React.JSX.Element {
                           <Ionicons name={d.icon as any} size={22} color={d.color} />
                         </View>
                         <View style={{ flex: 1 }}>
-                          <Text style={{ ...textStyles.labelMedium, color: colors.text }}>{d.label}</Text>
-                          <Text style={{ ...textStyles.caption, color: colors.textMuted }}>{d.description}</Text>
+                          <Text style={{ ...textStyles.labelMedium, color: colors.text }}>
+                            {d.label}
+                          </Text>
+                          <Text style={{ ...textStyles.caption, color: colors.textMuted }}>
+                            {d.description}
+                          </Text>
                         </View>
                         <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
                       </TouchableOpacity>
@@ -544,14 +582,19 @@ export default function TrainBotScreen(): React.JSX.Element {
 
               {/* NOTE Form */}
               {selectedType === 'NOTE' && (
-                <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps="handled"
+                >
                   <View style={{ gap: spacing[3] }}>
                     <TouchableOpacity
                       onPress={() => setSelectedType(null)}
                       style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[1] }}
                     >
                       <Ionicons name="arrow-back" size={16} color={colors.primary[500]} />
-                      <Text style={{ ...textStyles.bodySmall, color: colors.primary[500] }}>Change type</Text>
+                      <Text style={{ ...textStyles.bodySmall, color: colors.primary[500] }}>
+                        Change type
+                      </Text>
                     </TouchableOpacity>
 
                     <TextInput
@@ -595,7 +638,8 @@ export default function TrainBotScreen(): React.JSX.Element {
                       disabled={!noteTitle || !noteContent || isAdding}
                       activeOpacity={0.85}
                       style={{
-                        backgroundColor: noteTitle && noteContent ? colors.primary[500] : colors.primary[200],
+                        backgroundColor:
+                          noteTitle && noteContent ? colors.primary[500] : colors.primary[200],
                         borderRadius: radius.button,
                         height: layout.buttonHeight,
                         alignItems: 'center',
@@ -605,7 +649,9 @@ export default function TrainBotScreen(): React.JSX.Element {
                       {isAdding ? (
                         <ActivityIndicator color={colors.textInverse} />
                       ) : (
-                        <Text style={{ ...textStyles.buttonMedium, color: colors.textInverse }}>Add Note</Text>
+                        <Text style={{ ...textStyles.buttonMedium, color: colors.textInverse }}>
+                          Add Note
+                        </Text>
                       )}
                     </TouchableOpacity>
                   </View>
@@ -620,7 +666,9 @@ export default function TrainBotScreen(): React.JSX.Element {
                     style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[1] }}
                   >
                     <Ionicons name="arrow-back" size={16} color={colors.primary[500]} />
-                    <Text style={{ ...textStyles.bodySmall, color: colors.primary[500] }}>Change type</Text>
+                    <Text style={{ ...textStyles.bodySmall, color: colors.primary[500] }}>
+                      Change type
+                    </Text>
                   </TouchableOpacity>
 
                   <TextInput
@@ -673,21 +721,28 @@ export default function TrainBotScreen(): React.JSX.Element {
                     {isAdding ? (
                       <ActivityIndicator color={colors.textInverse} />
                     ) : (
-                      <Text style={{ ...textStyles.buttonMedium, color: colors.textInverse }}>Import URL</Text>
+                      <Text style={{ ...textStyles.buttonMedium, color: colors.textInverse }}>
+                        Import URL
+                      </Text>
                     )}
                   </TouchableOpacity>
                 </View>
               )}
 
               {/* DOCUMENT / FAQ / AUDIO / IMAGE - Coming Soon */}
-              {(selectedType === 'DOCUMENT' || selectedType === 'FAQ' || selectedType === 'AUDIO' || selectedType === 'IMAGE') && (
+              {(selectedType === 'DOCUMENT' ||
+                selectedType === 'FAQ' ||
+                selectedType === 'AUDIO' ||
+                selectedType === 'IMAGE') && (
                 <View style={{ gap: spacing[3] }}>
                   <TouchableOpacity
                     onPress={() => setSelectedType(null)}
                     style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[1] }}
                   >
                     <Ionicons name="arrow-back" size={16} color={colors.primary[500]} />
-                    <Text style={{ ...textStyles.bodySmall, color: colors.primary[500] }}>Change type</Text>
+                    <Text style={{ ...textStyles.bodySmall, color: colors.primary[500] }}>
+                      Change type
+                    </Text>
                   </TouchableOpacity>
                   <View
                     style={{
@@ -700,7 +755,13 @@ export default function TrainBotScreen(): React.JSX.Element {
                     }}
                   >
                     <Ionicons name="construct-outline" size={36} color={colors.textMuted} />
-                    <Text style={{ ...textStyles.labelLarge, color: colors.text, marginTop: spacing[3] }}>
+                    <Text
+                      style={{
+                        ...textStyles.labelLarge,
+                        color: colors.text,
+                        marginTop: spacing[3],
+                      }}
+                    >
                       Coming Soon
                     </Text>
                     <Text
@@ -711,10 +772,13 @@ export default function TrainBotScreen(): React.JSX.Element {
                         marginTop: spacing[1],
                       }}
                     >
-                      {selectedType === 'DOCUMENT' ? 'File upload will be available soon'
-                        : selectedType === 'FAQ' ? 'FAQ builder coming soon'
-                        : selectedType === 'AUDIO' ? 'Audio upload coming soon'
-                        : 'Image upload coming soon'}
+                      {selectedType === 'DOCUMENT'
+                        ? 'File upload will be available soon'
+                        : selectedType === 'FAQ'
+                          ? 'FAQ builder coming soon'
+                          : selectedType === 'AUDIO'
+                            ? 'Audio upload coming soon'
+                            : 'Image upload coming soon'}
                     </Text>
                   </View>
                 </View>

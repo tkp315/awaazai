@@ -3,7 +3,13 @@ import { Platform, View, Text, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useProfileStore } from '@/modules/profile';
 
-function ProfileTabIcon({ color, focused }: { color: string; focused: boolean }): React.JSX.Element {
+function ProfileTabIcon({
+  color,
+  focused,
+}: {
+  color: string;
+  focused: boolean;
+}): React.JSX.Element {
   const { user } = useProfileStore();
   const avatar = (user as any)?.profile?.avatar ?? (user as any)?.avatarUrl ?? null;
   const letter = (user?.fullName ?? 'U').charAt(0).toUpperCase();
@@ -65,28 +71,34 @@ export default function TabsLayout(): React.JSX.Element {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
-          headerShown:false
+          headerShown: false,
         }}
       />
       <Tabs.Screen
         name="bots"
         options={{
           title: 'Bots',
-          tabBarIcon: ({ color, size }) => <Ionicons name="hardware-chip-outline" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="hardware-chip-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="voices"
         options={{
           title: 'Voices',
-          tabBarIcon: ({ color, size }) => <Ionicons name="mic-outline" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="mic-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="chats"
         options={{
           title: 'Chats',
-          tabBarIcon: ({ color, size }) => <Ionicons name="chatbubbles-outline" size={size} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="chatbubbles-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen

@@ -14,12 +14,14 @@ const LIMIT_COPY: Record<LimitKey, { icon: string; title: string; description: s
   VOICE_CLONES: {
     icon: 'mic',
     title: 'Voice Clone Limit Reached',
-    description: 'You have reached the maximum number of voice clones on your current plan. Upgrade to clone more voices.',
+    description:
+      'You have reached the maximum number of voice clones on your current plan. Upgrade to clone more voices.',
   },
   VOICE_CHATS: {
     icon: 'chatbubbles',
     title: 'Chat Limit Reached',
-    description: 'You have used all your voice chats this month. Upgrade for unlimited conversations.',
+    description:
+      'You have used all your voice chats this month. Upgrade for unlimited conversations.',
   },
   AI_BOTS: {
     icon: 'hardware-chip',
@@ -70,12 +72,26 @@ export function PaywallModal({ visible, limitKey, onClose }: PaywallModalProps):
           </View>
 
           {/* Title */}
-          <Text style={{ ...textStyles.h4, color: colors.text, textAlign: 'center', marginBottom: spacing[2] }}>
+          <Text
+            style={{
+              ...textStyles.h4,
+              color: colors.text,
+              textAlign: 'center',
+              marginBottom: spacing[2],
+            }}
+          >
             {copy.title}
           </Text>
 
           {/* Description */}
-          <Text style={{ ...textStyles.bodyMedium, color: colors.textMuted, textAlign: 'center', marginBottom: spacing[6] }}>
+          <Text
+            style={{
+              ...textStyles.bodyMedium,
+              color: colors.textMuted,
+              textAlign: 'center',
+              marginBottom: spacing[6],
+            }}
+          >
             {copy.description}
           </Text>
 
@@ -91,11 +107,16 @@ export function PaywallModal({ visible, limitKey, onClose }: PaywallModalProps):
             }}
             activeOpacity={0.85}
           >
-            <Text style={{ ...textStyles.buttonMedium, color: colors.textInverse }}>View Plans</Text>
+            <Text style={{ ...textStyles.buttonMedium, color: colors.textInverse }}>
+              View Plans
+            </Text>
           </TouchableOpacity>
 
           {/* Dismiss */}
-          <TouchableOpacity onPress={onClose} style={{ alignItems: 'center', paddingVertical: spacing[2] }}>
+          <TouchableOpacity
+            onPress={onClose}
+            style={{ alignItems: 'center', paddingVertical: spacing[2] }}
+          >
             <Text style={{ ...textStyles.bodySmall, color: colors.textMuted }}>Maybe later</Text>
           </TouchableOpacity>
         </Pressable>

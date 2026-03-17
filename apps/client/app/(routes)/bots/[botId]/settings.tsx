@@ -46,7 +46,9 @@ export default function BotSettingsScreen(): React.JSX.Element {
   const [languageMixing, setLanguageMixing] = useState(existingConfig?.languageMixing ?? false);
 
   // Response
-  const [responseLength, setResponseLength] = useState<ResponseLength>(existingConfig?.responseLength ?? 'MEDIUM');
+  const [responseLength, setResponseLength] = useState<ResponseLength>(
+    existingConfig?.responseLength ?? 'MEDIUM'
+  );
   const [useEmoji, setUseEmoji] = useState(existingConfig?.useEmoji ?? false);
 
   // Behavior
@@ -154,7 +156,14 @@ export default function BotSettingsScreen(): React.JSX.Element {
       >
         {/* ---- Personality ---- */}
         <View style={{ gap: spacing[3] }}>
-          <SectionLabel label="Personality" icon="happy-outline" colors={colors} textStyles={textStyles} spacing={spacing} radius={radius} />
+          <SectionLabel
+            label="Personality"
+            icon="happy-outline"
+            colors={colors}
+            textStyles={textStyles}
+            spacing={spacing}
+            radius={radius}
+          />
 
           <View style={{ gap: spacing[1] }}>
             <Text style={{ ...textStyles.labelMedium, color: colors.text }}>Tone</Text>
@@ -250,7 +259,14 @@ export default function BotSettingsScreen(): React.JSX.Element {
 
         {/* ---- Response ---- */}
         <View style={{ gap: spacing[3] }}>
-          <SectionLabel label="Response" icon="chatbox-outline" colors={colors} textStyles={textStyles} spacing={spacing} radius={radius} />
+          <SectionLabel
+            label="Response"
+            icon="chatbox-outline"
+            colors={colors}
+            textStyles={textStyles}
+            spacing={spacing}
+            radius={radius}
+          />
 
           <View style={{ gap: spacing[1] }}>
             <Text style={{ ...textStyles.labelMedium, color: colors.text }}>Response Length</Text>
@@ -280,7 +296,9 @@ export default function BotSettingsScreen(): React.JSX.Element {
                     >
                       {opt.label}
                     </Text>
-                    <Text style={{ ...textStyles.caption, color: colors.textMuted }}>{opt.sub}</Text>
+                    <Text style={{ ...textStyles.caption, color: colors.textMuted }}>
+                      {opt.sub}
+                    </Text>
                   </TouchableOpacity>
                 );
               })}
@@ -301,7 +319,14 @@ export default function BotSettingsScreen(): React.JSX.Element {
 
         {/* ---- Language ---- */}
         <View style={{ gap: spacing[3] }}>
-          <SectionLabel label="Language" icon="language-outline" colors={colors} textStyles={textStyles} spacing={spacing} radius={radius} />
+          <SectionLabel
+            label="Language"
+            icon="language-outline"
+            colors={colors}
+            textStyles={textStyles}
+            spacing={spacing}
+            radius={radius}
+          />
 
           <View style={{ gap: spacing[1] }}>
             <Text style={{ ...textStyles.labelMedium, color: colors.text }}>Primary Language</Text>
@@ -345,7 +370,14 @@ export default function BotSettingsScreen(): React.JSX.Element {
 
         {/* ---- Voice ---- */}
         <View style={{ gap: spacing[3] }}>
-          <SectionLabel label="Voice" icon="mic-outline" colors={colors} textStyles={textStyles} spacing={spacing} radius={radius} />
+          <SectionLabel
+            label="Voice"
+            icon="mic-outline"
+            colors={colors}
+            textStyles={textStyles}
+            spacing={spacing}
+            radius={radius}
+          />
 
           <View style={{ gap: spacing[1] }}>
             <Text style={{ ...textStyles.labelMedium, color: colors.text }}>Voice Speed</Text>
@@ -392,7 +424,14 @@ export default function BotSettingsScreen(): React.JSX.Element {
 
         {/* ---- Behavior ---- */}
         <View style={{ gap: spacing[3] }}>
-          <SectionLabel label="Behavior" icon="options-outline" colors={colors} textStyles={textStyles} spacing={spacing} radius={radius} />
+          <SectionLabel
+            label="Behavior"
+            icon="options-outline"
+            colors={colors}
+            textStyles={textStyles}
+            spacing={spacing}
+            radius={radius}
+          />
 
           <View
             style={{
