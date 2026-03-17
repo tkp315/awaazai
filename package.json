@@ -27,7 +27,7 @@
     "db:seed": "npm run db:seed --workspace=@awaazai/server",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "prepare": "husky"
+    "prepare": "node -e \"if(process.env.NODE_ENV !== 'production') require('child_process').execSync('husky', {stdio: 'inherit'})\" || true"
   },
   "overrides": {
     "react": "19.1.0",
