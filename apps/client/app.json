@@ -12,7 +12,8 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.kalyani2015.client",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSMicrophoneUsageDescription": "AwaazAI needs microphone access to record your voice for conversations."
       }
     },
     "android": {
@@ -24,7 +25,8 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.kalyani2015.client"
+      "package": "com.kalyani2015.client",
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "output": "static",
@@ -33,6 +35,12 @@
     "plugins": [
       "expo-router",
       "@react-native-google-signin/google-signin",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "AwaazAI needs microphone access to record your voice for conversations."
+        }
+      ],
       [
         "expo-splash-screen",
         {

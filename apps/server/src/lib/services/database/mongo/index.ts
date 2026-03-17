@@ -2,7 +2,7 @@ import { MongoConfig } from '@config/services/database/mongo/index.js';
 import { getLogger } from '@lib/helper/logger/index.js';
 import { Application } from 'express';
 import mongoose from 'mongoose';
-async function initMongo(config: MongoConfig, appObj: Application) {
+export async function init(config: MongoConfig, appObj: Application) {
   const logger = getLogger();
 
   try {

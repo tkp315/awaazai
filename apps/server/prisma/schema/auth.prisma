@@ -8,6 +8,7 @@ model User {
   password    String
   isVerified  Boolean     @default(false)
   userStatus  UserStatus
+  role UserType @default(CONSUMER)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
   accountType AccountType
@@ -19,6 +20,7 @@ model User {
   orgVerification OrgVerification?
   orgMember       OrgMember?
   bot             Bot[]
+  botChats        BotChat[]
   deviceToken     DeviceToken[]
   botRemainder    BotRemainder[]
   subscription    Subscription[]
@@ -51,7 +53,7 @@ model GuestUser {
 model Profile {
   id                  String  @id @default(uuid())
   age                 Int?
-  gender              Gender
+  gender              Gender ?
   totalPlansPurchased Int?
   avatar              String?
 
@@ -74,8 +76,8 @@ model Preferences {
   responseLength    ResponseLength @default(MEDIUM)
   preferredLanguage String         @default("en")
   voiceSpeed        VoiceSpeed     @default(NORMAL)
-  topicsOfInterest  String[] // ["motivation", "stories", "jokes"]
-  avoidTopics       String[] // ["politics", "religion"]
+  topicsOfInterest  String[] @default([])// ["motivation", "stories", "jokes"] 
+  avoidTopics       String[] @default([])// ["politics", "religion"]
   reminderEnabled   Boolean        @default(false)
   reminderTime      String? // "20:00" - daily reminder
   dailyGoalMinutes  Int?

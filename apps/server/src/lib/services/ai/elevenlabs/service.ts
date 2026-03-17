@@ -1,5 +1,4 @@
 import { getClient, getConfig } from './client.js';
-import type { Readable } from 'stream';
 
 // ============================================
 // TEXT-TO-SPEECH
@@ -10,6 +9,7 @@ export interface TTSOptions {
   similarityBoost?: number;
   style?: number;
   modelId?: string;
+  speed?: number;
 }
 
 export async function textToSpeech(
@@ -23,16 +23,17 @@ export async function textToSpeech(
   const audio = await client.textToSpeech.convert(voiceId, {
     text,
     model_id: options?.modelId || config.tts.modelId,
+    speed: options?.speed ?? config.tts.speed,
     voice_settings: {
       stability: options?.stability ?? config.tts.stability,
       similarity_boost: options?.similarityBoost ?? config.tts.similarityBoost,
       style: options?.style ?? config.tts.style,
+      use_speaker_boost: true,
     },
   });
 
-  // Convert the stream to buffer
   const chunks: Buffer[] = [];
-  for await (const chunk of audio) {
+  for await (const chunk of audio as AsyncIterable<Uint8Array>) {
     chunks.push(Buffer.from(chunk));
   }
 
@@ -47,17 +48,19 @@ export async function* textToSpeechStream(
   const client = getClient();
   const config = getConfig();
 
-  const audio = await client.textToSpeech.convertAsStream(voiceId, {
+  const audio = await client.textToSpeech.convert(voiceId, {
     text,
     model_id: options?.modelId || config.tts.modelId,
+    speed: options?.speed ?? config.tts.speed,
     voice_settings: {
       stability: options?.stability ?? config.tts.stability,
       similarity_boost: options?.similarityBoost ?? config.tts.similarityBoost,
       style: options?.style ?? config.tts.style,
+      use_speaker_boost: true,
     },
   });
 
-  for await (const chunk of audio) {
+  for await (const chunk of audio as AsyncIterable<Uint8Array>) {
     yield Buffer.from(chunk);
   }
 }
@@ -79,22 +82,21 @@ export async function cloneVoice(
     (buffer: any, index) => new File([buffer], `sample_${index}.mp3`, { type: 'audio/mpeg' })
   );
 
-  const voice = await client.voices.add({
-    name: options.name,
+  const voice = await client.voices.ivc.create({
+    name: options?.name,
     description: options.description,
-    // labels: options.labels||undefined,
+    labels: options.labels || undefined,
     files: audioFiles,
   });
 
   return {
-    voiceId: voice.voice_id,
-    // name: voice.name,
+    voiceId: voice.voiceId,
   };
 }
 
 export async function deleteVoice(voiceId: string): Promise<void> {
   const client = getClient();
-  await client.voices.delete(voiceId);
+  await client.voices.delete(voiceId).catch(() => {});
 }
 
 // ============================================
@@ -114,11 +116,11 @@ export async function getVoice(voiceId: string): Promise<VoiceInfo> {
   const voice = await client.voices.get(voiceId);
 
   return {
-    voiceId: voice.voice_id,
-    // name: voice.name,
+    voiceId: voice.voiceId,
+    name: voice.name,
     description: voice.description,
     labels: voice.labels,
-    previewUrl: voice.preview_url,
+    previewUrl: voice.previewUrl,
   };
 }
 
@@ -127,11 +129,11 @@ export async function getAllVoices(): Promise<VoiceInfo[]> {
   const response = await client.voices.getAll();
 
   return response.voices.map(voice => ({
-    voiceId: voice.voice_id,
+    voiceId: voice.voiceId,
     name: voice.name,
     description: voice.description,
     labels: voice.labels,
-    previewUrl: voice.preview_url,
+    previewUrl: voice.previewUrl,
   }));
 }
 
@@ -157,17 +159,13 @@ export async function getAllVoices(): Promise<VoiceInfo[]> {
 // ============================================
 
 export async function getVoiceSettings(voiceId: string): Promise<{
-  // stability: number;
-  // similarityBoost: number;
   style: number;
 }> {
   const client = getClient();
   const settings = await client.voices.getSettings(voiceId);
 
   return {
-    // stability: settings.stability,
-    // similarityBoost: settings.similarity_boost,
-    style: settings.style || 0,
+    style: settings.style ?? 0,
   };
 }
 
@@ -186,10 +184,9 @@ export async function getUserInfo(): Promise<{
   const subscription = user.subscription;
 
   return {
-    characterCount: subscription.character_count,
-    characterLimit: subscription.character_limit,
-    // voiceCount: subscription.voice_count || 0,
-    voiceLimit: subscription.voice_limit || 0,
+    characterCount: subscription.characterCount,
+    characterLimit: subscription.characterLimit,
+    voiceLimit: subscription.voiceLimit ?? 0,
   };
 }
 

@@ -1,5 +1,14 @@
 {
   "permissions": {
-    "allow": ["Bash(cat:*)", "Bash(npm install:*)", "Bash(npx prisma:*)"]
+    "allow": [
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(cd D:/ideas/awaazai/apps/client && npx expo install expo-image-picker)",
+      "Bash(cd D:/ideas/awaazai/apps/client && npx expo run:android 2>&1 | head -5)",
+      "Bash(cd:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)"
+    ]
   }
 }
