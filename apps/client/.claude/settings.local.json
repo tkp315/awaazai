@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cd:*)",
+      "Bash(node:)",
+      "Read(//d/ideas/awaazai/**)",
+      "Bash(npm install:*)",
+      "Bash(node:*)"
+    ]
+  }
+}

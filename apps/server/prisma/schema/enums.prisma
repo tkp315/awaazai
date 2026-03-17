@@ -16,7 +16,10 @@ enum UserStatus {
   INACTIVE
   SUSPENDED
 }
-
+enum UserType {
+  CONSUMER
+  ADMIN
+}
 enum DeviceType {
   MOBILE
   DESKTOP
@@ -141,9 +144,35 @@ enum TeamMemberRole {
 // BOT MODULE ENUMS
 // ==========================================
 
+enum KnowledgeMode {
+  AI_ONLY
+  RAG
+  HYBRID
+}
+
+enum BotMessageRole {
+  USER
+  BOT
+  SYSTEM
+}
+
 enum BotStatus {
   ACTIVE
   INACTIVE
+}
+
+enum VoiceStatus {
+  PENDING
+  PROCESSING
+  READY
+  FAILED
+}
+
+enum SampleStatus {
+  UPLOADED
+  PROCESSING
+  TRANSCRIBED
+  FAILED
 }
 
 enum TrainingStatus {
@@ -163,6 +192,8 @@ enum KnowledgeType {
   NOTE
   URL
   FAQ
+  AUDIO
+  IMAGE
 }
 
 enum KnowledgeStatus {
@@ -283,6 +314,8 @@ enum Currency {
 
 enum LimitKey {
     VOICE_CLONES
+    VOICE_CHATS
+    AI_BOTS
     TRAINED_BOTS
     MESSAGES_PER_DAY
     VOICE_MIN_PER_MONTH
