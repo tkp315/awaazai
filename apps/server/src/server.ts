@@ -36,7 +36,6 @@ async function startServer() {
       logger.info(`${signal} received, shutting down gracefully...`);
 
       server.close(async () => {
-
         logger.info('HTTP server closed');
         await getTrainingWorker()?.close();
         await getCloningWorker()?.close();

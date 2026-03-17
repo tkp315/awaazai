@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 import * as subscriptionService from './subscription.service';
-import type { IPlan, ISubscription, IMyLimits, IUsageData, IPaymentRecord, BillingCycle } from './subscription.types';
+import type {
+  IPlan,
+  ISubscription,
+  IMyLimits,
+  IUsageData,
+  IPaymentRecord,
+  BillingCycle,
+} from './subscription.types';
 
 interface SubscriptionState {
   subscription: ISubscription | null;
@@ -51,7 +58,10 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       const subscription = await subscriptionService.getMySubscription();
       set({ subscription, loading: false });
     } catch (err) {
-      set({ error: subscriptionService.handleError(err, 'Failed to load subscription'), loading: false });
+      set({
+        error: subscriptionService.handleError(err, 'Failed to load subscription'),
+        loading: false,
+      });
     }
   },
 
@@ -61,7 +71,10 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       const plans = await subscriptionService.getPlans();
       set({ plans, loadingPlans: false });
     } catch (err) {
-      set({ error: subscriptionService.handleError(err, 'Failed to load plans'), loadingPlans: false });
+      set({
+        error: subscriptionService.handleError(err, 'Failed to load plans'),
+        loadingPlans: false,
+      });
     }
   },
 
@@ -71,7 +84,10 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       const limits = await subscriptionService.getMyLimits();
       set({ limits, loadingLimits: false });
     } catch (err) {
-      set({ error: subscriptionService.handleError(err, 'Failed to load limits'), loadingLimits: false });
+      set({
+        error: subscriptionService.handleError(err, 'Failed to load limits'),
+        loadingLimits: false,
+      });
     }
   },
 
@@ -81,7 +97,10 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       const usage = await subscriptionService.getMyUsage();
       set({ usage, loadingUsage: false });
     } catch (err) {
-      set({ error: subscriptionService.handleError(err, 'Failed to load usage'), loadingUsage: false });
+      set({
+        error: subscriptionService.handleError(err, 'Failed to load usage'),
+        loadingUsage: false,
+      });
     }
   },
 
@@ -91,7 +110,10 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       const payments = await subscriptionService.getMyPayments();
       set({ payments, loadingPayments: false });
     } catch (err) {
-      set({ error: subscriptionService.handleError(err, 'Failed to load payments'), loadingPayments: false });
+      set({
+        error: subscriptionService.handleError(err, 'Failed to load payments'),
+        loadingPayments: false,
+      });
     }
   },
 
@@ -103,7 +125,10 @@ export const useSubscriptionStore = create<SubscriptionState>((set, get) => ({
       const subscription = await subscriptionService.getMySubscription();
       set({ subscription, loading: false });
     } catch (err) {
-      set({ error: subscriptionService.handleError(err, 'Failed to cancel subscription'), loading: false });
+      set({
+        error: subscriptionService.handleError(err, 'Failed to cancel subscription'),
+        loading: false,
+      });
     }
   },
 

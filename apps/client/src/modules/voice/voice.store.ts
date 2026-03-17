@@ -18,7 +18,10 @@ interface VoiceState {
   fetchVoices: (botId: string) => Promise<void>;
   fetchReadyVoices: () => Promise<void>;
   fetchSamples: (sessionId: string) => Promise<void>;
-  uploadSamples: (sessionId: string, files: { uri: string; name: string; type: string }[]) => Promise<ISampleVoice[] | null>;
+  uploadSamples: (
+    sessionId: string,
+    files: { uri: string; name: string; type: string }[]
+  ) => Promise<ISampleVoice[] | null>;
   deleteSample: (sampleId: string) => Promise<void>;
   createVoice: (botId: string, payload: CreateVoicePayload) => Promise<IBotVoice | null>;
   deleteVoice: (voiceId: string) => Promise<void>;
@@ -52,7 +55,7 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
     }
   },
 
-  fetchVoices: async (botId) => {
+  fetchVoices: async botId => {
     set({ loadingVoices: true, error: null });
     try {
       const voices = await voiceService.getVoicesByBot(botId);
@@ -64,7 +67,7 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
     }
   },
 
-  fetchSamples: async (sessionId) => {
+  fetchSamples: async sessionId => {
     set({ loadingSamples: true, error: null });
     try {
       const samples = await voiceService.getSamplesBySession(sessionId);
@@ -90,7 +93,7 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
     }
   },
 
-  deleteSample: async (sampleId) => {
+  deleteSample: async sampleId => {
     try {
       await voiceService.deleteSample(sampleId);
       set(state => ({ samples: state.samples.filter(s => s.id !== sampleId) }));
@@ -117,7 +120,7 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
     }
   },
 
-  deleteVoice: async (voiceId) => {
+  deleteVoice: async voiceId => {
     try {
       await voiceService.deleteVoice(voiceId);
       set(state => ({ voices: state.voices.filter(v => v.id !== voiceId) }));
@@ -126,13 +129,11 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
     }
   },
 
-  retryCloning: async (voiceId) => {
+  retryCloning: async voiceId => {
     try {
       await voiceService.retryCloning(voiceId);
       set(state => ({
-        voices: state.voices.map(v =>
-          v.id === voiceId ? { ...v, status: 'PENDING' } : v
-        ),
+        voices: state.voices.map(v => (v.id === voiceId ? { ...v, status: 'PENDING' } : v)),
       }));
     } catch (e) {
       set({ error: voiceService.handleError(e, 'Failed to retry cloning') });

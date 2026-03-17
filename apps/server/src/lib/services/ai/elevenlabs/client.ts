@@ -1,4 +1,4 @@
-import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
+import { ElevenLabsClient } from '@elevenlabs/elevenlabs-js';
 import { getLogger } from '../../../helper/logger/index.js';
 import type { ElevenLabsConfig } from '../../../../config/services/ai/elevenlabs/index.js';
 

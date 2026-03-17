@@ -26,7 +26,6 @@ async function init() {
 
   // 4. Error handlers (must be after routes)
   applyErrorHandlers(app);
-
 }
 
 export { app, init };

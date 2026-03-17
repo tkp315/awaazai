@@ -15,6 +15,9 @@ export const upsertPreferencesSchema = z.object({
   topicsOfInterest: z.array(z.string()).optional(),
   avoidTopics: z.array(z.string()).optional(),
   reminderEnabled: z.boolean().optional(),
-  reminderTime: z.string().regex(/^\d{2}:\d{2}$/).optional(), // "HH:MM"
+  reminderTime: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/)
+    .optional(), // "HH:MM"
   dailyGoalMinutes: z.number().int().positive().optional(),
 });

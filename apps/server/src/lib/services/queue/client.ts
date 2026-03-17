@@ -117,7 +117,9 @@ export function registerWorker(
   return worker;
 }
 
-export function getWorker(name: 'voiceClone' | 'tts' | 'stt' | 'meeting' | 'training'): Worker | undefined {
+export function getWorker(
+  name: 'voiceClone' | 'tts' | 'stt' | 'meeting' | 'training'
+): Worker | undefined {
   return workers.get(name);
 }
 

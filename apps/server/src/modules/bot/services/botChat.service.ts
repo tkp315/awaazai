@@ -180,7 +180,9 @@ function buildSystemPrompt(
 
   // ── RAG Knowledge ──
   if (ragContext) {
-    sections.push(`Use the following knowledge to answer accurately:\n\n${ragContext}\n\nIf the answer is not in the knowledge base, use your general knowledge but mention it.`);
+    sections.push(
+      `Use the following knowledge to answer accurately:\n\n${ragContext}\n\nIf the answer is not in the knowledge base, use your general knowledge but mention it.`
+    );
   }
 
   return sections.join('\n\n');
@@ -321,12 +323,7 @@ export const botChatService = {
 
   // ─── Send Message ──────────────────────────────────────────────────────────
 
-  sendMessage: async (
-    botId: string,
-    chatId: string,
-    userId: string,
-    data: SendBotMessageInput
-  ) => {
+  sendMessage: async (botId: string, chatId: string, userId: string, data: SendBotMessageInput) => {
     const logger = getLogger();
     const prisma = getPrisma();
 
@@ -364,7 +361,13 @@ export const botChatService = {
     }
 
     // Build messages for OpenAI
-    const systemPrompt = buildSystemPrompt(bot.name, bot.purpose, bot.config as BotConfigContext | null, bot.rules as BotRulesContext | null, ragContext);
+    const systemPrompt = buildSystemPrompt(
+      bot.name,
+      bot.purpose,
+      bot.config as BotConfigContext | null,
+      bot.rules as BotRulesContext | null,
+      ragContext
+    );
 
     const historyMessages = history.map(msg => ({
       role: msg.role === 'USER' ? ('user' as const) : ('assistant' as const),
@@ -390,7 +393,8 @@ export const botChatService = {
       max_tokens: maxTokens,
     });
 
-    const aiReply = completion.choices[0]?.message?.content?.trim() ?? 'Sorry, I could not respond.';
+    const aiReply =
+      completion.choices[0]?.message?.content?.trim() ?? 'Sorry, I could not respond.';
 
     // Generate TTS if bot has a selected voice
     let voiceUrl: string | null = null;

@@ -3,13 +3,13 @@ import { AxiosError } from 'axios';
 import type { IBotVoice, ISampleVoice, CreateVoicePayload } from './voice.types';
 
 const VOICE_ENDPOINTS = {
-  SAMPLES:          'voices/samples',
-  SAMPLES_SESSION:  (sessionId: string) => `voices/samples/${sessionId}`,
-  SAMPLE:           (sampleId: string) => `voices/samples/${sampleId}`,
-  BOT_VOICES:       (botId: string) => `voices/bots/${botId}`,
-  READY_VOICES:     'voices/ready',
-  VOICE:            (voiceId: string) => `voices/${voiceId}`,
-  RETRY_CLONE:      (voiceId: string) => `voices/${voiceId}/clone`,
+  SAMPLES: 'voices/samples',
+  SAMPLES_SESSION: (sessionId: string) => `voices/samples/${sessionId}`,
+  SAMPLE: (sampleId: string) => `voices/samples/${sampleId}`,
+  BOT_VOICES: (botId: string) => `voices/bots/${botId}`,
+  READY_VOICES: 'voices/ready',
+  VOICE: (voiceId: string) => `voices/${voiceId}`,
+  RETRY_CLONE: (voiceId: string) => `voices/${voiceId}/clone`,
 };
 
 export function handleError(error: unknown, fallback: string): string {

@@ -12,9 +12,9 @@ type FileType = 'image' | 'audio' | 'video' | 'document' | 'raw';
 interface UploadResult {
   url: string;
   publicId: string;
-  duration?: number;   // audio/video only
-  width?: number;      // image only
-  height?: number;     // image only
+  duration?: number; // audio/video only
+  width?: number; // image only
+  height?: number; // image only
   format: string;
   bytes: number;
 }
@@ -22,7 +22,7 @@ interface UploadResult {
 // Cloudinary resource_type mapping
 const RESOURCE_TYPE_MAP: Record<FileType, 'image' | 'video' | 'raw'> = {
   image: 'image',
-  audio: 'video',   // Cloudinary uses 'video' for audio too
+  audio: 'video', // Cloudinary uses 'video' for audio too
   video: 'video',
   document: 'raw',
   raw: 'raw',

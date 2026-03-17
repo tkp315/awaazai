@@ -73,12 +73,7 @@ export const endSession = asyncHandler(async (req, res) => {
   const { success, data, error } = endSessionSchema.safeParse(req.body);
   if (!success) throw new ApiError(400, `Validation Error: ${error}`);
 
-  const session = await chatService.endSession(
-    chatId as string,
-    sessionId as string,
-    userId,
-    data,
-  );
+  const session = await chatService.endSession(chatId as string, sessionId as string, userId, data);
 
   return res.status(200).json(new ApiResponse(200, 'Session ended', session, {}));
 });
@@ -97,7 +92,7 @@ export const getSessionMessages = asyncHandler(async (req, res) => {
     sessionId as string,
     userId,
     limit,
-    before,
+    before
   );
 
   return res.status(200).json(new ApiResponse(200, 'Messages fetched', messages, {}));

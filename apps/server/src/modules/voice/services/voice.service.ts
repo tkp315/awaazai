@@ -5,7 +5,6 @@ import type { VoiceStatus, SampleStatus } from 'generated/prisma/client.js';
 import { AWAAZBOT_AVAILABLE_BOT_ID } from 'globals/constants.js';
 // import { AWAAZBOT_AVAILABLE_BOT_ID } from '@globals/constants.js';
 
-
 interface UploadedSample {
   url: string;
   duration: number;
@@ -13,7 +12,6 @@ interface UploadedSample {
 }
 
 export const voiceService = {
-
   // ─── Sample Voice ────────────────────────────────────────────────────────
 
   saveSamples: async (sessionId: string, samples: UploadedSample[]) => {
@@ -45,7 +43,7 @@ export const voiceService = {
     botId: string,
     userId: string,
     input: CreateVoiceInput,
-    sessionId: string,
+    sessionId: string
   ) => {
     const prisma = getPrisma();
 

@@ -20,7 +20,9 @@ export const registerVoiceHandler = (socket: Socket) => {
   socket.on(socketEvents.sendVoice, async (payload: SendVoicePayload) => {
     const { chatId, sessionId, audioBase64, fileName } = payload;
     const userId = socket.data.userId;
-    logger.info(`[VOICE_HANDLER] send_voice received | socketId: ${socket.id} | chatId: ${chatId} | sessionId: ${sessionId} | userId: ${userId}`);
+    logger.info(
+      `[VOICE_HANDLER] send_voice received | socketId: ${socket.id} | chatId: ${chatId} | sessionId: ${sessionId} | userId: ${userId}`
+    );
     try {
       if (activePipelines.has(socket.id)) {
         logger.info(`[VOICE_HANDLER] Aborting existing pipeline for socketId: ${socket.id}`);
@@ -51,14 +53,18 @@ export const registerVoiceHandler = (socket: Socket) => {
         return socket.emit('error', { message: 'Chat not found' });
       }
       if (chat.botVoice.bot.userId !== userId) {
-        logger.warn(`[VOICE_HANDLER] Unauthorized access | userId: ${userId} | ownerId: ${chat.botVoice.bot.userId}`);
+        logger.warn(
+          `[VOICE_HANDLER] Unauthorized access | userId: ${userId} | ownerId: ${chat.botVoice.bot.userId}`
+        );
         return socket.emit('error', { message: 'Unauthorized' });
       }
       if (!chat.botVoice.elvenlabsVoiceId) {
         logger.warn(`[VOICE_HANDLER] Voice not ready for botVoiceId: ${chat.botVoice.id}`);
         return socket.emit('error', { message: 'Voice not ready yet' });
       }
-      logger.info(`[VOICE_HANDLER] Audio buffer size: ${audioBase64.length} chars | elvenlabsVoiceId: ${chat.botVoice.elvenlabsVoiceId}`);
+      logger.info(
+        `[VOICE_HANDLER] Audio buffer size: ${audioBase64.length} chars | elvenlabsVoiceId: ${chat.botVoice.elvenlabsVoiceId}`
+      );
       const audioBuffer = Buffer.from(audioBase64, 'base64');
       logger.info(`[VOICE_HANDLER] Building system prompt`);
       const { systemPrompt, history } = await buildSystemPrompt(
@@ -85,7 +91,9 @@ export const registerVoiceHandler = (socket: Socket) => {
         abortSignal: abortController.signal,
       });
       activePipelines.delete(socket.id);
-      logger.info(`[VOICE_HANDLER] Pipeline complete | emitting ai_stopped | audioUrl: ${result.aiAudioUrl}`);
+      logger.info(
+        `[VOICE_HANDLER] Pipeline complete | emitting ai_stopped | audioUrl: ${result.aiAudioUrl}`
+      );
       socket.emit('ai_stopped', { audioUrl: result.aiAudioUrl, aiText: result.aiText });
       logger.info(`[VOICE_HANDLER] Saving user message`);
       await messageService.saveMessage({

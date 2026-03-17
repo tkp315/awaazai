@@ -17,11 +17,7 @@ export const createAvailableBotSchema = z.object({
     .max(200, 'Description must be less than 200 characters')
     .trim(),
 
-  icon: z
-    .string()
-    .max(10, 'Icon must be a single emoji or short code')
-    .trim()
-    .optional(),
+  icon: z.string().max(10, 'Icon must be a single emoji or short code').trim().optional(),
 
   isActive: z.boolean().optional().default(true),
 
@@ -35,19 +31,9 @@ export const createAvailableBotSchema = z.object({
 });
 
 export const updateAvailableBotSchema = z.object({
-  name: z
-    .string()
-    .min(2)
-    .max(50)
-    .trim()
-    .optional(),
+  name: z.string().min(2).max(50).trim().optional(),
 
-  description: z
-    .string()
-    .min(5)
-    .max(200)
-    .trim()
-    .optional(),
+  description: z.string().min(5).max(200).trim().optional(),
 
   icon: z.string().max(10).trim().optional(),
 
@@ -62,16 +48,16 @@ export const updateAvailableBotCapabilitiesSchema = z.object({
     .min(1, 'At least one capability is required'),
 });
 
-export type UpdateAvailableBotCapabilitiesInput = z.infer<typeof updateAvailableBotCapabilitiesSchema>;
+export type UpdateAvailableBotCapabilitiesInput = z.infer<
+  typeof updateAvailableBotCapabilitiesSchema
+>;
 
 // ==========================================
 // BOT CRUD
 // ==========================================
 
 export const createBotSchema = z.object({
-  availableBotId: z
-    .string({ message: 'Bot type is required' })
-    .uuid('Invalid bot type ID'),
+  availableBotId: z.string({ message: 'Bot type is required' }).uuid('Invalid bot type ID'),
 
   name: z
     .string({ message: 'Bot name is required' })
@@ -79,27 +65,15 @@ export const createBotSchema = z.object({
     .max(50, 'Bot name must be less than 50 characters')
     .trim(),
 
-  purpose: z
-    .string()
-    .max(200, 'Purpose must be less than 200 characters')
-    .trim()
-    .optional(),
+  purpose: z.string().max(200, 'Purpose must be less than 200 characters').trim().optional(),
 
-  avatar: z
-    .string()
-    .max(10, 'Avatar must be a single emoji')
-    .trim()
-    .optional(),
+  avatar: z.string().max(10, 'Avatar must be a single emoji').trim().optional(),
 
   isPublic: z.boolean().optional().default(false),
 
   knowledgeMode: z.enum(['AI_ONLY', 'RAG', 'HYBRID']).optional().default('AI_ONLY'),
 
-  selectedVoiceId: z
-    .string()
-    .uuid('Invalid voice ID')
-    .optional()
-    .nullable(),
+  selectedVoiceId: z.string().uuid('Invalid voice ID').optional().nullable(),
 });
 
 export const updateBotSchema = z.object({
@@ -110,23 +84,14 @@ export const updateBotSchema = z.object({
     .trim()
     .optional(),
 
-  purpose: z
-    .string()
-    .max(200, 'Purpose must be less than 200 characters')
-    .trim()
-    .optional(),
+  purpose: z.string().max(200, 'Purpose must be less than 200 characters').trim().optional(),
 
-  avatar: z
-    .string()
-    .max(10, 'Avatar must be a single emoji')
-    .trim()
-    .optional(),
+  avatar: z.string().max(10, 'Avatar must be a single emoji').trim().optional(),
 
   isPublic: z.boolean().optional(),
 
   status: z.enum(['ACTIVE', 'INACTIVE']).optional(),
 });
-
 
 // ==========================================
 // CAPABILITY (Admin CRUD)
@@ -151,19 +116,9 @@ export const createCapabilitySchema = z.object({
 });
 
 export const updateCapabilitySchema = z.object({
-  name: z
-    .string()
-    .min(2)
-    .max(100)
-    .trim()
-    .optional(),
+  name: z.string().min(2).max(100).trim().optional(),
 
-  description: z
-    .string()
-    .min(5)
-    .max(300)
-    .trim()
-    .optional(),
+  description: z.string().min(5).max(300).trim().optional(),
 });
 
 // ==========================================
@@ -185,19 +140,9 @@ export const createCapabilityFunctionSchema = z.object({
 });
 
 export const updateCapabilityFunctionSchema = z.object({
-  name: z
-    .string()
-    .min(2)
-    .max(100)
-    .trim()
-    .optional(),
+  name: z.string().min(2).max(100).trim().optional(),
 
-  description: z
-    .string()
-    .min(5)
-    .max(300)
-    .trim()
-    .optional(),
+  description: z.string().min(5).max(300).trim().optional(),
 });
 
 // ==========================================
@@ -206,7 +151,7 @@ export const updateCapabilityFunctionSchema = z.object({
 
 export const updateBotCapabilitySchema = z.object({
   isEnabled: z.boolean({ message: 'isEnabled must be a boolean' }),
-  settings: z.record(z.string(),z.string()).optional().default({}),
+  settings: z.record(z.string(), z.string()).optional().default({}),
 });
 
 // ==========================================
@@ -225,10 +170,7 @@ export const addKnowledgeSchema = z
       .max(200, 'Title must be less than 200 characters')
       .trim(),
 
-    capabilityId: z
-      .string()
-      .uuid('Invalid capability ID')
-      .optional(),
+    capabilityId: z.string().uuid('Invalid capability ID').optional(),
 
     // NOTE type
     content: z
@@ -239,10 +181,7 @@ export const addKnowledgeSchema = z
       .optional(),
 
     // URL type
-    sourceUrl: z
-      .string()
-      .url('Invalid URL format')
-      .optional(),
+    sourceUrl: z.string().url('Invalid URL format').optional(),
 
     // FAQ type
     faqItems: z
@@ -286,10 +225,7 @@ export const addKnowledgeSchema = z
 // ==========================================
 
 export const triggerTrainingSchema = z.object({
-  capabilityId: z
-    .string()
-    .uuid('Invalid capability ID')
-    .optional(), // optional - agar nahi diya toh sab capabilities train hongi
+  capabilityId: z.string().uuid('Invalid capability ID').optional(), // optional - agar nahi diya toh sab capabilities train hongi
 });
 
 // ==========================================
@@ -297,9 +233,7 @@ export const triggerTrainingSchema = z.object({
 // ==========================================
 
 export const updateBotConfigSchema = z.object({
-  tone: z
-    .enum(['FORMAL', 'CASUAL', 'FRIENDLY', 'PROFESSIONAL', 'HUMOROUS'])
-    .optional(),
+  tone: z.enum(['FORMAL', 'CASUAL', 'FRIENDLY', 'PROFESSIONAL', 'HUMOROUS']).optional(),
 
   personality: z
     .object({
@@ -321,20 +255,13 @@ export const updateBotConfigSchema = z.object({
     .max(10)
     .optional(),
 
-  secondaryLanguage: z
-    .string()
-    .min(2)
-    .max(10)
-    .optional()
-    .nullable(),
+  secondaryLanguage: z.string().min(2).max(10).optional().nullable(),
 
   languageMixing: z.boolean().optional(),
 
   responseLength: z.enum(['SHORT', 'MEDIUM', 'DETAILED']).optional(),
 
-  responseFormat: z
-    .enum(['TEXT_ONLY', 'TEXT_WITH_EMOJI', 'MARKDOWN', 'RICH_TEXT'])
-    .optional(),
+  responseFormat: z.enum(['TEXT_ONLY', 'TEXT_WITH_EMOJI', 'MARKDOWN', 'RICH_TEXT']).optional(),
 
   useEmoji: z.boolean().optional(),
 
@@ -354,10 +281,7 @@ export const updateBotConfigSchema = z.object({
 
   voiceSpeed: z.enum(['SLOW', 'NORMAL', 'FAST']).optional(),
 
-  voicePitch: z
-    .enum(['low', 'medium', 'high'])
-    .optional()
-    .nullable(),
+  voicePitch: z.enum(['low', 'medium', 'high']).optional().nullable(),
 
   voiceVolume: z
     .number()
@@ -366,12 +290,7 @@ export const updateBotConfigSchema = z.object({
     .max(100, 'Volume must be between 0 and 100')
     .optional(),
 
-  typingDelay: z
-    .number()
-    .int()
-    .min(0)
-    .max(5000, 'Typing delay max 5 seconds')
-    .optional(),
+  typingDelay: z.number().int().min(0).max(5000, 'Typing delay max 5 seconds').optional(),
 
   autoGreet: z.boolean().optional(),
 
@@ -409,12 +328,7 @@ export const updateBotRulesSchema = z.object({
     .max(10000, 'Max response length is 10,000 characters')
     .optional(),
 
-  maxMessagesPerMin: z
-    .number()
-    .int()
-    .min(1)
-    .max(60)
-    .optional(),
+  maxMessagesPerMin: z.number().int().min(1).max(60).optional(),
 
   sessionTimeout: z
     .number()
@@ -428,24 +342,11 @@ export const updateBotRulesSchema = z.object({
   canMakeToolCalls: z.boolean().optional(),
   canShareExternal: z.boolean().optional(),
 
-  dataRetentionDays: z
-    .number()
-    .int()
-    .min(1)
-    .max(3650, 'Max data retention 10 years')
-    .optional(),
+  dataRetentionDays: z.number().int().min(1).max(3650, 'Max data retention 10 years').optional(),
 
-  ageRestriction: z
-    .number()
-    .int()
-    .min(0)
-    .max(21)
-    .optional(),
+  ageRestriction: z.number().int().min(0).max(21).optional(),
 
-  doList: z
-    .array(z.string().min(1).max(200).trim())
-    .max(20, 'Max 20 rules in do list')
-    .optional(),
+  doList: z.array(z.string().min(1).max(200).trim()).max(20, 'Max 20 rules in do list').optional(),
 
   dontList: z
     .array(z.string().min(1).max(200).trim())

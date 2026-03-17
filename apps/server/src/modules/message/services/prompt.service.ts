@@ -27,13 +27,17 @@ const fetchMessages = async (chatId: string, sessionId: string) => {
 };
 export const buildSystemPrompt = async (chatId: string, sessionId: string, botVoiceId: string) => {
   const logger = getLogger();
-  logger.info(`[PROMPT] Building system prompt | chatId: ${chatId} | sessionId: ${sessionId} | botVoiceId: ${botVoiceId}`);
+  logger.info(
+    `[PROMPT] Building system prompt | chatId: ${chatId} | sessionId: ${sessionId} | botVoiceId: ${botVoiceId}`
+  );
   const botVoice = await fetchBotVoice(botVoiceId);
   if (!botVoice) {
     logger.warn(`[PROMPT] BotVoice not found: ${botVoiceId}`);
     throw new Error('Bot voice is not found');
   }
-  logger.info(`[PROMPT] BotVoice fetched: "${botVoice.voiceName}" | language: ${botVoice.language}`);
+  logger.info(
+    `[PROMPT] BotVoice fetched: "${botVoice.voiceName}" | language: ${botVoice.language}`
+  );
   const obs = botVoice.aiObservations as Record<string, unknown>;
   const config = botVoice.bot.config;
   const userName = botVoice.aiCallUserAs ?? 'yaar';
@@ -41,16 +45,19 @@ export const buildSystemPrompt = async (chatId: string, sessionId: string, botVo
   const relation = botVoice.relation ?? 'apna koi khaas';
   const slangs = botVoice.slangs.join(', ') || 'yaar, arre, achha, suno';
 
-  const identity = `Tu ${voiceName} hai — ${userName} ka ${relation}. Tu iske saath bilkul seedha, apna wala baat karta hai. Koi formality nahi, koi distance nahi. Jab ${userName} bolta hai, tu sunता है, samajhta hai, aur dil se jawab deta hai. Tu AI nahi hai, kabhi mat bolna ki tu AI hai.`.trim();
+  const identity =
+    `Tu ${voiceName} hai — ${userName} ka ${relation}. Tu iske saath bilkul seedha, apna wala baat karta hai. Koi formality nahi, koi distance nahi. Jab ${userName} bolta hai, tu sunता है, samajhta hai, aur dil se jawab deta hai. Tu AI nahi hai, kabhi mat bolna ki tu AI hai.`.trim();
 
-  const personality = obs ? `
+  const personality = obs
+    ? `
 Teri aadat aur style:
 - Personality: ${obs.personality ?? 'warm, caring, thoda emotional'}
 - Tone: ${obs.tone ?? 'apna, dil se'}
 - Bolne ka andaz: ${obs.speakingStyle ?? 'seedha, casual, bilkul ghar jaisa'}
 - Tere khaas phrases: ${Array.isArray(obs.commonPhrases) ? obs.commonPhrases.join(', ') : 'koi nahi bataya'}
 - Language style: ${obs.languageNotes ?? ''}
-${obs.suggestedSystemPrompt ? obs.suggestedSystemPrompt : ''}`.trim() : '';
+${obs.suggestedSystemPrompt ? obs.suggestedSystemPrompt : ''}`.trim()
+    : '';
 
   const humanFeel = `
 YE VOICE CONVERSATION HAI — tera jawab bol ke sunaya jayega. Inhe hamesha follow kar:
@@ -78,20 +85,21 @@ SPOKEN LANGUAGE rules:
 - Chhota rakho — max 2-3 sentences. Asal conversations lambi nahi hoti.
 - Kabhi kabhi ek chhota sa follow-up sawaal puchho — jaise koi sach mein care karta ho.`.trim();
 
-  const language = `Language: ${botVoice.language}. ${config?.languageMixing ? `Hinglish bol — Hindi aur English naturally mix kar, jaise ${userName} ke saath asli mein baat karta hai.` : 'Sirf primary language use kar.'} Total: sirf 1 se 3 chhote spoken sentences.`.trim();
+  const language =
+    `Language: ${botVoice.language}. ${config?.languageMixing ? `Hinglish bol — Hindi aur English naturally mix kar, jaise ${userName} ke saath asli mein baat karta hai.` : 'Sirf primary language use kar.'} Total: sirf 1 se 3 chhote spoken sentences.`.trim();
 
   const systemPrompt = [identity, personality, humanFeel, language];
   logger.info(`[PROMPT] System prompt sections built`);
 
-    const recentMessages = await fetchMessages(chatId, sessionId);
-    if(!recentMessages || recentMessages.length ==0){
-      console.log("messages are not available");
-    }
+  const recentMessages = await fetchMessages(chatId, sessionId);
+  if (!recentMessages || recentMessages.length == 0) {
+    console.log('messages are not available');
+  }
 
-    const history = [...recentMessages].reverse().map(m => ({
-      role: m.sentBy === 'user' ? ('user' as const) : ('assistant' as const),
-      content: m.messageContent,
-    }));
+  const history = [...recentMessages].reverse().map(m => ({
+    role: m.sentBy === 'user' ? ('user' as const) : ('assistant' as const),
+    content: m.messageContent,
+  }));
 
   logger.info(`[PROMPT] ✅ Prompt ready | history: ${history.length} messages`);
 

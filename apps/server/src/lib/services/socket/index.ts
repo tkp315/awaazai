@@ -25,12 +25,12 @@ export function getIO(): SocketServer {
 }
 
 export const socketEvents = () => {
-    const events = {
-        transcribing:'transcribing',
-        textChunk:'text_chunk',
-        audioChunk:'audio_chunk',
-        sendVoice:'send_voice',
-        pipelineStart:'pipeline_start'
-    }
-    return events
-}
+  const events = {
+    transcribing: 'transcribing',
+    textChunk: 'text_chunk',
+    audioChunk: 'audio_chunk',
+    sendVoice: 'send_voice',
+    pipelineStart: 'pipeline_start',
+  };
+  return events;
+};

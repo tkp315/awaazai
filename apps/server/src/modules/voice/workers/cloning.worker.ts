@@ -16,7 +16,7 @@ export function initCloningWorker(): Worker<CloningJobData> {
 
   cloningWorker = new Worker<CloningJobData>(
     'voice-clone',
-    async (job) => {
+    async job => {
       return await processCloningJob(job.data);
     },
     {
@@ -26,7 +26,7 @@ export function initCloningWorker(): Worker<CloningJobData> {
     }
   );
 
-  cloningWorker.on('completed', (job) => {
+  cloningWorker.on('completed', job => {
     logger.info(`Cloning job ${job.id} completed`);
   });
 

@@ -49,11 +49,9 @@ const getRawDocs = async (knowledge: {
 }): Promise<Document[]> => {
   if (knowledge.type === 'NOTE') {
     return [new Document({ pageContent: knowledge.content ?? '' })];
-
   } else if (knowledge.type === 'URL') {
     const loader = new CheerioWebBaseLoader(knowledge.sourceUrl!);
     return await loader.load();
-
   } else if (knowledge.type === 'DOCUMENT') {
     const tempPath = await downloadFile(knowledge.sourceUrl!, knowledge.id);
     try {
@@ -62,7 +60,6 @@ const getRawDocs = async (knowledge: {
     } finally {
       await deleteTempFile(tempPath);
     }
-
   } else if (knowledge.type === 'AUDIO') {
     const tempPath = await downloadFile(knowledge.sourceUrl!, knowledge.id);
     try {
@@ -75,29 +72,29 @@ const getRawDocs = async (knowledge: {
     } finally {
       await deleteTempFile(tempPath);
     }
-
   } else if (knowledge.type === 'IMAGE') {
     // GPT-4o can read from URL directly — no download needed
     const openai = getOpenAI();
     const response = await openai.chat.completions.create({
       model: 'gpt-4o',
-      messages: [{
-        role: 'user',
-        content: [
-          {
-            type: 'text',
-            text: 'Extract and describe all the text, information, and content from this image in detail. Include any handwriting and every minute detail that helps with a personalised user experience.',
-          },
-          {
-            type: 'image_url',
-            image_url: { url: knowledge.sourceUrl! },
-          },
-        ],
-      }],
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: 'Extract and describe all the text, information, and content from this image in detail. Include any handwriting and every minute detail that helps with a personalised user experience.',
+            },
+            {
+              type: 'image_url',
+              image_url: { url: knowledge.sourceUrl! },
+            },
+          ],
+        },
+      ],
     });
     const description = response.choices[0].message.content ?? '';
     return [new Document({ pageContent: description })];
-
   } else if (knowledge.type === 'FAQ') {
     const faqs = JSON.parse(knowledge.content ?? '[]') as { q: string; a: string }[];
     return faqs.map(faq => new Document({ pageContent: `Q: ${faq.q}\nA: ${faq.a}` }));
@@ -143,18 +140,19 @@ export const processTraining = async (data: TrainingJobData): Promise<void> => {
 
         const chunks = await splitter.splitDocuments(rawDocs);
 
-        const chunksWithMeta = chunks.map((chunk, idx) =>
-          new Document({
-            pageContent: chunk.pageContent,
-            metadata: {
-              botId,
-              userId: bot.userId,
-              knowledgeId: knowledge.id,
-              type: knowledge.type,
-              title: knowledge.title,
-              chunkIndex: idx,
-            },
-          })
+        const chunksWithMeta = chunks.map(
+          (chunk, idx) =>
+            new Document({
+              pageContent: chunk.pageContent,
+              metadata: {
+                botId,
+                userId: bot.userId,
+                knowledgeId: knowledge.id,
+                type: knowledge.type,
+                title: knowledge.title,
+                chunkIndex: idx,
+              },
+            })
         );
 
         await QdrantVectorStore.fromDocuments(chunksWithMeta, embeddings, {
@@ -175,7 +173,6 @@ export const processTraining = async (data: TrainingJobData): Promise<void> => {
           type: knowledge.type,
           chunks: chunks.length,
         });
-
       } catch (err) {
         // Single item failed — mark it, continue with rest
         await prisma.botKnowledge.update({

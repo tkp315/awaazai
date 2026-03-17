@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 const PLAN_PRICES: Record<string, { monthly: number; yearly: number }> = {
   starter: { monthly: 199, yearly: 1990 },
-  pro:     { monthly: 499, yearly: 4990 },
+  pro: { monthly: 499, yearly: 4990 },
 };
 
 // ── GET /subscriptions/me ─────────────────────────────────────────────────────
@@ -43,7 +43,10 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
   const userId = (req as any).user.id;
 
   const parsed = createOrderSchema.safeParse(req.body);
-  if (!parsed.success) { res.status(400).json({ message: 'Invalid input', errors: parsed.error.issues }); return; }
+  if (!parsed.success) {
+    res.status(400).json({ message: 'Invalid input', errors: parsed.error.issues });
+    return;
+  }
 
   const { planSlug, billingCycle } = parsed.data;
   const prices = PLAN_PRICES[planSlug];
@@ -59,7 +62,10 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
     });
 
     logger.info('[SUBSCRIPTION] Order created', { userId, planSlug, orderId: order.id });
-    res.json({ success: true, data: { orderId: order.id, amount, currency: 'INR', planSlug, billingCycle } });
+    res.json({
+      success: true,
+      data: { orderId: order.id, amount, currency: 'INR', planSlug, billingCycle },
+    });
   } catch (err) {
     logger.error('[SUBSCRIPTION] Order creation failed', { err });
     res.status(500).json({ message: 'Payment order creation failed' });
@@ -68,11 +74,11 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
 
 // ── POST /subscriptions/verify ────────────────────────────────────────────────
 const verifySchema = z.object({
-  razorpayOrderId:   z.string(),
+  razorpayOrderId: z.string(),
   razorpayPaymentId: z.string(),
   razorpaySignature: z.string(),
-  planSlug:          z.enum(['starter', 'pro']),
-  billingCycle:      z.enum(['MONTHLY', 'YEARLY']).default('MONTHLY'),
+  planSlug: z.enum(['starter', 'pro']),
+  billingCycle: z.enum(['MONTHLY', 'YEARLY']).default('MONTHLY'),
 });
 
 export async function verifyPayment(req: Request, res: Response): Promise<void> {
@@ -80,9 +86,13 @@ export async function verifyPayment(req: Request, res: Response): Promise<void> 
   const userId = (req as any).user.id;
 
   const parsed = verifySchema.safeParse(req.body);
-  if (!parsed.success) { res.status(400).json({ message: 'Invalid input' }); return; }
+  if (!parsed.success) {
+    res.status(400).json({ message: 'Invalid input' });
+    return;
+  }
 
-  const { razorpayOrderId, razorpayPaymentId, razorpaySignature, planSlug, billingCycle } = parsed.data;
+  const { razorpayOrderId, razorpayPaymentId, razorpaySignature, planSlug, billingCycle } =
+    parsed.data;
 
   // Verify signature
   const keySecret = getKeySecret();
@@ -96,7 +106,12 @@ export async function verifyPayment(req: Request, res: Response): Promise<void> 
 
   try {
     // Activate subscription
-    const subscription = await subscriptionService.activateSubscription(userId, planSlug, razorpayPaymentId, billingCycle);
+    const subscription = await subscriptionService.activateSubscription(
+      userId,
+      planSlug,
+      razorpayPaymentId,
+      billingCycle
+    );
 
     // Save payment record
     const prisma = getPrisma();

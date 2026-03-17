@@ -9,9 +9,10 @@ export async function createClient(config: QdrantConfig): Promise<QdrantClient> 
   const logger = getLogger();
 
   // Qdrant Cloud needs port 6333 explicitly
-  const url = config.endpoint.includes(':') && !config.endpoint.endsWith(':6333')
-    ? config.endpoint
-    : `${config.endpoint.replace(/\/$/, '')}:6333`;
+  const url =
+    config.endpoint.includes(':') && !config.endpoint.endsWith(':6333')
+      ? config.endpoint
+      : `${config.endpoint.replace(/\/$/, '')}:6333`;
 
   qdrantClient = new QdrantClient({
     url,

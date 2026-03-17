@@ -52,7 +52,9 @@ export const getPreferences = asyncHandler(async (req, res) => {
 
   const preferences = await profileService.getPreferences(userId);
 
-  return res.status(200).json(new ApiResponse(200, 'Preferences fetched successfully', preferences ?? {}, {}));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, 'Preferences fetched successfully', preferences ?? {}, {}));
 });
 
 // PATCH /api/v1/profile/preferences  — upsert
@@ -65,5 +67,7 @@ export const upsertPreferences = asyncHandler(async (req, res) => {
 
   const preferences = await profileService.upsertPreferences(userId, data);
 
-  return res.status(200).json(new ApiResponse(200, 'Preferences saved successfully', preferences, {}));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, 'Preferences saved successfully', preferences, {}));
 });

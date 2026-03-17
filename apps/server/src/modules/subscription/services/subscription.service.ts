@@ -5,7 +5,6 @@ import type { LimitKey } from 'generated/prisma/client.js';
 const UNLIMITED = -1;
 
 export const subscriptionService = {
-
   // ── Get active subscription with plan + features ───────────────────────────
   getActiveSubscription: async (userId: string) => {
     const prisma = getPrisma();
@@ -95,9 +94,7 @@ export const subscriptionService = {
 
     // For periodic limits — use UsageTrack
     const period = getCurrentPeriod(feature?.resetPeriod ?? 'MONTHLY');
-    const track = subscription.usageTrack.find(
-      t => t.limitKey === limitKey && t.period === period
-    );
+    const track = subscription.usageTrack.find(t => t.limitKey === limitKey && t.period === period);
     const used = track?.used ?? 0;
 
     return { allowed: used < limit, used, limit };
@@ -116,7 +113,9 @@ export const subscriptionService = {
     const period = getCurrentPeriod(feature.resetPeriod);
 
     await prisma.usageTrack.upsert({
-      where: { subscriptionId_limitKey_period: { subscriptionId: subscription.id, limitKey, period } },
+      where: {
+        subscriptionId_limitKey_period: { subscriptionId: subscription.id, limitKey, period },
+      },
       create: { subscriptionId: subscription.id, limitKey, used: 1, period },
       update: { used: { increment: 1 }, lastUsedAt: new Date() },
     });
@@ -177,7 +176,11 @@ export const subscriptionService = {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-async function countDirectUsage(prisma: ReturnType<typeof getPrisma>, userId: string, limitKey: LimitKey): Promise<number> {
+async function countDirectUsage(
+  prisma: ReturnType<typeof getPrisma>,
+  userId: string,
+  limitKey: LimitKey
+): Promise<number> {
   switch (limitKey) {
     case 'VOICE_CLONES':
       return prisma.botVoice.count({
@@ -199,14 +202,18 @@ function getCurrentPeriod(resetPeriod: string): string {
   const d = String(now.getDate()).padStart(2, '0');
 
   switch (resetPeriod) {
-    case 'DAILY':   return `${y}-${m}-${d}`;
+    case 'DAILY':
+      return `${y}-${m}-${d}`;
     case 'WEEKLY': {
       const weekStart = new Date(now);
       weekStart.setDate(now.getDate() - now.getDay());
       return `${weekStart.getFullYear()}-W${Math.ceil(weekStart.getDate() / 7)}`;
     }
-    case 'MONTHLY': return `${y}-${m}`;
-    case 'YEARLY':  return `${y}`;
-    default:        return `${y}-${m}`;
+    case 'MONTHLY':
+      return `${y}-${m}`;
+    case 'YEARLY':
+      return `${y}`;
+    default:
+      return `${y}-${m}`;
   }
 }

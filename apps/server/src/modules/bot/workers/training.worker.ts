@@ -10,7 +10,7 @@ export function initTrainingWorker(): Worker<TrainingJobData> {
 
   trainingWorker = new Worker<TrainingJobData>(
     'bot-training',
-    async (job) => {
+    async job => {
       return await processTraining(job.data);
     },
     {
@@ -19,7 +19,7 @@ export function initTrainingWorker(): Worker<TrainingJobData> {
     }
   );
 
-  trainingWorker.on('completed', (job) => {
+  trainingWorker.on('completed', job => {
     logger.info(`Training job ${job.id} completed`);
   });
 

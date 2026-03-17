@@ -25,32 +25,63 @@ interface PipelineResult {
 // ─── Speech Friendly Text ────────────────────────────────────────────────────
 
 const makeSpeechFriendly = (text: string): string => {
-  return text
-    // markdown hataao
-    .replace(/\*\*?(.*?)\*\*?/g, '$1')
-    .replace(/#{1,6}\s/g, '')
-    .replace(/`+/g, '')
-    .replace(/\[(.*?)\]\(.*?\)/g, '$1')
-    .replace(/^\s*[-*•]\s+/gm, '')
-    // newlines → pauses
-    .replace(/\n{2,}/g, '... ')
-    .replace(/\n/g, ', ')
-    // em dash → natural pause
-    .replace(/—/g, '... ')
-    // multiple spaces clean
-    .replace(/\s{2,}/g, ' ')
-    // sentence end ke baad thoda zyada pause
-    .replace(/([।?!])\s+/g, '$1... ')
-    // "hmm" ke baad pause
-    .replace(/\b(hmm|hm|ummm?)\b/gi, '$1...')
-    // trailing cleanup
-    .trim();
+  return (
+    text
+      // markdown hataao
+      .replace(/\*\*?(.*?)\*\*?/g, '$1')
+      .replace(/#{1,6}\s/g, '')
+      .replace(/`+/g, '')
+      .replace(/\[(.*?)\]\(.*?\)/g, '$1')
+      .replace(/^\s*[-*•]\s+/gm, '')
+      // newlines → pauses
+      .replace(/\n{2,}/g, '... ')
+      .replace(/\n/g, ', ')
+      // em dash → natural pause
+      .replace(/—/g, '... ')
+      // multiple spaces clean
+      .replace(/\s{2,}/g, ' ')
+      // sentence end ke baad thoda zyada pause
+      .replace(/([।?!])\s+/g, '$1... ')
+      // "hmm" ke baad pause
+      .replace(/\b(hmm|hm|ummm?)\b/gi, '$1...')
+      // trailing cleanup
+      .trim()
+  );
 };
 
 // ─── Mood Detection ──────────────────────────────────────────────────────────
 
-const HAPPY_WORDS = ['wah', 'kya baat', 'sach mein', 'amazing', 'zabardast', 'bahut accha', 'khushi', 'mast', 'dhamaal', 'woah', '!', 'haha', 'hehe', 'lol'];
-const SAD_WORDS = ['koi baat nahi', 'arre yaar', 'dukh', 'bura laga', 'mushkil', 'takleef', 'pareshan', 'chinta', 'rona', 'sad', 'sorry', 'hmm...', 'hey sun'];
+const HAPPY_WORDS = [
+  'wah',
+  'kya baat',
+  'sach mein',
+  'amazing',
+  'zabardast',
+  'bahut accha',
+  'khushi',
+  'mast',
+  'dhamaal',
+  'woah',
+  '!',
+  'haha',
+  'hehe',
+  'lol',
+];
+const SAD_WORDS = [
+  'koi baat nahi',
+  'arre yaar',
+  'dukh',
+  'bura laga',
+  'mushkil',
+  'takleef',
+  'pareshan',
+  'chinta',
+  'rona',
+  'sad',
+  'sorry',
+  'hmm...',
+  'hey sun',
+];
 
 type MoodSettings = {
   mood: 'happy' | 'sad' | 'neutral';
@@ -78,13 +109,20 @@ const detectMoodSettings = (text: string): MoodSettings => {
 
 export const runPipeline = async (input: PipelineInput): Promise<PipelineResult> => {
   const {
-    audioBuffer, fileName, language,
-    elvenlabsVoiceId, systemPrompt, history,
-    socket, abortSignal,
+    audioBuffer,
+    fileName,
+    language,
+    elvenlabsVoiceId,
+    systemPrompt,
+    history,
+    socket,
+    abortSignal,
   } = input;
 
   const logger = getLogger();
-  logger.info(`[PIPELINE] Starting | socketId: ${socket.id} | file: ${fileName} | lang: ${language}`);
+  logger.info(
+    `[PIPELINE] Starting | socketId: ${socket.id} | file: ${fileName} | lang: ${language}`
+  );
 
   // ── Step 1: User audio upload + Whisper STT (parallel) ──
   logger.info(`[PIPELINE] Step 1: Uploading user audio & transcribing in parallel`);
@@ -104,7 +142,10 @@ export const runPipeline = async (input: PipelineInput): Promise<PipelineResult>
   // ── Step 2: GPT — poora response collect karo ──
   logger.info(`[PIPELINE] Step 2: GPT stream start`);
   const messages = [
-    { role: 'system' as const, content: Array.isArray(systemPrompt) ? systemPrompt.join('\n\n') : systemPrompt },
+    {
+      role: 'system' as const,
+      content: Array.isArray(systemPrompt) ? systemPrompt.join('\n\n') : systemPrompt,
+    },
     ...history,
     { role: 'user' as const, content: userTranscription },
   ];
@@ -124,7 +165,9 @@ export const runPipeline = async (input: PipelineInput): Promise<PipelineResult>
 
   // Mood detect karo text se → TTS settings adjust karo
   const moodSettings = detectMoodSettings(spokenText);
-  logger.info(`[PIPELINE] Step 3: TTS | mood: ${moodSettings.mood} | stability: ${moodSettings.stability} | style: ${moodSettings.style} | text: "${spokenText.slice(0, 80)}"`);
+  logger.info(
+    `[PIPELINE] Step 3: TTS | mood: ${moodSettings.mood} | stability: ${moodSettings.stability} | style: ${moodSettings.style} | text: "${spokenText.slice(0, 80)}"`
+  );
   socket.emit('audio_chunk', {});
   const aiAudioBuffer = await textToSpeech(elvenlabsVoiceId, spokenText, {
     stability: moodSettings.stability,

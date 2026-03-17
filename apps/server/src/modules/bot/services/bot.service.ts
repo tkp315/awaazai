@@ -22,7 +22,14 @@ const BOT_INCLUDE = {
   trainings: { orderBy: { createdAt: 'desc' as const }, take: 1 },
   botVoices: {
     where: { status: 'READY' as const },
-    select: { id: true, voiceName: true, relation: true, status: true, language: true, elvenlabsVoiceId: true },
+    select: {
+      id: true,
+      voiceName: true,
+      relation: true,
+      status: true,
+      language: true,
+      elvenlabsVoiceId: true,
+    },
   },
   selectedVoice: {
     select: { id: true, voiceName: true, relation: true, status: true, language: true },
@@ -113,7 +120,14 @@ export const botService = {
           capability: { include: { capability: true } },
           botVoices: {
             where: { status: 'READY' },
-            select: { id: true, voiceName: true, relation: true, status: true, language: true, elvenlabsVoiceId: true },
+            select: {
+              id: true,
+              voiceName: true,
+              relation: true,
+              status: true,
+              language: true,
+              elvenlabsVoiceId: true,
+            },
           },
           _count: { select: { knowledge: true, trainings: true } },
         },
@@ -254,7 +268,11 @@ export const botService = {
     });
 
     const queue = getQueue('training');
-    await queue.add('train-bot', { trainingId: training.id, botId, capabilityId: capabilityId ?? null });
+    await queue.add('train-bot', {
+      trainingId: training.id,
+      botId,
+      capabilityId: capabilityId ?? null,
+    });
 
     return training;
   },

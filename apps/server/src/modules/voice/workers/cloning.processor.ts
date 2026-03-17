@@ -3,7 +3,7 @@ import { transcribeAudioBuffer, chat } from '@lib/services/ai/openai/service.js'
 import { cloneVoice, textToSpeech } from '@lib/services/ai/elevenlabs/service.js';
 import { uploadFile } from '@lib/services/cloudinary/index.js';
 import { getLogger } from '@lib/helper/logger/index.js';
-import axios from 'axios'
+import axios from 'axios';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -80,7 +80,9 @@ export const processCloningJob = async (data: {
   if (!botVoice) throw new Error(`BotVoice not found: ${botVoiceId}`);
   if (!botVoice.sampleVoices.length) throw new Error('No samples found for cloning');
 
-  logger.info(`[CLONING] Found ${botVoice.sampleVoices.length} samples for "${botVoice.voiceName}"`);
+  logger.info(
+    `[CLONING] Found ${botVoice.sampleVoices.length} samples for "${botVoice.voiceName}"`
+  );
 
   try {
     // 2. Mark as PROCESSING
@@ -99,11 +101,16 @@ export const processCloningJob = async (data: {
       audioBuffers.push(buffer);
 
       logger.info(`[CLONING] Transcribing sample: ${sample.id}`);
-      const transcription = await transcribeAudioBuffer(buffer, `sample_${sample.id}.mp3`, { language: botVoice.language });
+      const transcription = await transcribeAudioBuffer(buffer, `sample_${sample.id}.mp3`, {
+        language: botVoice.language,
+      });
       transcriptions.push(transcription);
       logger.info(`[CLONING] Transcription done: "${transcription.slice(0, 60)}..."`);
 
-      await prisma.sampleVoice.update({ where: { id: sample.id }, data: { status: 'TRANSCRIBED', transcription } });
+      await prisma.sampleVoice.update({
+        where: { id: sample.id },
+        data: { status: 'TRANSCRIBED', transcription },
+      });
     }
 
     if (!audioBuffers.length) throw new Error('No downloadable samples found');
@@ -125,25 +132,32 @@ export const processCloningJob = async (data: {
     logger.info(`[CLONING] ElevenLabs voice created: ${elvenlabsVoiceId.voiceId}`);
 
     // 6. Generate preview
-    const previewText = botVoice.language === 'hi'
-      ? `नमस्ते! मैं ${botVoice.voiceName ?? 'यहाँ'} हूं। तुमसे बात करके बहुत अच्छा लगा।`
-      : `Hey! It's ${botVoice.voiceName ?? 'me'}. So good to hear from you.`;
+    const previewText =
+      botVoice.language === 'hi'
+        ? `नमस्ते! मैं ${botVoice.voiceName ?? 'यहाँ'} हूं। तुमसे बात करके बहुत अच्छा लगा।`
+        : `Hey! It's ${botVoice.voiceName ?? 'me'}. So good to hear from you.`;
 
     logger.info(`[CLONING] Generating preview TTS`);
     const previewBuffer = await textToSpeech(elvenlabsVoiceId.voiceId, previewText);
 
     // 7. Upload preview to Cloudinary
     logger.info(`[CLONING] Uploading preview to Cloudinary`);
-    const uploaded = await uploadFile(previewBuffer, 'voice-previews', 'audio', { publicId: `preview_${botVoiceId}` });
+    const uploaded = await uploadFile(previewBuffer, 'voice-previews', 'audio', {
+      publicId: `preview_${botVoiceId}`,
+    });
     logger.info(`[CLONING] Preview uploaded: ${uploaded.url}`);
 
     // 8. Mark READY
     await prisma.botVoice.update({
       where: { id: botVoiceId },
-      data: { status: 'READY', elvenlabsVoiceId: elvenlabsVoiceId.voiceId, aiObservations, generatedVoiceSample: uploaded.url },
+      data: {
+        status: 'READY',
+        elvenlabsVoiceId: elvenlabsVoiceId.voiceId,
+        aiObservations,
+        generatedVoiceSample: uploaded.url,
+      },
     });
     logger.info(`[CLONING] ✅ Job complete → READY | voiceId: ${botVoiceId}`);
-
   } catch (err) {
     logger.error(`[CLONING] ❌ Job failed for ${botVoiceId}`, { error: (err as Error).message });
     await prisma.botVoice.update({ where: { id: botVoiceId }, data: { status: 'FAILED' } });

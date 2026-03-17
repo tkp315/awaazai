@@ -1,4 +1,3 @@
-
 import asyncHandler from '@utils/asyncHandler.js';
 import ApiError from '@utils/apiError.js';
 import ApiResponse from '@utils/apiResponse.js';
@@ -18,7 +17,8 @@ export const uploadSampleVoice = asyncHandler(async (req, res) => {
   if (!sessionId) throw new ApiError(400, 'sessionId is required');
 
   const files = req.files as Express.Multer.File[];
-  if (!files || files.length === 0) throw new ApiError(400, 'At least one audio sample is required');
+  if (!files || files.length === 0)
+    throw new ApiError(400, 'At least one audio sample is required');
 
   const uploaded = await voiceHelper.processFiles(files, sessionId);
 
@@ -65,9 +65,11 @@ export const createBotVoice = asyncHandler(async (req, res) => {
   const { sessionId } = req.body;
   if (!sessionId) throw new ApiError(400, 'sessionId is required');
 
-  const voice = await voiceService.createBotVoice(botId as string , userId, data, sessionId);
+  const voice = await voiceService.createBotVoice(botId as string, userId, data, sessionId);
 
-  return res.status(201).json(new ApiResponse(201, 'Voice profile created and queued for cloning', voice, {}));
+  return res
+    .status(201)
+    .json(new ApiResponse(201, 'Voice profile created and queued for cloning', voice, {}));
 });
 
 // GET /api/voices/ready  — all READY voices for logged-in user
@@ -128,12 +130,12 @@ export const retriggerCloning = asyncHandler(async (req, res) => {
   if (!userId) throw new ApiError(401, 'Unauthorized');
 
   const { voiceId } = req.params;
-  const voice = await voiceService.getVoiceById(voiceId as string );
+  const voice = await voiceService.getVoiceById(voiceId as string);
   if (!voice) throw new ApiError(404, 'Voice not found');
 
   if (voice.status === 'PROCESSING') throw new ApiError(409, 'Cloning already in progress');
 
-  await voiceService.retriggerCloning(voiceId as string , voice.botId, userId);
+  await voiceService.retriggerCloning(voiceId as string, voice.botId, userId);
 
   return res.status(200).json(new ApiResponse(200, 'Cloning retriggered', {}, {}));
 });

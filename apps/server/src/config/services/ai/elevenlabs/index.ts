@@ -28,10 +28,10 @@ async function elevenlabsConfig(): Promise<ElevenLabsConfig> {
     // Text-to-Speech settings
     tts: {
       modelId: 'eleven_turbo_v2_5',
-      stability: 0.3,        // kam = zyada natural variation, pauses, emotion
+      stability: 0.3, // kam = zyada natural variation, pauses, emotion
       similarityBoost: 0.85, // cloned voice ke zyada close
-      style: 0.6,            // expressive delivery
-      speed: 0.85,           // thoda slow — 1.0 default, 0.7 min, 1.2 max
+      style: 0.6, // expressive delivery
+      speed: 0.85, // thoda slow — 1.0 default, 0.7 min, 1.2 max
     },
   };
 }

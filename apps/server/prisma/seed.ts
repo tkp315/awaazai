@@ -18,9 +18,24 @@ const PLANS = [
     description: 'Get started with 1 voice clone and basic features',
     displayOrder: 0,
     features: [
-      { name: 'Voice Clones', limitKey: 'VOICE_CLONES' as const, limitValue: 1, resetPeriod: 'NEVER' as const },
-      { name: 'Voice Chats', limitKey: 'VOICE_CHATS' as const, limitValue: 5, resetPeriod: 'NEVER' as const },
-      { name: 'AI Bots', limitKey: 'AI_BOTS' as const, limitValue: 1, resetPeriod: 'NEVER' as const },
+      {
+        name: 'Voice Clones',
+        limitKey: 'VOICE_CLONES' as const,
+        limitValue: 1,
+        resetPeriod: 'NEVER' as const,
+      },
+      {
+        name: 'Voice Chats',
+        limitKey: 'VOICE_CHATS' as const,
+        limitValue: 5,
+        resetPeriod: 'NEVER' as const,
+      },
+      {
+        name: 'AI Bots',
+        limitKey: 'AI_BOTS' as const,
+        limitValue: 1,
+        resetPeriod: 'NEVER' as const,
+      },
     ],
   },
   {
@@ -32,9 +47,24 @@ const PLANS = [
     description: '3 voice clones, unlimited chats, and 2 AI bots',
     displayOrder: 1,
     features: [
-      { name: 'Voice Clones', limitKey: 'VOICE_CLONES' as const, limitValue: 3, resetPeriod: 'NEVER' as const },
-      { name: 'Voice Chats', limitKey: 'VOICE_CHATS' as const, limitValue: -1, resetPeriod: 'NEVER' as const },
-      { name: 'AI Bots', limitKey: 'AI_BOTS' as const, limitValue: 2, resetPeriod: 'NEVER' as const },
+      {
+        name: 'Voice Clones',
+        limitKey: 'VOICE_CLONES' as const,
+        limitValue: 3,
+        resetPeriod: 'NEVER' as const,
+      },
+      {
+        name: 'Voice Chats',
+        limitKey: 'VOICE_CHATS' as const,
+        limitValue: -1,
+        resetPeriod: 'NEVER' as const,
+      },
+      {
+        name: 'AI Bots',
+        limitKey: 'AI_BOTS' as const,
+        limitValue: 2,
+        resetPeriod: 'NEVER' as const,
+      },
     ],
   },
   {
@@ -46,9 +76,24 @@ const PLANS = [
     description: '5 voice clones, unlimited chats, unlimited bots + TTS',
     displayOrder: 2,
     features: [
-      { name: 'Voice Clones', limitKey: 'VOICE_CLONES' as const, limitValue: 5, resetPeriod: 'NEVER' as const },
-      { name: 'Voice Chats', limitKey: 'VOICE_CHATS' as const, limitValue: -1, resetPeriod: 'NEVER' as const },
-      { name: 'AI Bots', limitKey: 'AI_BOTS' as const, limitValue: -1, resetPeriod: 'NEVER' as const },
+      {
+        name: 'Voice Clones',
+        limitKey: 'VOICE_CLONES' as const,
+        limitValue: 5,
+        resetPeriod: 'NEVER' as const,
+      },
+      {
+        name: 'Voice Chats',
+        limitKey: 'VOICE_CHATS' as const,
+        limitValue: -1,
+        resetPeriod: 'NEVER' as const,
+      },
+      {
+        name: 'AI Bots',
+        limitKey: 'AI_BOTS' as const,
+        limitValue: -1,
+        resetPeriod: 'NEVER' as const,
+      },
     ],
   },
 ];
@@ -100,5 +145,8 @@ async function main() {
 }
 
 main()
-  .catch(e => { console.error(e); process.exit(1); })
+  .catch(e => {
+    console.error(e);
+    process.exit(1);
+  })
   .finally(() => prisma.$disconnect());

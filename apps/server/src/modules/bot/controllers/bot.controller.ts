@@ -22,7 +22,9 @@ import { botService } from '../services/bot.service.js';
 // GET /api/v1/available-bots
 export const getAvailableBots = asyncHandler(async (req, res) => {
   const bots = await botService.getAvailableBots();
-  return res.status(200).json(new ApiResponse(200, 'Available bots fetched successfully', bots, {}));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, 'Available bots fetched successfully', bots, {}));
 });
 
 // ==========================================
@@ -118,10 +120,16 @@ export const updateBotCapability = asyncHandler(async (req, res) => {
   const bot = await botService.getBotById(botId as string, userId);
   if (!bot) throw new ApiError(404, 'Bot not found');
 
-  const botCapability = await botService.updateBotCapability(botId as string, capabilityId as string, data);
+  const botCapability = await botService.updateBotCapability(
+    botId as string,
+    capabilityId as string,
+    data
+  );
   if (!botCapability) throw new ApiError(404, 'Capability not found on this bot');
 
-  return res.status(200).json(new ApiResponse(200, 'Capability updated successfully', botCapability, {}));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, 'Capability updated successfully', botCapability, {}));
 });
 
 // ==========================================
@@ -133,15 +141,15 @@ export const addKnowledge = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
   if (!userId) throw new ApiError(401, 'Unauthorized');
 
-  const { botId  } = req.params;
+  const { botId } = req.params;
 
   const { success, data, error } = addKnowledgeSchema.safeParse(req.body);
   if (!success) throw new ApiError(400, `Validation Error: ${error}`);
 
-  const bot = await botService.getBotById(botId as string , userId);
+  const bot = await botService.getBotById(botId as string, userId);
   if (!bot) throw new ApiError(404, 'Bot not found');
 
-  const knowledge = await botService.addKnowledge(botId as string , data);
+  const knowledge = await botService.addKnowledge(botId as string, data);
   return res.status(201).json(new ApiResponse(201, 'Knowledge added successfully', knowledge, {}));
 });
 
@@ -159,7 +167,9 @@ export const getKnowledge = asyncHandler(async (req, res) => {
   if (!bot) throw new ApiError(404, 'Bot not found');
 
   const knowledge = await botService.getKnowledge(botId as string, data);
-  return res.status(200).json(new ApiResponse(200, 'Knowledge fetched successfully', knowledge, {}));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, 'Knowledge fetched successfully', knowledge, {}));
 });
 
 // DELETE /api/v1/bots/:botId/knowledge/:knowledgeId
@@ -218,7 +228,9 @@ export const getTrainings = asyncHandler(async (req, res) => {
   if (!bot) throw new ApiError(404, 'Bot not found');
 
   const trainings = await botService.getTrainings(botId as string, data);
-  return res.status(200).json(new ApiResponse(200, 'Trainings fetched successfully', trainings, {}));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, 'Trainings fetched successfully', trainings, {}));
 });
 
 // ==========================================
@@ -247,7 +259,7 @@ export const updateBotRules = asyncHandler(async (req, res) => {
   const userId = req.user?.id;
   if (!userId) throw new ApiError(401, 'Unauthorized');
 
-  const { botId } = req.params ;
+  const { botId } = req.params;
 
   const { success, data, error } = updateBotRulesSchema.safeParse(req.body);
   if (!success) throw new ApiError(400, `Validation Error: ${error}`);

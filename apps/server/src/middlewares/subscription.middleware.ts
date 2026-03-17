@@ -5,7 +5,10 @@ import type { LimitKey } from 'generated/prisma/client.js';
 export function checkLimit(limitKey: LimitKey) {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const userId = (req as any).user?.id;
-    if (!userId) { res.status(401).json({ message: 'Unauthorized' }); return; }
+    if (!userId) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
 
     const { allowed, used, limit } = await subscriptionService.checkLimit(userId, limitKey);
 

@@ -1,5 +1,5 @@
 import { getPrisma } from '@lib/services/database/prisma/index.js';
-import {MessageModel} from '../../message/models/message.model.js';
+import { MessageModel } from '../../message/models/message.model.js';
 import type { CreateChatInput, EndSessionInput } from '../validators/chat.validation.js';
 
 const chatInclude = {
@@ -19,7 +19,6 @@ const chatInclude = {
 };
 
 export const chatService = {
-
   // ─── Chat ─────────────────────────────────────────────────────────────────
 
   createChat: async (userId: string, input: CreateChatInput) => {
@@ -149,12 +148,7 @@ export const chatService = {
     });
   },
 
-  endSession: async (
-    chatId: string,
-    sessionId: string,
-    userId: string,
-    input: EndSessionInput,
-  ) => {
+  endSession: async (chatId: string, sessionId: string, userId: string, input: EndSessionInput) => {
     const prisma = getPrisma();
 
     const session = await prisma.session.findUnique({
@@ -185,7 +179,7 @@ export const chatService = {
     sessionId: string,
     userId: string,
     limit = 50,
-    before?: string, // MongoDB _id for pagination
+    before?: string // MongoDB _id for pagination
   ) => {
     const prisma = getPrisma();
 
@@ -207,10 +201,7 @@ export const chatService = {
       query['_id'] = { $lt: before };
     }
 
-    const messages = await MessageModel.find(query)
-      .sort({ sentAt: -1 })
-      .limit(limit)
-      .lean();
+    const messages = await MessageModel.find(query).sort({ sentAt: -1 }).limit(limit).lean();
 
     return messages.reverse(); // chronological order
   },

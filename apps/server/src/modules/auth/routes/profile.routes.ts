@@ -1,6 +1,12 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { getMe, updateProfile, updateAvatar, getPreferences, upsertPreferences } from '../controllers/profile.controller.js';
+import {
+  getMe,
+  updateProfile,
+  updateAvatar,
+  getPreferences,
+  upsertPreferences,
+} from '../controllers/profile.controller.js';
 import { authMiddleware } from '@middlewares/auth.middleware.js';
 
 const router = Router();
