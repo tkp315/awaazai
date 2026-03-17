@@ -1,6 +1,43 @@
 import { Tabs } from 'expo-router';
-import { Platform } from 'react-native';
+import { Platform, View, Text, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useProfileStore } from '@/modules/profile';
+
+function ProfileTabIcon({ color, focused }: { color: string; focused: boolean }): React.JSX.Element {
+  const { user } = useProfileStore();
+  const avatar = (user as any)?.profile?.avatar ?? (user as any)?.avatarUrl ?? null;
+  const letter = (user?.fullName ?? 'U').charAt(0).toUpperCase();
+
+  if (avatar) {
+    return (
+      <Image
+        source={{ uri: avatar }}
+        style={{
+          width: 26,
+          height: 26,
+          borderRadius: 13,
+          borderWidth: 2,
+          borderColor: color,
+        }}
+      />
+    );
+  }
+
+  return (
+    <View
+      style={{
+        width: 26,
+        height: 26,
+        borderRadius: 13,
+        backgroundColor: focused ? '#6366f1' : '#94a3b8',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>{letter}</Text>
+    </View>
+  );
+}
 
 export default function TabsLayout(): React.JSX.Element {
   return (
@@ -28,13 +65,35 @@ export default function TabsLayout(): React.JSX.Element {
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => <Ionicons name="home" size={size} color={color} />,
+          headerShown:false
+        }}
+      />
+      <Tabs.Screen
+        name="bots"
+        options={{
+          title: 'Bots',
+          tabBarIcon: ({ color, size }) => <Ionicons name="hardware-chip-outline" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="voices"
+        options={{
+          title: 'Voices',
+          tabBarIcon: ({ color, size }) => <Ionicons name="mic-outline" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="chats"
+        options={{
+          title: 'Chats',
+          tabBarIcon: ({ color, size }) => <Ionicons name="chatbubbles-outline" size={size} color={color} />,
         }}
       />
       <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color, size }) => <Ionicons name="person" size={size} color={color} />,
+          tabBarIcon: ({ color, focused }) => <ProfileTabIcon color={color} focused={focused} />,
         }}
       />
     </Tabs>

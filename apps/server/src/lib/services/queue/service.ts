@@ -1,7 +1,7 @@
 import { Job, JobsOptions } from 'bullmq';
 import { getQueue, getQueueConfig } from './client.js';
 
-type QueueName = 'voiceClone' | 'tts' | 'stt' | 'meeting';
+type QueueName = 'voiceClone' | 'tts' | 'stt' | 'meeting' | 'training';
 
 // ============================================
 // ADD JOB OPERATIONS

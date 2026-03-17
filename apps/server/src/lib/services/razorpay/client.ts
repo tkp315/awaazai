@@ -1,42 +1,18 @@
-// import Razorpay from 'razorpay';
-// import { getLogger } from '../../helper/logger/index.js';
-// import type { RazorpayConfig } from '../../../config/services/razorpay/index.js';
+import Razorpay from 'razorpay';
 
-// let razorpayClient: Razorpay | null = null;
-// let razorpayConfig: RazorpayConfig | null = null;
+let client: Razorpay | null = null;
+let _keySecret: string = '';
 
-// export async function createClient(config: RazorpayConfig): Promise<Razorpay> {
-//   const logger = getLogger();
+export function initRazorpay(keyId: string, keySecret: string): void {
+  client = new Razorpay({ key_id: keyId, key_secret: keySecret });
+  _keySecret = keySecret;
+}
 
-//   razorpayClient = new Razorpay({
-//     key_id: config.keyId,
-//     key_secret: config.keySecret,
-//   });
+export function getClient(): Razorpay {
+  if (!client) throw new Error('Razorpay not initialized');
+  return client;
+}
 
-//   razorpayConfig = config;
-
-//   logger.info('✅ Razorpay client initialized');
-
-//   return razorpayClient;
-// }
-
-// export function getClient(): Razorpay {
-//   if (!razorpayClient) {
-//     throw new Error('Razorpay client not initialized');
-//   }
-//   return razorpayClient;
-// }
-
-// export function getConfig(): RazorpayConfig {
-//   if (!razorpayConfig) {
-//     throw new Error('Razorpay config not initialized');
-//   }
-//   return razorpayConfig;
-// }
-
-// export async function disconnect(): Promise<void> {
-//   const logger = getLogger();
-//   razorpayClient = null;
-//   razorpayConfig = null;
-//   logger.info('Razorpay client disconnected');
-// }
+export function getKeySecret(): string {
+  return _keySecret;
+}

@@ -1,6 +1,12 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useTheme } from '@/hooks';
+import { useProfileStore } from '@/modules/profile';
+import { useEffect } from 'react';
+import { useAuthStore } from '@/modules/auth/auth.store';
+import { useSubscriptionStore } from '@/modules/subscription';
 
 interface MenuItemProps {
   icon: React.ComponentProps<typeof Ionicons>['name'];
@@ -12,361 +18,282 @@ interface MenuItemProps {
   danger?: boolean;
 }
 
-function MenuItem({
-  icon,
-  label,
-  iconBg,
-  iconColor,
-  value,
-  onPress,
-  danger,
-}: MenuItemProps): React.JSX.Element {
+function MenuItem({ icon, label, iconBg, iconColor, value, onPress, danger }: MenuItemProps) {
+  const { colors, spacing, radius, textStyles } = useTheme();
   return (
-    <TouchableOpacity style={styles.menuItem} onPress={onPress} activeOpacity={0.7}>
-      <View style={[styles.menuIcon, { backgroundColor: iconBg }]}>
+    <TouchableOpacity
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: spacing[4],
+        paddingVertical: spacing[3],
+        borderBottomWidth: 1,
+        borderBottomColor: colors.surfaceHover,
+      }}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      <View
+        style={{
+          width: spacing[9],
+          height: spacing[9],
+          borderRadius: radius.button,
+          backgroundColor: iconBg,
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginRight: spacing[3],
+        }}
+      >
         <Ionicons name={icon} size={20} color={iconColor} />
       </View>
-      <Text style={[styles.menuLabel, danger && styles.menuLabelDanger]}>{label}</Text>
-      <View style={styles.menuRight}>
-        {value ? <Text style={styles.menuValue}>{value}</Text> : null}
-        <Ionicons name="chevron-forward" size={16} color="#cbd5e1" />
+      <Text style={{ flex: 1, ...textStyles.bodyMedium, color: danger ? colors.error.main : colors.text }}>
+        {label}
+      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing[1] }}>
+        {value ? <Text style={{ ...textStyles.bodySmall, color: colors.textMuted }}>{value}</Text> : null}
+        <Ionicons name="chevron-forward" size={16} color={colors.border} />
       </View>
     </TouchableOpacity>
   );
 }
 
+// helper: "FRIENDLY" → "Friendly"
+function toLabel(val?: string | null) {
+  if (!val) return undefined;
+  return val.charAt(0) + val.slice(1).toLowerCase();
+}
+
 export default function ProfileScreen(): React.JSX.Element {
+  const { colors, spacing, layout, radius, textStyles } = useTheme();
+  const router = useRouter();
+  const { user, preferences, fetchMe, fetchPreferences, clearUser } = useProfileStore();
+  const { clearTokens } = useAuthStore();
+  const { subscription, limits, fetchSubscription, fetchLimits, getPlanName, isFreePlan } = useSubscriptionStore();
+
+  const handleLogout = () => {
+    Alert.alert('Log Out', 'Are you sure you want to log out?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Log Out',
+        style: 'destructive',
+        onPress: async () => {
+          clearUser();
+          await clearTokens();
+          router.replace('/(auth)/login');
+        },
+      },
+    ]);
+  };
+
+  useEffect(() => {
+    fetchMe();
+    fetchPreferences();
+    fetchSubscription();
+    fetchLimits();
+  }, []);
+
+  const displayName = user?.fullName ?? 'User';
+  const displayEmail = user?.email ?? '';
+  const avatarLetter = displayName.charAt(0).toUpperCase();
+
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
+      <ScrollView
+        contentContainerStyle={{ paddingHorizontal: layout.screenPaddingHorizontal, paddingBottom: spacing[8] }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header */}
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Profile</Text>
-          <TouchableOpacity style={styles.settingsBtn}>
-            <Ionicons name="settings-outline" size={22} color="#334155" />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: spacing[5] }}>
+          <Text style={{ ...textStyles.h3, color: colors.text }}>Profile</Text>
+          <TouchableOpacity
+            style={{
+              width: spacing[11],
+              height: spacing[11],
+              borderRadius: radius.avatar,
+              backgroundColor: colors.surface,
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderWidth: 1,
+              borderColor: colors.border,
+            }}
+          >
+            <Ionicons name="settings-outline" size={layout.iconLarge} color={colors.text} />
           </TouchableOpacity>
         </View>
 
         {/* User Card */}
-        <View style={styles.userCard}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>U</Text>
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: radius.card,
+            padding: spacing[4],
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: colors.border,
+            marginBottom: spacing[4],
+          }}
+        >
+          <View
+            style={{
+              width: spacing[14],
+              height: spacing[14],
+              borderRadius: radius.avatar,
+              backgroundColor: colors.primary[500],
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginRight: spacing[3],
+            }}
+          >
+            <Text style={{ ...textStyles.h3, color: colors.textInverse }}>{avatarLetter}</Text>
           </View>
-          <View style={styles.userInfo}>
-            <Text style={styles.userName}>User</Text>
-            <Text style={styles.userEmail}>user@example.com</Text>
+          <View style={{ flex: 1 }}>
+            <Text style={{ ...textStyles.labelLarge, color: colors.text }}>{displayName}</Text>
+            <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[0.5] }}>
+              {displayEmail}
+            </Text>
           </View>
-          <TouchableOpacity style={styles.editBtn}>
-            <Ionicons name="pencil" size={16} color="#6366f1" />
+          <TouchableOpacity
+            onPress={() => router.push('/(routes)/profile/update')}
+            activeOpacity={0.7}
+            style={{
+              width: spacing[9],
+              height: spacing[9],
+              borderRadius: radius.avatar,
+              backgroundColor: colors.primary[50],
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Ionicons name="pencil" size={layout.iconSmall} color={colors.primary[500]} />
           </TouchableOpacity>
         </View>
 
         {/* Subscription Card */}
-        <View style={styles.subscriptionCard}>
-          <View style={styles.subCardLeft}>
-            <View style={styles.subBadge}>
-              <Ionicons name="star" size={12} color="#ffffff" />
-              <Text style={styles.subBadgeText}>FREE</Text>
+        <View
+          style={{
+            backgroundColor: colors.primary[950],
+            borderRadius: radius.card,
+            padding: spacing[5],
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginBottom: spacing[7],
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: colors.primary[500],
+                alignSelf: 'flex-start',
+                borderRadius: radius.badge,
+                paddingHorizontal: spacing[2],
+                paddingVertical: spacing[0.5],
+                gap: spacing[1],
+                marginBottom: spacing[2],
+              }}
+            >
+              <Ionicons name={isFreePlan() ? 'star-outline' : 'star'} size={11} color={colors.textInverse} />
+              <Text style={{ ...textStyles.labelSmall, color: colors.textInverse }}>
+                {getPlanName().toUpperCase()}
+              </Text>
             </View>
-            <Text style={styles.subTitle}>Free Plan</Text>
-            <Text style={styles.subSubtitle}>Upgrade to unlock unlimited voices</Text>
+            <Text style={{ ...textStyles.labelLarge, color: colors.textInverse }}>{getPlanName()} Plan</Text>
+            <Text style={{ ...textStyles.bodySmall, color: colors.textMuted, marginTop: spacing[0.5] }}>
+              {isFreePlan() ? 'Upgrade to unlock unlimited voices' : 'Active subscription'}
+            </Text>
           </View>
-          <TouchableOpacity style={styles.upgradeBtn} activeOpacity={0.85}>
-            <Text style={styles.upgradeBtnText}>Upgrade</Text>
-          </TouchableOpacity>
+          {isFreePlan() && (
+            <TouchableOpacity
+              onPress={() => router.push('/(routes)/subscription/plans')}
+              style={{
+                backgroundColor: colors.primary[500],
+                borderRadius: radius.button,
+                paddingHorizontal: spacing[4],
+                paddingVertical: spacing[2],
+              }}
+              activeOpacity={0.85}
+            >
+              <Text style={{ ...textStyles.buttonSmall, color: colors.textInverse }}>Upgrade</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Usage Stats */}
-        <Text style={styles.sectionTitle}>Usage This Month</Text>
-        <View style={styles.usageRow}>
-          <View style={styles.usageStat}>
-            <Text style={styles.usageValue}>0</Text>
-            <Text style={styles.usageLabel}>Voices Cloned</Text>
-          </View>
-          <View style={styles.usageDivider} />
-          <View style={styles.usageStat}>
-            <Text style={styles.usageValue}>0</Text>
-            <Text style={styles.usageLabel}>Conversations</Text>
-          </View>
-          <View style={styles.usageDivider} />
-          <View style={styles.usageStat}>
-            <Text style={styles.usageValue}>0 min</Text>
-            <Text style={styles.usageLabel}>Audio Generated</Text>
-          </View>
+        <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}>
+          USAGE
+        </Text>
+        <View
+          style={{
+            backgroundColor: colors.surface,
+            borderRadius: radius.card,
+            padding: spacing[5],
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderWidth: 1,
+            borderColor: colors.border,
+            marginBottom: spacing[7],
+          }}
+        >
+          {[
+            {
+              value: limits ? `${limits.VOICE_CLONES.used}${limits.VOICE_CLONES.limit === -1 ? '' : `/${limits.VOICE_CLONES.limit}`}` : '—',
+              label: 'Voices',
+            },
+            {
+              value: limits ? `${limits.VOICE_CHATS.used}${limits.VOICE_CHATS.limit === -1 ? '' : `/${limits.VOICE_CHATS.limit}`}` : '—',
+              label: 'Chats',
+            },
+            {
+              value: limits ? `${limits.AI_BOTS.used}${limits.AI_BOTS.limit === -1 ? '' : `/${limits.AI_BOTS.limit}`}` : '—',
+              label: 'Bots',
+            },
+          ].map((stat, i, arr) => (
+            <View key={stat.label} style={{ flex: 1, flexDirection: 'row' }}>
+              <View style={{ flex: 1, alignItems: 'center' }}>
+                <Text style={{ ...textStyles.h3, color: colors.text }}>{stat.value}</Text>
+                <Text style={{ ...textStyles.caption, color: colors.textMuted, marginTop: spacing[1], textAlign: 'center' }}>
+                  {stat.label}
+                </Text>
+              </View>
+              {i < arr.length - 1 && (
+                <View style={{ width: 1, height: 36, backgroundColor: colors.border, alignSelf: 'center' }} />
+              )}
+            </View>
+          ))}
         </View>
 
         {/* Account */}
-        <Text style={styles.sectionTitle}>Account</Text>
-        <View style={styles.menuGroup}>
-          <MenuItem
-            icon="card-outline"
-            label="Subscription"
-            iconBg="#ede9fe"
-            iconColor="#7c3aed"
-            value="Free"
-          />
-          <MenuItem
-            icon="bar-chart-outline"
-            label="Usage & Limits"
-            iconBg="#dbeafe"
-            iconColor="#2563eb"
-          />
-          <MenuItem
-            icon="shield-checkmark-outline"
-            label="Privacy & Security"
-            iconBg="#dcfce7"
-            iconColor="#16a34a"
-          />
+        <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}>ACCOUNT</Text>
+        <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', marginBottom: spacing[5] }}>
+          <MenuItem icon="card-outline" label="Subscription" iconBg={colors.primary[100]} iconColor={colors.primary[600]} value={getPlanName()} onPress={() => router.push('/(routes)/subscription/plans')} />
+          <MenuItem icon="bar-chart-outline" label="Usage & Limits" iconBg={colors.secondary[100]} iconColor={colors.secondary[600]} onPress={() => router.push('/(routes)/subscription/usage')} />
+          <MenuItem icon="shield-checkmark-outline" label="Privacy & Security" iconBg={colors.success.light} iconColor={colors.success.dark} />
         </View>
 
         {/* Preferences */}
-        <Text style={styles.sectionTitle}>Preferences</Text>
-        <View style={styles.menuGroup}>
-          <MenuItem
-            icon="notifications-outline"
-            label="Notifications"
-            iconBg="#fef3c7"
-            iconColor="#d97706"
-          />
-          <MenuItem
-            icon="help-circle-outline"
-            label="Help & Support"
-            iconBg="#f1f5f9"
-            iconColor="#64748b"
-          />
-          <MenuItem
-            icon="information-circle-outline"
-            label="About AwaazAI"
-            iconBg="#f1f5f9"
-            iconColor="#64748b"
-          />
+        <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}>PREFERENCES</Text>
+        <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', marginBottom: spacing[5] }}>
+          <MenuItem icon="mic-outline" label="Voice Preferences" iconBg={colors.primary[100]} iconColor={colors.primary[600]} value={toLabel(preferences?.talkType) ?? 'Set up'} onPress={() => router.push('/(routes)/profile/voice-preferences')} />
+          <MenuItem icon="bookmark-outline" label="Topics" iconBg={colors.secondary[100]} iconColor={colors.secondary[600]} value={preferences?.topicsOfInterest?.length ? `${preferences.topicsOfInterest.length} topics` : 'Set up'} onPress={() => router.push('/(routes)/profile/topics')} />
+        </View>
+
+        {/* App */}
+        <Text style={{ ...textStyles.labelSmall, color: colors.textMuted, marginBottom: spacing[2] }}>APP</Text>
+        <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', marginBottom: spacing[5] }}>
+          <MenuItem icon="notifications-outline" label="Notifications" iconBg={colors.warning.light} iconColor={colors.warning.dark} />
+          <MenuItem icon="help-circle-outline" label="Help & Support" iconBg={colors.surfaceHover} iconColor={colors.textMuted} />
+          <MenuItem icon="information-circle-outline" label="About AwaazAI" iconBg={colors.surfaceHover} iconColor={colors.textMuted} />
         </View>
 
         {/* Logout */}
-        <View style={styles.menuGroup}>
-          <MenuItem
-            icon="log-out-outline"
-            label="Log Out"
-            iconBg="#fee2e2"
-            iconColor="#dc2626"
-            danger
-          />
+        <View style={{ backgroundColor: colors.surface, borderRadius: radius.card, borderWidth: 1, borderColor: colors.border, overflow: 'hidden', marginBottom: spacing[5] }}>
+          <MenuItem icon="log-out-outline" label="Log Out" iconBg={colors.error.light} iconColor={colors.error.main} danger onPress={handleLogout} />
         </View>
 
-        <Text style={styles.version}>AwaazAI v1.0.0</Text>
+        <Text style={{ ...textStyles.caption, color: colors.border, textAlign: 'center' }}>AwaazAI v1.0.0</Text>
       </ScrollView>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 32,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 20,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#0f172a',
-  },
-  settingsBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-  },
-  userCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    marginBottom: 16,
-  },
-  avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#6366f1',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 14,
-  },
-  avatarText: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-  userInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#0f172a',
-  },
-  userEmail: {
-    fontSize: 13,
-    color: '#64748b',
-    marginTop: 2,
-  },
-  editBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#eef2ff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  subscriptionCard: {
-    backgroundColor: '#0f172a',
-    borderRadius: 16,
-    padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 28,
-  },
-  subCardLeft: {
-    flex: 1,
-  },
-  subBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#6366f1',
-    alignSelf: 'flex-start',
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    gap: 4,
-    marginBottom: 8,
-  },
-  subBadgeText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#ffffff',
-    letterSpacing: 0.5,
-  },
-  subTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-  subSubtitle: {
-    fontSize: 12,
-    color: '#94a3b8',
-    marginTop: 2,
-  },
-  upgradeBtn: {
-    backgroundColor: '#6366f1',
-    borderRadius: 10,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-  },
-  upgradeBtnText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#ffffff',
-  },
-  sectionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#64748b',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 10,
-  },
-  usageRow: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    marginBottom: 28,
-  },
-  usageStat: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  usageValue: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#0f172a',
-  },
-  usageLabel: {
-    fontSize: 11,
-    color: '#94a3b8',
-    marginTop: 4,
-    textAlign: 'center',
-  },
-  usageDivider: {
-    width: 1,
-    height: 36,
-    backgroundColor: '#e2e8f0',
-  },
-  menuGroup: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#e2e8f0',
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f1f5f9',
-  },
-  menuIcon: {
-    width: 36,
-    height: 36,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  menuLabel: {
-    flex: 1,
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#1e293b',
-  },
-  menuLabelDanger: {
-    color: '#dc2626',
-  },
-  menuRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  menuValue: {
-    fontSize: 13,
-    color: '#94a3b8',
-  },
-  version: {
-    textAlign: 'center',
-    fontSize: 12,
-    color: '#cbd5e1',
-    marginTop: 8,
-  },
-});

@@ -1,5 +1,5 @@
 // Helper Functions
-// import * as Application from 'expo-application'
+import * as Application from 'expo-application';
 import { Platform } from 'react-native';
 
 /**
@@ -84,10 +84,9 @@ export const isEmpty = (value: unknown): boolean => {
   return false;
 };
 
-// export const getDeviceId = async() =>{
-
-//   if(Platform.OS==='ios'){
-//     return await Application.getIosIdForVendorAsync();
-//   }
-//   return Application.getAndroidId();
-// }
+export const getDeviceId = async (): Promise<string | null> => {
+  if (Platform.OS === 'ios') {
+    return await Application.getIosIdForVendorAsync();
+  }
+  return Application.getAndroidId();
+};

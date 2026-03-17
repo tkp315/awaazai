@@ -1,6 +1,25 @@
-// AwaazAI Database Schema - Bot Module
-// Tables: Bot, Capability, CapabilityFunction, BotCapability, BotVoice, SampleVoice,
-//         BotTraining, BotKnowledge, BotConfig, BotRules, BotRemainder
+
+model AvailableBot {
+  id          String  @id @default(uuid())
+  name        String  // "VoiceTwin", "StudyMate", "NoteForge"
+  description String  // "Clone & chat in their voice"
+  icon        String? // emoji "🎤" or icon name for UI
+  isActive    Boolean @default(true) // admin enable/disable kar sakta hai
+  sortOrder   Int     @default(0)    // display order in app
+
+  // Capabilities this bot type supports (implicit M2M)
+  capabilities Capability[]
+
+  // User bots created from this template
+  bots Bot[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// USER BOT (Instance of AvailableBot)
+// ==========================================
 
 model Bot {
   id         String    @id @default(uuid())
@@ -9,23 +28,38 @@ model Bot {
   status     BotStatus @default(ACTIVE)
   avatar     String?
   lastUsedAt DateTime?
-  isPublic   Boolean
+  isPublic   Boolean   @default(false)
 
   // User Relation
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+ 
+  // AvailableBot Template Relation
+  availableBotId String
+  availableBot   AvailableBot @relation(fields: [availableBotId], references: [id])
+
+  // Knowledge mode
+  knowledgeMode   KnowledgeMode @default(AI_ONLY)
+
+  // Selected voice (optional — from botVoices)
+  selectedVoiceId String?
+  selectedVoice   BotVoice? @relation("BotSelectedVoice", fields: [selectedVoiceId], references: [id])
 
   // Nested Relations
   capability   BotCapability[]
-  botVoices    BotVoice[]
+  botVoices    BotVoice[]      @relation("BotVoices")
   trainings    BotTraining[]
   knowledge    BotKnowledge[]
   config       BotConfig?
   rules        BotRules?
   botRemainder BotRemainder[]
+  chats        BotChat[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([availableBotId])
 }
 
 // ==========================================
@@ -36,12 +70,13 @@ model Capability {
   id          String @id @default(uuid())
   name        String
   description String
-
-  // Nested Relations
-  functions     CapabilityFunction[]
-  botCapability BotCapability[]
-  trainings     BotTraining[]
-  knowledge     BotKnowledge[]
+  availableBotId String
+   availableBots  AvailableBot @relation(fields: [availableBotId],references: [id],onDelete: Cascade,onUpdate: Cascade)
+  functions      CapabilityFunction[]
+  botCapability  BotCapability[]
+     // implicit M2M
+  trainings      BotTraining[]
+  knowledge      BotKnowledge[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -87,33 +122,35 @@ model BotVoice {
   elvenlabsVoiceId     String?
   voiceName            String?
   relation             String?  // Mom, Dad, Friend, etc.
-  status               String
+  status               VoiceStatus @default(PENDING)
   language             String
   slangs               String[] @default([])
   aiObservations       Json?    // { gender, language, accent }
   aiCallUserAs         String?  // "beta", "bhai", etc.
-
+  sessionId String @unique
   // Bot Relation
   botId String
-  bot   Bot    @relation(fields: [botId], references: [id])
+  bot   Bot    @relation("BotVoices", fields: [botId], references: [id])
 
   // Nested Relations
-  sampleVoices SampleVoice[]
-  chat         Chat?
+  sampleVoices    SampleVoice[]
+  chat            Chat?
+  selectedInBots  Bot[]         @relation("BotSelectedVoice")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
 }
 
 model SampleVoice {
-  id       String @id @default(uuid())
-  url      String?
-  status   String
-  duration Int    // in seconds
-
+  id           String       @id @default(uuid())
+  url          String?
+  status       SampleStatus @default(UPLOADED)
+  duration     Int          // in seconds
+  transcription String?
+  sessionId String
   // BotVoice Relation
-  botVoiceId String
-  botVoice   BotVoice @relation(fields: [botVoiceId], references: [id])
+  botVoiceId String?
+  botVoice   BotVoice? @relation(fields: [botVoiceId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
@@ -280,6 +317,57 @@ model BotRules {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ==========================================
+// BOT CHAT (Chatbot conversation threads)
+// ==========================================
+
+model BotChat {
+  id        String   @id @default(uuid())
+  title     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  botId String
+  bot   Bot    @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  sessions BotSession[]
+
+  @@index([userId])
+  @@index([botId])
+}
+
+model BotSession {
+  id        String    @id @default(uuid())
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  summary   String?
+
+  botChatId String
+  botChat   BotChat @relation(fields: [botChatId], references: [id], onDelete: Cascade)
+
+  messages BotMessage[]
+
+  @@index([botChatId])
+}
+
+model BotMessage {
+  id         String         @id @default(uuid())
+  role       BotMessageRole
+  content    String
+  voiceUrl   String?
+  ragUsed    Boolean        @default(false)
+  ragSources Json?
+  createdAt  DateTime       @default(now())
+
+  botSessionId String
+  botSession   BotSession @relation(fields: [botSessionId], references: [id], onDelete: Cascade)
+
+  @@index([botSessionId])
 }
 
 // ==========================================

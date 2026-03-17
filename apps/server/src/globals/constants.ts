@@ -1,5 +1,6 @@
 // App Info
 export const APP_NAME = 'AwaazAI';
+export const AWAAZBOT_AVAILABLE_BOT_ID = '3f0b66d8-b443-4804-92e0-cb8fa0812401';
 export const API_VERSION = 'v1';
 export const API_PREFIX = `/api/${API_VERSION}`;
 
