@@ -33,6 +33,7 @@ export interface QueueConfig {
     tts: QueueJobConfig;
     stt: QueueJobConfig;
     meeting: QueueJobConfig;
+    training: QueueJobConfig;
   };
 }
 
@@ -100,6 +101,17 @@ async function queueConfig(): Promise<QueueConfig> {
         timeout: 10 * 60 * 1000, // 10 minutes
         removeOnComplete: 30,
         removeOnFail: 20,
+      },
+
+      // Bot training - embed knowledge into Qdrant
+      training: {
+        name: 'bot-training',
+        concurrency: 2,
+        attempts: 3,
+        backoff: { type: 'exponential', delay: 5000 },
+        timeout: 10 * 60 * 1000, // 10 minutes
+        removeOnComplete: 50,
+        removeOnFail: 30,
       },
     },
   };

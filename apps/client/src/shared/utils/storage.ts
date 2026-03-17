@@ -20,10 +20,15 @@ export async function saveToken(key: string, value: string) {
 export async function getToken(key: string) {
   try {
     const value = await SecureStore.getItemAsync(key);
-    const formatedValue = typeof value === 'string' ? JSON.parse(value) : value;
-    return formatedValue;
+    if (!value) return null;
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value; // plain string (e.g. JWT token)
+    }
   } catch (error) {
     console.error('Err while getting value', error);
+    return null;
   }
 }
 

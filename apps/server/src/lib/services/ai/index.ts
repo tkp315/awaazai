@@ -34,5 +34,7 @@ export async function init(config: AIConfig, appObj: Application): Promise<AILib
 // Re-export individual services for direct access
 export * as openai from './openai/index.js';
 export * as elevenlabs from './elevenlabs/index.js';
+export * as qdrant from './qdrant/index.js';
+export * as embeddings from './embeddings/index.js';
 
 export default { init };

@@ -110,8 +110,21 @@ export async function transcribeAudioBuffer(
   const config = getConfig();
 
   // Create a File-like object from the buffer
+  const ext = fileName.split('.').pop()?.toLowerCase() ?? 'm4a';
+  const mimeMap: Record<string, string> = {
+    mp3: 'audio/mpeg',
+    mp4: 'audio/mp4',
+    m4a: 'audio/mp4',
+    wav: 'audio/wav',
+    webm: 'audio/webm',
+    ogg: 'audio/ogg',
+    flac: 'audio/flac',
+    mpeg: 'audio/mpeg',
+    mpga: 'audio/mpeg',
+  };
+  const mimeType = mimeMap[ext] ?? 'audio/mp4';
   const uint8Array = new Uint8Array(audioBuffer);
-  const file = new File([uint8Array], fileName, { type: 'audio/webm' });
+  const file = new File([uint8Array], fileName, { type: mimeType });
 
   const response = await client.audio.transcriptions.create({
     file: file,

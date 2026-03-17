@@ -1,4 +1,5 @@
 import { getPrisma } from '@lib/services/database/prisma/index.js';
+import { subscriptionService } from '@modules/subscription/services/subscription.service.js';
 
 interface CreateUserPayload {
   fullName: string;
@@ -71,6 +72,9 @@ export const authServices = {
         accountType: payload.accountType ?? 'INDIVIDUAL',
       },
     });
+
+    // Auto-assign free plan on registration
+    await subscriptionService.assignFreePlan(user.id).catch(() => {});
 
     return user;
   },

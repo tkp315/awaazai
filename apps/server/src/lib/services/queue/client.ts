@@ -59,7 +59,7 @@ export async function createQueues(config: QueueLibConfig): Promise<Map<string, 
   return queues;
 }
 
-export function getQueue(name: 'voiceClone' | 'tts' | 'stt' | 'meeting'): Queue {
+export function getQueue(name: 'voiceClone' | 'tts' | 'stt' | 'meeting' | 'training'): Queue {
   const queue = queues.get(name);
   if (!queue) {
     throw new Error(`Queue ${name} not initialized`);
@@ -86,7 +86,7 @@ export function getQueueConfig(): QueueConfig {
 }
 
 export function registerWorker(
-  queueName: 'voiceClone' | 'tts' | 'stt' | 'meeting',
+  queueName: 'voiceClone' | 'tts' | 'stt' | 'meeting' | 'training',
   processor: (job: { id?: string; name: string; data: unknown }) => Promise<unknown>
 ): Worker {
   const logger = getLogger();
@@ -117,12 +117,14 @@ export function registerWorker(
   return worker;
 }
 
-export function getWorker(name: 'voiceClone' | 'tts' | 'stt' | 'meeting'): Worker | undefined {
+export function getWorker(
+  name: 'voiceClone' | 'tts' | 'stt' | 'meeting' | 'training'
+): Worker | undefined {
   return workers.get(name);
 }
 
 export function registerQueueEvents(
-  queueName: 'voiceClone' | 'tts' | 'stt' | 'meeting'
+  queueName: 'voiceClone' | 'tts' | 'stt' | 'meeting' | 'training'
 ): QueueEvents {
   const config = getQueueConfig();
   const jobConfig = config.jobs[queueName];

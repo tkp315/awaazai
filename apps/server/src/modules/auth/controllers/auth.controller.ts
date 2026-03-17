@@ -12,6 +12,7 @@ import { authServices } from '../services/auth.service.js';
 import { authHelpers } from '../helpers/auth.helper.js';
 import { CookieOptions } from 'express';
 import { OAuth2Client } from 'google-auth-library';
+import { profileService } from '../services/profile.service.js';
 
 // signup *
 // send otp *
@@ -49,7 +50,8 @@ export const signup = asyncHandler(async (req, res) => {
     userStatus: 'ACTIVE',
     accountType: 'INDIVIDUAL',
   };
-  await authServices.createUser(createUserPayload);
+  const user = await authServices.createUser(createUserPayload);
+  await profileService.createProfile(user.id);
 
   return res.status(201).json(new ApiResponse(201, 'User registered successfully', {}, {}));
 });
@@ -298,6 +300,7 @@ export const googleLogin = asyncHandler(async (req, res) => {
       accountType: 'INDIVIDUAL',
     };
     user = await authServices.createUser(createUserPayload);
+    await profileService.createProfile(user.id);
   }
   const tokenPayload = {
     id: user.id,
