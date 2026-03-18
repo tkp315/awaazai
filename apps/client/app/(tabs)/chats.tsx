@@ -275,7 +275,13 @@ export default function ChatsScreen(): React.JSX.Element {
           paddingBottom: spacing[8],
         }}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary[500]} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary[500]}
+          />
+        }
       >
         {/* Header */}
         <View

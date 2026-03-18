@@ -10,7 +10,7 @@ export interface PostgresConfig {
 }
 
 async function pgConfig(): Promise<PostgresConfig> {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'prod';
   return {
     url: process.env.DATABASE_URL || '',
     maxConnections: parseInt(process.env.PG_MAX_CONNECTIONS || '20', 10),

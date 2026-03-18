@@ -14,7 +14,10 @@ export function checkLimit(limitKey: LimitKey) {
     // Admins bypass all plan limits
     const prisma = getPrisma();
     const user = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
-    if (user?.role === 'ADMIN') { next(); return; }
+    if (user?.role === 'ADMIN') {
+      next();
+      return;
+    }
 
     const { allowed, used, limit } = await subscriptionService.checkLimit(userId, limitKey);
 
