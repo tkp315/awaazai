@@ -10,5 +10,7 @@ export default defineConfig({
   },
   datasource: {
     url: process.env['DATABASE_URL'],
+    // Supabase ke liye direct connection (migrations ke liye)
+    directUrl: process.env['DIRECT_URL'],
   },
 });
