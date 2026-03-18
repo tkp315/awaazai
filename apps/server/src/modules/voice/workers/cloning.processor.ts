@@ -3,7 +3,9 @@ import { transcribeAudioBuffer, chat } from '@lib/services/ai/openai/service.js'
 import { cloneVoice, textToSpeech } from '@lib/services/ai/elevenlabs/service.js';
 import { uploadFile } from '@lib/services/cloudinary/index.js';
 import { getLogger } from '@lib/helper/logger/index.js';
+import { sendPushToUser } from '@modules/notification/controllers/notification.controller.js';
 import axios from 'axios';
+import path from 'path';
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -91,17 +93,20 @@ export const processCloningJob = async (data: {
     logger.info(`[CLONING] Status → PROCESSING`);
 
     // 3. Download + transcribe each sample
-    const audioBuffers: Buffer[] = [];
+    const audioFiles: { buffer: Buffer; ext: string }[] = [];
     const transcriptions: string[] = [];
 
     for (const sample of botVoice.sampleVoices) {
       if (!sample.url) continue;
       logger.info(`[CLONING] Downloading sample: ${sample.id}`);
       const buffer = await downloadAsBuffer(sample.url);
-      audioBuffers.push(buffer);
 
-      logger.info(`[CLONING] Transcribing sample: ${sample.id}`);
-      const transcription = await transcribeAudioBuffer(buffer, `sample_${sample.id}.mp3`, {
+      // Detect real extension from URL (handles .m4a, .mp3, .wav, etc.)
+      const ext = path.extname(new URL(sample.url).pathname).slice(1).toLowerCase() || 'mp3';
+      audioFiles.push({ buffer, ext });
+
+      logger.info(`[CLONING] Transcribing sample: ${sample.id} (ext: ${ext})`);
+      const transcription = await transcribeAudioBuffer(buffer, `sample_${sample.id}.${ext}`, {
         language: botVoice.language,
       });
       transcriptions.push(transcription);
@@ -113,7 +118,7 @@ export const processCloningJob = async (data: {
       });
     }
 
-    if (!audioBuffers.length) throw new Error('No downloadable samples found');
+    if (!audioFiles.length) throw new Error('No downloadable samples found');
 
     // 4. GPT observations
     logger.info(`[CLONING] Generating AI observations via GPT`);
@@ -128,7 +133,7 @@ export const processCloningJob = async (data: {
 
     // 5. ElevenLabs IVC
     logger.info(`[CLONING] Cloning voice on ElevenLabs (IVC)`);
-    const elvenlabsVoiceId = await cloneVoice(audioBuffers, { name: botVoice.voiceName! });
+    const elvenlabsVoiceId = await cloneVoice(audioFiles, { name: botVoice.voiceName! });
     logger.info(`[CLONING] ElevenLabs voice created: ${elvenlabsVoiceId.voiceId}`);
 
     // 6. Generate preview
@@ -158,6 +163,13 @@ export const processCloningJob = async (data: {
       },
     });
     logger.info(`[CLONING] ✅ Job complete → READY | voiceId: ${botVoiceId}`);
+
+    // Push notification
+    await sendPushToUser(data.userId, {
+      title: 'Voice Clone Ready! 🎙️',
+      body: `${botVoice.voiceName ?? 'Your voice clone'} is ready to chat.`,
+      data: { botVoiceId, botId: data.botId, screen: 'voices' },
+    });
   } catch (err) {
     logger.error(`[CLONING] ❌ Job failed for ${botVoiceId}`, { error: (err as Error).message });
     await prisma.botVoice.update({ where: { id: botVoiceId }, data: { status: 'FAILED' } });

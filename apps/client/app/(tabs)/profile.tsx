@@ -347,6 +347,13 @@ export default function ProfileScreen(): React.JSX.Element {
             onPress={() => router.push('/(routes)/subscription/usage')}
           />
           <MenuItem
+            icon="receipt-outline"
+            label="Payment History"
+            iconBg={colors.warning.light}
+            iconColor={colors.warning.dark}
+            onPress={() => router.push('/(routes)/subscription/payments')}
+          />
+          <MenuItem
             icon="shield-checkmark-outline"
             label="Privacy & Security"
             iconBg={colors.success.light}

@@ -180,7 +180,28 @@ export default function BotsScreen(): React.JSX.Element {
             </Text>
           </View>
         ) : (
-          availableBots.map(bot => <AvailableBotCard key={bot.id} bot={bot} />)
+          <>
+            {availableBots.map(bot => (
+              <AvailableBotCard key={bot.id} bot={bot} />
+            ))}
+            {availableBots.length > 0 && (
+              <View
+                style={{
+                  alignItems: 'center',
+                  paddingVertical: spacing[5],
+                  gap: spacing[1],
+                }}
+              >
+                <Text style={{ fontSize: 22 }}>✨</Text>
+                <Text style={{ ...textStyles.labelMedium, color: colors.textMuted }}>
+                  Many more to come...
+                </Text>
+                <Text style={{ ...textStyles.caption, color: colors.border }}>
+                  We're building new bots for you
+                </Text>
+              </View>
+            )}
+          </>
         )}
       </ScrollView>
     </SafeAreaView>

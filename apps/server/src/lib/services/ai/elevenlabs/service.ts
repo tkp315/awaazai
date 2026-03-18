@@ -24,7 +24,7 @@ export async function textToSpeech(
     text,
     modelId: options?.modelId || config.tts.modelId,
     
-    seed: options?.speed ?? config.tts.speed,
+    // speed: options?.speed ?? config.tts.speed,
     voiceSettings: {
       stability: options?.stability ?? config.tts.stability,
       similarityBoost: options?.similarityBoost ?? config.tts.similarityBoost,
@@ -52,7 +52,7 @@ export async function* textToSpeechStream(
   const audio = await client.textToSpeech.convert(voiceId, {
     text,
     modelId: options?.modelId || config.tts.modelId,
-    seed: options?.speed ?? config.tts.speed,
+    // speed: options?.speed ?? config.tts.speed,
     voiceSettings: {
       stability: options?.stability ?? config.tts.stability,
       similarityBoost: options?.similarityBoost ?? config.tts.similarityBoost,
@@ -72,15 +72,28 @@ export interface VoiceCloneOptions {
   labels?: Record<string, string>;
 }
 
+const AUDIO_MIME: Record<string, string> = {
+  mp3: 'audio/mpeg',
+  mp4: 'audio/mp4',
+  m4a: 'audio/mp4',
+  wav: 'audio/wav',
+  webm: 'audio/webm',
+  ogg: 'audio/ogg',
+  flac: 'audio/flac',
+};
+
 export async function cloneVoice(
-  files: Buffer[],
+  files: { buffer: Buffer; ext: string }[],
   options: VoiceCloneOptions
 ): Promise<{ voiceId: string }> {
   const client = getClient();
 
-  // Convert buffers to File objects
+  // Convert buffers to File objects with correct name + mime
   const audioFiles = files.map(
-    (buffer: any, index) => new File([buffer], `sample_${index}.mp3`, { type: 'audio/mpeg' })
+    ({ buffer, ext }, index) =>
+      new File([new Uint8Array(buffer)], `sample_${index}.${ext}`, {
+        type: AUDIO_MIME[ext] ?? 'audio/mpeg',
+      })
   );
 
   const voice = await client.voices.ivc.create({

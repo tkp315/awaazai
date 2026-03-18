@@ -1,4 +1,5 @@
-import loadConfig, { AppConfig } from './config.loader.js';
+import loadConfig from './config.loader.js';
+import { AppConfig } from '@config/app/index.js';
 export interface LoaderResults {
   config: AppConfig;
 }

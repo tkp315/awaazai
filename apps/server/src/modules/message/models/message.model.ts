@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { Document, Schema } from 'mongoose';
 
-interface MessageSchema extends Document {
+export interface MessageSchema extends Document {
   messageContent: string;
   title: string;
   sentBy: string; //  user , ai

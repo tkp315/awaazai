@@ -12,7 +12,7 @@ export interface RedisConfig {
 }
 
 async function redisConfig(): Promise<RedisConfig> {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production';
   console.log(`REDIS HOST ${process.env.REDIS_HOST}`);
   console.log(`REDIS PASSWORD ${process.env.REDIS_HOST}`);
   // console.log(`REDIS HOST ${process.env.REDIS_HOST}`);
@@ -21,13 +21,10 @@ async function redisConfig(): Promise<RedisConfig> {
     host: process.env.REDIS_HOST || 'localhost',
     port: parseInt(process.env.REDIS_PORT || '6379', 10),
     password: process.env.REDIS_PASSWORD || '',
-    tls: isProduction,
-    databases: {
-      cache: 0,
-      queue: 1,
-      session: 2,
-      rateLimit: 3,
-    },
+    tls: process.env.REDIS_TLS === 'true',
+    databases: isProduction
+      ? { cache: 0, queue: 0, session: 0, rateLimit: 0 }
+      : { cache: 0, queue: 1, session: 2, rateLimit: 3 },
   };
 }
 export default redisConfig;

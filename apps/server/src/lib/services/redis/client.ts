@@ -2,9 +2,9 @@ import IORedis from 'ioredis';
 import { getLogger } from '../../helper/logger/index.js';
 import { RedisConfig } from '@config/services/redis/index.js';
 export type { RedisConfig };
-import { Application } from 'express';
 
-type RedisClient = InstanceType<typeof IORedis>;
+
+type RedisClient = InstanceType<typeof IORedis.Redis>;
 const redisClients: Map<string, RedisClient> = new Map();
 let redisConfig: RedisConfig | null = null;
 
@@ -14,7 +14,7 @@ export async function createClients(config: RedisConfig): Promise<Map<string, Re
   const { host, port, password, tls, databases } = config;
 
   for (const [name, dbNumber] of Object.entries(databases)) {
-    const client = new IORedis({
+    const client = new IORedis.Redis({
       host,
       port,
       password: password || undefined,

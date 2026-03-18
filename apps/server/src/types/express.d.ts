@@ -2,8 +2,8 @@ import { ConfigResult } from '@config/index.js';
 
 interface AuthUser {
   id: string;
-  email: string;
-  name?: string;
+  // email?: string;
+  // name?: string;
 }
 
 declare global {

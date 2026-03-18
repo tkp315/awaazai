@@ -11,8 +11,8 @@ import {
 import { authServices } from '../services/auth.service.js';
 import { authHelpers } from '../helpers/auth.helper.js';
 import { CookieOptions } from 'express';
-import { OAuth2Client } from 'google-auth-library';
 import { profileService } from '../services/profile.service.js';
+
 
 // signup *
 // send otp *
@@ -47,8 +47,8 @@ export const signup = asyncHandler(async (req, res) => {
     email: data?.email!,
     password: encryptedPassword!,
     isVerified: false,
-    userStatus: 'ACTIVE',
-    accountType: 'INDIVIDUAL',
+    userStatus: 'ACTIVE' as const,
+    accountType: 'INDIVIDUAL' as const,
   };
   const user = await authServices.createUser(createUserPayload);
   await profileService.createProfile(user.id);
@@ -296,8 +296,8 @@ export const googleLogin = asyncHandler(async (req, res) => {
       email: payload.email!,
       password: null,
       isVerified: true,
-      userStatus: 'ACTIVE',
-      accountType: 'INDIVIDUAL',
+      userStatus: 'ACTIVE' as const,
+      accountType: 'INDIVIDUAL' as const,
     };
     user = await authServices.createUser(createUserPayload);
     await profileService.createProfile(user.id);

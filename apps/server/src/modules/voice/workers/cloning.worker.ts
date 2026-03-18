@@ -1,5 +1,5 @@
 import { Worker } from 'bullmq';
-import { getRedisConnection } from '@lib/services/queue/client.js';
+import { getRedisConnectionOptions } from '@lib/services/queue/client.js';
 import { getLogger } from '@lib/helper/logger/index.js';
 import { processCloningJob } from './cloning.processor.js';
 
@@ -20,7 +20,7 @@ export function initCloningWorker(): Worker<CloningJobData> {
       return await processCloningJob(job.data);
     },
     {
-      connection: getRedisConnection(),
+      connection: getRedisConnectionOptions(),
       concurrency: 2,
       prefix: 'awaazai',
     }

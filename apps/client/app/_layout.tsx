@@ -12,11 +12,19 @@ import Toast from 'react-native-toast-message';
 
 import { queryClient } from '@/api';
 import { toastConfig } from '@/components/ui/toast';
+import { usePushNotifications } from '@/hooks';
+import { useAuthStore } from '@/modules/auth/auth.store';
 
 import '../global.css';
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
+
+function PushNotificationSetup() {
+  const { isLoggedIn } = useAuthStore();
+  usePushNotifications(isLoggedIn);
+  return null;
+}
 
 export default function RootLayout() {
   // Font loading skeleton - add fonts here when needed
@@ -48,6 +56,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <QueryClientProvider client={queryClient}>
+          <PushNotificationSetup />
           <StatusBar style="auto" />
           <Stack>
             <Stack.Screen
