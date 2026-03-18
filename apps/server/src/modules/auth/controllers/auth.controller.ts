@@ -36,7 +36,7 @@ export const signup = asyncHandler(async (req, res) => {
     throw new ApiError(400, `Validation failed:${error}`);
   }
 
-  const isAlreadyUser = await authServices.findUserByEmail(data.email);
+  const isAlreadyUser = await authServices.findVerifiedUserByEmail(data.email);
 
   if (isAlreadyUser) {
     throw new ApiError(409, 'User is already registered');
