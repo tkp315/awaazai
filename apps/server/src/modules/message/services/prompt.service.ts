@@ -5,7 +5,7 @@ import { getLogger } from '@lib/helper/logger/index.js';
 const fetchBotVoice = async (botVoiceId: string) => {
   const prisma = getPrisma();
 
-  const botVoice = prisma.botVoice.findUnique({
+  const botVoice = await prisma.botVoice.findUnique({
     where: {
       id: botVoiceId,
     },
