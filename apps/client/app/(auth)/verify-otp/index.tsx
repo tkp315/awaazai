@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -27,7 +27,14 @@ export default function VerifyOTPScreen() {
   const params = useLocalSearchParams();
   console.log('Params', params);
   const [resendOtp, setResendOtp] = useState(false);
+  const [timer, setTimer] = useState(30);
   const inputRefs = useRef<(TextInput | null)[]>([]);
+
+  useEffect(() => {
+    if (timer === 0) return;
+    const interval = setInterval(() => setTimer(t => t - 1), 1000);
+    return () => clearInterval(interval);
+  }, [timer]);
 
   // Handlers - logic part tu karega
   const handleVerifyOTP = async () => {
@@ -70,12 +77,14 @@ export default function VerifyOTPScreen() {
   };
 
   const handleResendOTP = async () => {
+    if (timer > 0) return;
     const res = await sendOtp({ email: params?.email as string });
     if (!res.success) {
       toast.error({ title: 'Failed to resend otp', message: res.message });
       return;
     }
     toast.success({ title: 'OTP sent !', message: 'Please check your email' });
+    setTimer(30);
   };
 
   const handleGoBack = () => {
@@ -247,11 +256,11 @@ export default function VerifyOTPScreen() {
               >
                 Didn't receive the code?{' '}
               </Text>
-              <TouchableOpacity onPress={handleResendOTP}>
+              <TouchableOpacity onPress={handleResendOTP} disabled={timer > 0}>
                 <Text
                   style={{
                     ...textStyles.button,
-                    color: colors.primary[500],
+                    color: timer > 0 ? colors.textMuted : colors.primary[500],
                   }}
                 >
                   Resend
@@ -259,21 +268,16 @@ export default function VerifyOTPScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Timer placeholder */}
-            <View
-              style={{
-                alignItems: 'center',
-                marginTop: spacing[4],
-              }}
-            >
-              <Text
-                style={{
-                  ...textStyles.bodySmall,
-                  color: colors.textMuted,
-                }}
-              >
-                Resend code in 00:30
-              </Text>
+            <View style={{ alignItems: 'center', marginTop: spacing[4] }}>
+              {timer > 0 ? (
+                <Text style={{ ...textStyles.bodySmall, color: colors.textMuted }}>
+                  Resend code in 00:{String(timer).padStart(2, '0')}
+                </Text>
+              ) : (
+                <Text style={{ ...textStyles.bodySmall, color: colors.textMuted }}>
+                  Didn't get it? Tap Resend above
+                </Text>
+              )}
             </View>
           </View>
         </ScrollView>

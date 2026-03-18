@@ -21,14 +21,10 @@ export async function createClients(config: RedisConfig): Promise<Map<string, Re
       db: dbNumber as number,
       tls: tls ? {} : undefined,
       retryStrategy: (times: number) => {
-        if (times > 3) {
-          logger.error(`Redis ${name} max retries reached`);
-          return null;
-        }
-        return Math.min(times * 200, 2000);
+        return Math.min(times * 500, 5000);
       },
-      maxRetriesPerRequest: 3,
-      lazyConnect: true,
+      maxRetriesPerRequest: null,
+      enableOfflineQueue: true,
     });
 
     client.on('error', (err: Error) => {
@@ -41,13 +37,6 @@ export async function createClients(config: RedisConfig): Promise<Map<string, Re
 
     redisClients.set(name, client);
   }
-
-  // Connect all clients
-  await Promise.all(
-    Array.from(redisClients.entries()).map(async ([name, client]) => {
-      await client.connect();
-    })
-  );
 
   return redisClients;
 }

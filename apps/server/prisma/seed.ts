@@ -3,10 +3,14 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 
-const envFile = process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.dev';
+const envFile = process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'prod' ? '.env.prod' : '.env.dev';
 dotenv.config({ path: resolve(process.cwd(), envFile) });
 
-const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const isProduction = process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production';
+const adapter = new PrismaPg({
+  connectionString: process.env.DATABASE_URL!,
+  ...(isProduction ? { ssl: { rejectUnauthorized: false } } : {}),
+});
 const prisma = new PrismaClient({ adapter } as any);
 
 const PLANS = [

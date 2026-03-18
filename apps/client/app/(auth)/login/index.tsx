@@ -308,8 +308,8 @@ export default function LoginScreen() {
 
             {formContent}
 
-            {/* Divider */}
-            <View
+            {/* Divider - Google login disabled temporarily */}
+            {/* <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -329,7 +329,6 @@ export default function LoginScreen() {
               <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
             </View>
 
-            {/* Google Button */}
             <TouchableOpacity
               onPress={handleSigninWithGoogle}
               style={{
@@ -354,7 +353,7 @@ export default function LoginScreen() {
               >
                 Continue with Google
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* Signup Link */}
             <View
