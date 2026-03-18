@@ -22,13 +22,14 @@ export async function textToSpeech(
 
   const audio = await client.textToSpeech.convert(voiceId, {
     text,
-    model_id: options?.modelId || config.tts.modelId,
-    speed: options?.speed ?? config.tts.speed,
-    voice_settings: {
+    modelId: options?.modelId || config.tts.modelId,
+    
+    seed: options?.speed ?? config.tts.speed,
+    voiceSettings: {
       stability: options?.stability ?? config.tts.stability,
-      similarity_boost: options?.similarityBoost ?? config.tts.similarityBoost,
+      similarityBoost: options?.similarityBoost ?? config.tts.similarityBoost,
       style: options?.style ?? config.tts.style,
-      use_speaker_boost: true,
+      useSpeakerBoost: true,
     },
   });
 
@@ -50,13 +51,13 @@ export async function* textToSpeechStream(
 
   const audio = await client.textToSpeech.convert(voiceId, {
     text,
-    model_id: options?.modelId || config.tts.modelId,
-    speed: options?.speed ?? config.tts.speed,
-    voice_settings: {
+    modelId: options?.modelId || config.tts.modelId,
+    seed: options?.speed ?? config.tts.speed,
+    voiceSettings: {
       stability: options?.stability ?? config.tts.stability,
-      similarity_boost: options?.similarityBoost ?? config.tts.similarityBoost,
+      similarityBoost: options?.similarityBoost ?? config.tts.similarityBoost,
       style: options?.style ?? config.tts.style,
-      use_speaker_boost: true,
+      useSpeakerBoost: true,
     },
   });
 
@@ -162,8 +163,7 @@ export async function getVoiceSettings(voiceId: string): Promise<{
   style: number;
 }> {
   const client = getClient();
-  const settings = await client.voices.getSettings(voiceId);
-
+  const settings = await client.voices.settings.get(voiceId);
   return {
     style: settings.style ?? 0,
   };
