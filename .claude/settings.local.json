@@ -8,7 +8,12 @@
       "Bash(cd D:/ideas/awaazai/apps/client && npx expo run:android 2>&1 | head -5)",
       "Bash(cd:*)",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(netstat -ano)",
+      "Bash(xargs -r taskkill /PID /F)",
+      "Bash(cmd /c \"taskkill /PID 41616 /F\")",
+      "Bash(DATABASE_URL=\"postgresql://postgres.uokkaboptcwikfcggnmo:mango123!tushar@aws-1-ap-south-1.pooler.supabase.com:6543/postgres\" npx prisma migrate dev 2>&1)",
+      "Bash(DATABASE_URL=\"postgresql://postgres.uokkaboptcwikfcggnmo:mango123!tushar@aws-1-ap-south-1.pooler.supabase.com:6543/postgres\" npx prisma migrate dev --name \"sync_to_supabase\" 2>&1)"
     ]
   }
 }

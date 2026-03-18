@@ -7,6 +7,7 @@ import voiceRoutes from '@modules/voice/routes/voice.route.js';
 import chatRoutes from '@modules/chat/routes/chat.route.js';
 import subscriptionRoutes from '@modules/subscription/routes/subscription.routes.js';
 import adminSubscriptionRoutes from '@modules/subscription/routes/admin.routes.js';
+import notificationRoutes from '@modules/notification/routes/notification.routes.js';
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use('/voices', voiceRoutes);
 router.use('/chats', chatRoutes);
 router.use('/subscriptions', subscriptionRoutes);
 router.use('/admin', adminSubscriptionRoutes);
+router.use('/notifications', notificationRoutes);
 
 export default router;

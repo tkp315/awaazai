@@ -43,7 +43,7 @@ async function queueConfig(): Promise<QueueConfig> {
       host: process.env.REDIS_HOST || 'localhost',
       port: parseInt(process.env.REDIS_PORT || '6379', 10),
       password: process.env.REDIS_PASSWORD || undefined,
-      db: parseInt(process.env.REDIS_QUEUE_DB || '1', 10),
+      db: parseInt(process.env.REDIS_QUEUE_DB || '0', 10),
     },
     prefix: 'awaazai',
 
