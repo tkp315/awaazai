@@ -114,6 +114,7 @@ export const adminBotService = {
         description: data.description,
         icon: data.icon,
         isActive: data.isActive ?? true,
+        isVoiceBot: data.isVoiceBot ?? false,
         sortOrder: data.sortOrder ?? 0,
         // Connect capabilities via implicit M2M
         ...(data.capabilityIds && data.capabilityIds.length > 0

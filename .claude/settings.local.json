@@ -13,7 +13,8 @@
       "Bash(xargs -r taskkill /PID /F)",
       "Bash(cmd /c \"taskkill /PID 41616 /F\")",
       "Bash(DATABASE_URL=\"postgresql://postgres.uokkaboptcwikfcggnmo:mango123!tushar@aws-1-ap-south-1.pooler.supabase.com:6543/postgres\" npx prisma migrate dev 2>&1)",
-      "Bash(DATABASE_URL=\"postgresql://postgres.uokkaboptcwikfcggnmo:mango123!tushar@aws-1-ap-south-1.pooler.supabase.com:6543/postgres\" npx prisma migrate dev --name \"sync_to_supabase\" 2>&1)"
+      "Bash(DATABASE_URL=\"postgresql://postgres.uokkaboptcwikfcggnmo:mango123!tushar@aws-1-ap-south-1.pooler.supabase.com:6543/postgres\" npx prisma migrate dev --name \"sync_to_supabase\" 2>&1)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:mango123!tushar@db.uokkaboptcwikfcggnmo.supabase.co:5432/postgres\" npx tsx prisma/seed.ts 2>&1)"
     ]
   }
 }

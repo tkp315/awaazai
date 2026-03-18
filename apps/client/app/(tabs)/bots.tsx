@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ScrollView, Text, TouchableOpacity, View, ActivityIndicator, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -107,10 +107,17 @@ export default function BotsScreen(): React.JSX.Element {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
   const router = useRouter();
   const { availableBots, loadingAvailable, fetchAvailableBots } = useBotsStore();
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchAvailableBots();
   }, []);
+
+  const onRefresh = async (): Promise<void> => {
+    setRefreshing(true);
+    await fetchAvailableBots();
+    setRefreshing(false);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
@@ -120,6 +127,7 @@ export default function BotsScreen(): React.JSX.Element {
           paddingBottom: spacing[8],
         }}
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary[500]} />}
       >
         {/* Header */}
         <View style={{ paddingVertical: spacing[5] }}>
