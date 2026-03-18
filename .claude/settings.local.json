@@ -14,7 +14,8 @@
       "Bash(cmd /c \"taskkill /PID 41616 /F\")",
       "Bash(DATABASE_URL=\"postgresql://postgres.uokkaboptcwikfcggnmo:mango123!tushar@aws-1-ap-south-1.pooler.supabase.com:6543/postgres\" npx prisma migrate dev 2>&1)",
       "Bash(DATABASE_URL=\"postgresql://postgres.uokkaboptcwikfcggnmo:mango123!tushar@aws-1-ap-south-1.pooler.supabase.com:6543/postgres\" npx prisma migrate dev --name \"sync_to_supabase\" 2>&1)",
-      "Bash(DATABASE_URL=\"postgresql://postgres:mango123!tushar@db.uokkaboptcwikfcggnmo.supabase.co:5432/postgres\" npx tsx prisma/seed.ts 2>&1)"
+      "Bash(DATABASE_URL=\"postgresql://postgres:mango123!tushar@db.uokkaboptcwikfcggnmo.supabase.co:5432/postgres\" npx tsx prisma/seed.ts 2>&1)",
+      "Bash(DATABASE_URL=\"postgresql://tushar:RPuJr3fm3ngz7dsBF6AvotjK5GgKkxvl@dpg-d6t9v9vfte5s73fm6kbg-a.singapore-postgres.render.com/awaazai\" NODE_ENV=prod npx prisma db seed)"
     ]
   }
 }

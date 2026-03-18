@@ -17,9 +17,11 @@ const url = () => {
   console.log(`Port :`, Constants.expoConfig?.extra);
   if (isDev) {
     const ip = getIPAddress();
-    return `http://${ip}:${backendPort}/api`;
+    // return `http://${ip}:${backendPort}/api`;
+    console.log(`Backend url: ${Constants?.expoConfig?.extra?.PROD_BACKEND_URL}`)
+    return Constants?.expoConfig?.extra?.PROD_BACKEND_URL
   } else {
-    return 'https://api.awaazai.com/api';
+    return Constants?.expoConfig?.extra?.PROD_BACKEND_URL
   }
 };
 
