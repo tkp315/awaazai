@@ -72,6 +72,15 @@ export const createBotVoice = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, 'Voice profile created and queued for cloning', voice, {}));
 });
 
+// GET /api/voices/recent  — recent voices (all statuses) for logged-in user
+export const getRecentVoices = asyncHandler(async (req, res) => {
+  const userId = req.user?.id;
+  if (!userId) throw new ApiError(401, 'Unauthorized');
+
+  const voices = await voiceService.getRecentVoicesByUser(userId);
+  return res.status(200).json(new ApiResponse(200, 'Recent voices fetched', voices, {}));
+});
+
 // GET /api/voices/ready  — all READY voices for logged-in user
 export const getAllReadyVoices = asyncHandler(async (req, res) => {
   const userId = req.user?.id;

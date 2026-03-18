@@ -8,6 +8,7 @@ import {
   Modal,
   FlatList,
   Pressable,
+  RefreshControl,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,6 +16,7 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks';
 import { useMessageStore } from '@/modules/message';
 import { useVoiceStore } from '@/modules/voice';
+import { useBotsStore } from '@/modules/bots';
 import type { IChat } from '@/modules/message';
 import type { IBotVoice } from '@/modules/voice';
 import { PaywallModal } from '@/components/ui/paywall';
@@ -224,17 +226,31 @@ export default function ChatsScreen(): React.JSX.Element {
   const router = useRouter();
   const { chats, loadingChats, fetchChats, createChat, limitReached, clearLimitReached } =
     useMessageStore();
-  const { readyVoices, loadingReadyVoices, fetchReadyVoices } = useVoiceStore();
+  const { voices, loadingVoices, fetchVoices } = useVoiceStore();
+  const { bots, fetchBots } = useBotsStore();
+  const readyVoices = voices.filter(v => v.status === 'READY');
   const [modalVisible, setModalVisible] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchChats();
   }, []);
 
-  const handleOpenModal = (): void => {
-    fetchReadyVoices();
+  const onRefresh = async (): Promise<void> => {
+    setRefreshing(true);
+    await fetchChats();
+    setRefreshing(false);
+  };
+
+  const handleOpenModal = async (): Promise<void> => {
     setModalVisible(true);
+    const voiceBots = bots.filter(b => b.availableBot?.isVoiceBot);
+    if (voiceBots.length === 0) {
+      await fetchBots();
+    }
+    const latestVoiceBots = bots.filter(b => b.availableBot?.isVoiceBot);
+    await Promise.all(latestVoiceBots.map(b => fetchVoices(b.id)));
   };
 
   const handleSelectVoice = async (voice: IBotVoice): Promise<void> => {
@@ -259,6 +275,13 @@ export default function ChatsScreen(): React.JSX.Element {
           paddingBottom: spacing[8],
         }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary[500]}
+          />
+        }
       >
         {/* Header */}
         <View
@@ -343,7 +366,7 @@ export default function ChatsScreen(): React.JSX.Element {
         onClose={() => setModalVisible(false)}
         onSelect={handleSelectVoice}
         voices={readyVoices}
-        loading={loadingReadyVoices}
+        loading={loadingVoices}
       />
     </SafeAreaView>
   );

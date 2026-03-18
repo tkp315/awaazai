@@ -1,12 +1,18 @@
-import { useEffect } from 'react';
-import { ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { useEffect, useState } from 'react';
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks';
 import { useBotsStore } from '@/modules/bots';
 import { VOICE_STATUS_DISPLAY, useVoiceStore } from '@/modules/voice';
-import { AWAAZBOT_AVAILABLE_BOT_ID } from '@/shared/constants';
 import type { IBot } from '@/modules/bots';
 import type { IBotVoice } from '@/modules/voice';
 
@@ -77,7 +83,7 @@ function VoiceChip({ voice }: { voice: IBotVoice }): React.JSX.Element {
   );
 }
 
-function BotVoiceCard({ bot }: { bot: IBot }): React.JSX.Element {
+function BotVoiceCard({ bot, refreshTick }: { bot: IBot; refreshTick: number }): React.JSX.Element {
   const { colors, spacing, radius, textStyles } = useTheme();
   const router = useRouter();
   const { voices, fetchVoices } = useVoiceStore();
@@ -85,7 +91,7 @@ function BotVoiceCard({ bot }: { bot: IBot }): React.JSX.Element {
 
   useEffect(() => {
     fetchVoices(bot.id);
-  }, [bot.id]);
+  }, [bot.id, refreshTick]);
 
   return (
     <View
@@ -174,11 +180,20 @@ function BotVoiceCard({ bot }: { bot: IBot }): React.JSX.Element {
 export default function VoicesScreen(): React.JSX.Element {
   const { colors, spacing, layout, textStyles } = useTheme();
   const { bots, loadingBots, fetchBots } = useBotsStore();
-  const awaazBots = bots.filter(b => b.availableBotId === AWAAZBOT_AVAILABLE_BOT_ID);
+  const awaazBots = bots.filter(b => b.availableBot?.isVoiceBot === true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshTick, setRefreshTick] = useState(0);
 
   useEffect(() => {
     fetchBots();
   }, []);
+
+  const onRefresh = async (): Promise<void> => {
+    setRefreshing(true);
+    await fetchBots();
+    setRefreshTick(t => t + 1);
+    setRefreshing(false);
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }} edges={['top']}>
@@ -188,6 +203,13 @@ export default function VoicesScreen(): React.JSX.Element {
           paddingBottom: spacing[8],
         }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary[500]}
+          />
+        }
       >
         {/* Header */}
         <View style={{ paddingVertical: spacing[5] }}>
@@ -220,7 +242,7 @@ export default function VoicesScreen(): React.JSX.Element {
             </Text>
           </View>
         ) : (
-          awaazBots.map(bot => <BotVoiceCard key={bot.id} bot={bot} />)
+          awaazBots.map(bot => <BotVoiceCard key={bot.id} bot={bot} refreshTick={refreshTick} />)
         )}
       </ScrollView>
     </SafeAreaView>

@@ -1,11 +1,19 @@
-import { useEffect } from 'react';
-import { ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { useEffect, useState } from 'react';
+import {
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks';
 import { useProfileStore } from '@/modules/profile';
 import { VOICE_STATUS_DISPLAY, useVoiceStore } from '@/modules/voice';
+import { useBotsStore } from '@/modules/bots';
 import type { IBotVoice } from '@/modules/voice';
 
 function VoiceCard({ voice }: { voice: IBotVoice }): React.JSX.Element {
@@ -79,12 +87,29 @@ export default function HomeScreen(): React.JSX.Element {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
   const router = useRouter();
   const { user, fetchMe } = useProfileStore();
-  const { readyVoices, loadingReadyVoices, fetchReadyVoices } = useVoiceStore();
+  const { voices, loadingVoices, fetchVoices } = useVoiceStore();
+  const { bots, fetchBots } = useBotsStore();
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!user) fetchMe();
-    fetchReadyVoices();
+    fetchAllVoices();
   }, []);
+
+  const fetchAllVoices = async (): Promise<void> => {
+    let voiceBots = bots.filter(b => b.availableBot?.isVoiceBot);
+    if (voiceBots.length === 0) {
+      await fetchBots();
+      voiceBots = bots.filter(b => b.availableBot?.isVoiceBot);
+    }
+    await Promise.all(voiceBots.map(b => fetchVoices(b.id)));
+  };
+
+  const onRefresh = async (): Promise<void> => {
+    setRefreshing(true);
+    await Promise.all([fetchMe(), fetchAllVoices()]);
+    setRefreshing(false);
+  };
 
   const quickActions = [
     {
@@ -125,6 +150,13 @@ export default function HomeScreen(): React.JSX.Element {
           paddingBottom: spacing[8],
         }}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={colors.primary[500]}
+          />
+        }
       >
         {/* Header */}
         <View
@@ -254,11 +286,11 @@ export default function HomeScreen(): React.JSX.Element {
           </TouchableOpacity>
         </View>
 
-        {loadingReadyVoices ? (
+        {loadingVoices ? (
           <View style={{ alignItems: 'center', paddingVertical: spacing[8] }}>
             <ActivityIndicator size="large" color={colors.primary[500]} />
           </View>
-        ) : readyVoices.length === 0 ? (
+        ) : voices.length === 0 ? (
           <View
             style={{
               backgroundColor: colors.surface,
@@ -299,10 +331,10 @@ export default function HomeScreen(): React.JSX.Element {
           </View>
         ) : (
           <>
-            {readyVoices.slice(0, 3).map(voice => (
+            {voices.slice(0, 3).map(voice => (
               <VoiceCard key={voice.id} voice={voice} />
             ))}
-            {readyVoices.length > 3 && (
+            {voices.length > 3 && (
               <TouchableOpacity
                 onPress={() => router.push('/(tabs)/voices')}
                 activeOpacity={0.8}
@@ -316,7 +348,7 @@ export default function HomeScreen(): React.JSX.Element {
                 }}
               >
                 <Text style={{ ...textStyles.labelSmall, color: colors.primary[500] }}>
-                  +{readyVoices.length - 3} more voices
+                  +{voices.length - 3} more voices
                 </Text>
               </TouchableOpacity>
             )}

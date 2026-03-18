@@ -2,8 +2,6 @@ import { getPrisma } from '@lib/services/database/prisma/index.js';
 import { getQueue } from '@lib/services/queue/client.js';
 import type { CreateVoiceInput } from '../validators/voice.validation.js';
 import type { VoiceStatus, SampleStatus } from 'generated/prisma/client.js';
-import { AWAAZBOT_AVAILABLE_BOT_ID } from 'globals/constants.js';
-// import { AWAAZBOT_AVAILABLE_BOT_ID } from '@globals/constants.js';
 
 interface UploadedSample {
   url: string;
@@ -85,12 +83,27 @@ export const voiceService = {
     });
   },
 
+  getRecentVoicesByUser: async (userId: string) => {
+    const prisma = getPrisma();
+    return prisma.botVoice.findMany({
+      where: {
+        bot: { userId, availableBot: { isVoiceBot: true } },
+      },
+      include: {
+        bot: { select: { id: true, name: true, avatar: true } },
+        sampleVoices: false,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+    });
+  },
+
   getAllReadyVoicesByUser: async (userId: string) => {
     const prisma = getPrisma();
     return prisma.botVoice.findMany({
       where: {
         status: 'READY',
-        bot: { userId, availableBotId: AWAAZBOT_AVAILABLE_BOT_ID },
+        bot: { userId, availableBot: { isVoiceBot: true } },
       },
       include: {
         bot: { select: { id: true, name: true, avatar: true } },

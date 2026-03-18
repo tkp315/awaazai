@@ -23,7 +23,7 @@ async function initLibs(config: ConfigResult, appObj: Application): Promise<LibR
   const services = await initServices(config.services, appObj);
   console.log('🔌 All services initialized!\n');
 
-  return { services, helper };
+  return { services: services as unknown as ServicesType, helper };
 }
 
 export default initLibs;

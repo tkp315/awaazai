@@ -1,5 +1,5 @@
 import { Worker } from 'bullmq';
-import { getRedisConnection } from '@lib/services/queue/client.js';
+import { getRedisConnectionOptions } from '@lib/services/queue/client.js';
 import { getLogger } from '@lib/helper/logger/index.js';
 import { processTraining, type TrainingJobData } from './training.processor.js';
 
@@ -14,7 +14,7 @@ export function initTrainingWorker(): Worker<TrainingJobData> {
       return await processTraining(job.data);
     },
     {
-      connection: getRedisConnection(), // called after services are initialized
+      connection: getRedisConnectionOptions(),
       concurrency: 2,
     }
   );

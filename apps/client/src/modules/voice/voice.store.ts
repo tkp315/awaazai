@@ -6,9 +6,11 @@ import type { IBotVoice, ISampleVoice, CreateVoicePayload } from './voice.types'
 interface VoiceState {
   voices: IBotVoice[];
   readyVoices: IBotVoice[];
+  recentVoices: IBotVoice[];
   samples: ISampleVoice[];
   loadingVoices: boolean;
   loadingReadyVoices: boolean;
+  loadingRecentVoices: boolean;
   loadingSamples: boolean;
   isUploading: boolean;
   isCreating: boolean;
@@ -17,6 +19,7 @@ interface VoiceState {
 
   fetchVoices: (botId: string) => Promise<void>;
   fetchReadyVoices: () => Promise<void>;
+  fetchRecentVoices: () => Promise<void>;
   fetchSamples: (sessionId: string) => Promise<void>;
   uploadSamples: (
     sessionId: string,
@@ -34,9 +37,11 @@ interface VoiceState {
 export const useVoiceStore = create<VoiceState>((set, get) => ({
   voices: [],
   readyVoices: [],
+  recentVoices: [],
   samples: [],
   loadingVoices: false,
   loadingReadyVoices: false,
+  loadingRecentVoices: false,
   loadingSamples: false,
   isUploading: false,
   isCreating: false,
@@ -47,11 +52,27 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
     set({ loadingReadyVoices: true, error: null });
     try {
       const readyVoices = await voiceService.getAllReadyVoices();
+      console.log('[fetchReadyVoices] response:', JSON.stringify(readyVoices, null, 2));
       set({ readyVoices });
     } catch (e) {
+      console.log('[fetchReadyVoices] error:', e);
       set({ error: voiceService.handleError(e, 'Failed to fetch ready voices') });
     } finally {
       set({ loadingReadyVoices: false });
+    }
+  },
+
+  fetchRecentVoices: async () => {
+    set({ loadingRecentVoices: true, error: null });
+    try {
+      const recentVoices = await voiceService.getRecentVoices();
+      console.log('[fetchRecentVoices] response:', JSON.stringify(recentVoices, null, 2));
+      set({ recentVoices });
+    } catch (e) {
+      console.log('[fetchRecentVoices] error:', e);
+      set({ error: voiceService.handleError(e, 'Failed to fetch recent voices') });
+    } finally {
+      set({ loadingRecentVoices: false });
     }
   },
 
@@ -59,7 +80,9 @@ export const useVoiceStore = create<VoiceState>((set, get) => ({
     set({ loadingVoices: true, error: null });
     try {
       const voices = await voiceService.getVoicesByBot(botId);
-      set({ voices });
+      set(state => ({
+        voices: [...state.voices.filter(v => v.botId !== botId), ...voices],
+      }));
     } catch (e) {
       set({ error: voiceService.handleError(e, 'Failed to fetch voices') });
     } finally {

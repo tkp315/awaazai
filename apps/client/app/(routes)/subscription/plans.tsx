@@ -3,6 +3,8 @@ import { View, Text, ScrollView, TouchableOpacity, ActivityIndicator, Alert } fr
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import Constants from 'expo-constants';
+import RazorpayCheckout from 'react-native-razorpay';
 import { useTheme } from '@/hooks';
 import { useSubscriptionStore, createOrder, verifyPayment } from '@/modules/subscription';
 import type { IPlan, BillingCycle } from '@/modules/subscription';
@@ -201,8 +203,7 @@ function PlanCard({
 export default function PlansScreen(): React.JSX.Element {
   const { colors, spacing, layout, textStyles, radius } = useTheme();
   const router = useRouter();
-  const { subscription, plans, loadingPlans, fetchPlans, fetchSubscription } =
-    useSubscriptionStore();
+  const { subscription, plans, loadingPlans, fetchPlans, fetchSubscription } = useSubscriptionStore();
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('MONTHLY');
   const [selecting, setSelecting] = useState<string | null>(null);
 
@@ -218,15 +219,39 @@ export default function PlansScreen(): React.JSX.Element {
     try {
       const order = await createOrder({ planSlug: plan.slug, billingCycle });
 
-      // In production, open Razorpay checkout SDK here
-      // For now, show the order details and simulate
-      Alert.alert(
-        'Payment',
-        `Order created: ₹${order.amount}\nOrder ID: ${order.orderId}\n\nIntegrate Razorpay SDK to complete payment.`,
-        [{ text: 'OK' }]
-      );
-    } catch {
-      Alert.alert('Error', 'Could not create payment order. Please try again.');
+      const keyId = Constants.expoConfig?.extra?.RAZORPAY_KEY_ID as string;
+
+      const options = {
+        key: keyId,
+        amount: String(order.amount * 100), // Razorpay expects paise
+        currency: order.currency,
+        order_id: order.orderId,
+        name: 'AwaazAI',
+        description: `${plan.name} - ${billingCycle === 'MONTHLY' ? 'Monthly' : 'Yearly'}`,
+        prefill: {},
+        theme: { color: '#6366F1' },
+      };
+
+      const paymentData = await RazorpayCheckout.open(options);
+
+      await verifyPayment({
+        razorpayOrderId: paymentData.razorpay_order_id,
+        razorpayPaymentId: paymentData.razorpay_payment_id,
+        razorpaySignature: paymentData.razorpay_signature,
+        planSlug: plan.slug,
+        billingCycle,
+      });
+
+      await fetchSubscription();
+
+      Alert.alert('Success', `You are now on the ${plan.name} plan!`, [
+        { text: 'OK', onPress: () => router.back() },
+      ]);
+    } catch (err: unknown) {
+      // User cancelled payment — Razorpay throws with description = "Payment cancelled"
+      const razorpayError = err as { error?: { description?: string } };
+      if (razorpayError?.error?.description === 'Payment cancelled') return;
+      Alert.alert('Payment Failed', 'Could not complete payment. Please try again.');
     } finally {
       setSelecting(null);
     }

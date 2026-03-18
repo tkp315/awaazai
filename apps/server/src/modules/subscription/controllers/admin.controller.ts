@@ -2,6 +2,7 @@ import type { Request, Response } from 'express';
 import { z } from 'zod';
 import { getPrisma } from '@lib/services/database/prisma/index.js';
 import { getLogger } from '@lib/helper/logger/index.js';
+import { PlanType, Currency } from 'generated/prisma/client.js';
 
 // ── Validators ────────────────────────────────────────────────────────────────
 
@@ -9,7 +10,7 @@ const featureSchema = z.object({
   name:        z.string().min(1),
   description: z.string().optional(),
   limitKey:    z.enum(['VOICE_CLONES', 'VOICE_CHATS', 'AI_BOTS']),
-  limitValue:  z.number().int().min(-1), // -1 = unlimited
+  limitValue:  z.number().int().min(-1),
   resetPeriod: z.enum(['DAILY', 'WEEKLY', 'MONTHLY', 'YEARLY', 'NEVER']).default('NEVER'),
 });
 
@@ -28,30 +29,37 @@ const createPlanSchema = z.object({
 
 const updatePlanSchema = createPlanSchema.partial().omit({ slug: true });
 
+// helper to safely extract a string param (Express 5 types params as string | string[])
+const param = (req: Request, key: string): string => String((req.params as Record<string, string | string[]>)[key] ?? '');
+
 // ── GET /admin/plans ──────────────────────────────────────────────────────────
 
 export async function adminGetPlans(req: Request, res: Response): Promise<void> {
   const prisma = getPrisma();
   const plans = await prisma.plan.findMany({
-    include: { features: true, _count: { select: { subscription: true } } },
+    include: { features: true },
     orderBy: { displayOrder: 'asc' },
   });
-  res.json({ success: true, data: plans });
+
+  // Attach subscriber counts
+  const counts = await Promise.all(
+    plans.map(p => prisma.subscription.count({ where: { planId: p.id, status: { in: ['ACTIVE', 'TRIAL'] } } }))
+  );
+
+  res.json({ success: true, data: plans.map((p, i) => ({ ...p, subscriberCount: counts[i] })) });
 }
 
 // ── GET /admin/plans/:planId ──────────────────────────────────────────────────
 
 export async function adminGetPlanById(req: Request, res: Response): Promise<void> {
-  const { planId } = req.params;
+  const planId = param(req, 'planId');
   const prisma = getPrisma();
 
-  const plan = await prisma.plan.findUnique({
-    where: { id: planId },
-    include: { features: true, _count: { select: { subscription: true } } },
-  });
-
+  const plan = await prisma.plan.findUnique({ where: { id: planId }, include: { features: true } });
   if (!plan) { res.status(404).json({ message: 'Plan not found' }); return; }
-  res.json({ success: true, data: plan });
+
+  const subscriberCount = await prisma.subscription.count({ where: { planId, status: { in: ['ACTIVE', 'TRIAL'] } } });
+  res.json({ success: true, data: { ...plan, subscriberCount } });
 }
 
 // ── POST /admin/plans ─────────────────────────────────────────────────────────
@@ -59,21 +67,19 @@ export async function adminGetPlanById(req: Request, res: Response): Promise<voi
 export async function adminCreatePlan(req: Request, res: Response): Promise<void> {
   const logger = getLogger();
   const parsed = createPlanSchema.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ message: 'Invalid input', errors: parsed.error.issues });
-    return;
-  }
+  if (!parsed.success) { res.status(400).json({ message: 'Invalid input', errors: parsed.error.issues }); return; }
 
   const { features, ...planData } = parsed.data;
   const prisma = getPrisma();
 
-  // Check slug uniqueness
   const existing = await prisma.plan.findUnique({ where: { slug: planData.slug } });
   if (existing) { res.status(409).json({ message: `Plan with slug '${planData.slug}' already exists` }); return; }
 
   const plan = await prisma.plan.create({
     data: {
       ...planData,
+      type: planData.type as PlanType,
+      currency: planData.currency as Currency,
       features: { create: features },
     },
     include: { features: true },
@@ -87,38 +93,33 @@ export async function adminCreatePlan(req: Request, res: Response): Promise<void
 
 export async function adminUpdatePlan(req: Request, res: Response): Promise<void> {
   const logger = getLogger();
-  const { planId } = req.params;
+  const planId = param(req, 'planId');
   const parsed = updatePlanSchema.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ message: 'Invalid input', errors: parsed.error.issues });
-    return;
-  }
+  if (!parsed.success) { res.status(400).json({ message: 'Invalid input', errors: parsed.error.issues }); return; }
 
   const { features, ...planData } = parsed.data;
   const prisma = getPrisma();
 
-  const plan = await prisma.plan.findUnique({ where: { id: planId } });
-  if (!plan) { res.status(404).json({ message: 'Plan not found' }); return; }
+  const existing = await prisma.plan.findUnique({ where: { id: planId } });
+  if (!existing) { res.status(404).json({ message: 'Plan not found' }); return; }
 
-  const updated = await prisma.$transaction(async (tx) => {
-    // Update plan fields
+  const updated = await prisma.$transaction(async tx => {
+    const { type: rawType, currency: rawCurrency, ...restPlanData } = planData;
     const updatedPlan = await tx.plan.update({
       where: { id: planId },
-      data: planData,
+      data: {
+        ...restPlanData,
+        ...(rawType && { type: rawType as PlanType }),
+        ...(rawCurrency && { currency: rawCurrency as Currency }),
+      },
     });
 
-    // Replace features if provided
     if (features && features.length > 0) {
       await tx.planFeature.deleteMany({ where: { planId } });
-      await tx.planFeature.createMany({
-        data: features.map(f => ({ ...f, planId })),
-      });
+      await tx.planFeature.createMany({ data: features.map(f => ({ ...f, planId })) });
     }
 
-    return tx.plan.findUnique({
-      where: { id: planId },
-      include: { features: true },
-    });
+    return tx.plan.findUnique({ where: { id: planId }, include: { features: true } });
   });
 
   logger.info('[ADMIN] Plan updated', { planId });
@@ -129,19 +130,15 @@ export async function adminUpdatePlan(req: Request, res: Response): Promise<void
 
 export async function adminDeletePlan(req: Request, res: Response): Promise<void> {
   const logger = getLogger();
-  const { planId } = req.params;
+  const planId = param(req, 'planId');
   const prisma = getPrisma();
 
-  const plan = await prisma.plan.findUnique({
-    where: { id: planId },
-    include: { _count: { select: { subscription: true } } },
-  });
+  const plan = await prisma.plan.findUnique({ where: { id: planId } });
   if (!plan) { res.status(404).json({ message: 'Plan not found' }); return; }
 
-  if (plan._count.subscription > 0) {
-    res.status(409).json({
-      message: `Cannot delete plan with ${plan._count.subscription} active subscription(s). Deactivate it instead.`,
-    });
+  const subscriberCount = await prisma.subscription.count({ where: { planId, status: { in: ['ACTIVE', 'TRIAL'] } } });
+  if (subscriberCount > 0) {
+    res.status(409).json({ message: `Cannot delete plan with ${subscriberCount} active subscriber(s). Deactivate it instead.` });
     return;
   }
 
@@ -153,17 +150,13 @@ export async function adminDeletePlan(req: Request, res: Response): Promise<void
 // ── PATCH /admin/plans/:planId/toggle ────────────────────────────────────────
 
 export async function adminTogglePlan(req: Request, res: Response): Promise<void> {
-  const { planId } = req.params;
+  const planId = param(req, 'planId');
   const prisma = getPrisma();
 
   const plan = await prisma.plan.findUnique({ where: { id: planId } });
   if (!plan) { res.status(404).json({ message: 'Plan not found' }); return; }
 
-  const updated = await prisma.plan.update({
-    where: { id: planId },
-    data: { isActive: !plan.isActive },
-  });
-
+  const updated = await prisma.plan.update({ where: { id: planId }, data: { isActive: !plan.isActive } });
   res.json({ success: true, data: { id: updated.id, isActive: updated.isActive } });
 }
 
@@ -185,27 +178,22 @@ export async function adminGetSubscriptions(req: Request, res: Response): Promis
     prisma.subscription.findMany({
       where,
       include: {
-        user:  { select: { id: true, fullName: true, email: true } },
-        plan:  { select: { name: true, slug: true } },
-        _count: { select: { payments: true } },
+        user: { select: { id: true, fullName: true, email: true } },
+        plan: { select: { name: true, slug: true } },
       },
       orderBy: { createdAt: 'desc' },
-      skip:  (page - 1) * limit,
-      take:  limit,
+      skip: (page - 1) * limit,
+      take: limit,
     }),
   ]);
 
-  res.json({
-    success: true,
-    data: subscriptions,
-    meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
-  });
+  res.json({ success: true, data: subscriptions, meta: { total, page, limit, totalPages: Math.ceil(total / limit) } });
 }
 
 // ── GET /admin/subscriptions/:subscriptionId ──────────────────────────────────
 
 export async function adminGetSubscriptionById(req: Request, res: Response): Promise<void> {
-  const { subscriptionId } = req.params;
+  const subscriptionId = param(req, 'subscriptionId');
   const prisma = getPrisma();
 
   const subscription = await prisma.subscription.findUnique({
@@ -223,7 +211,6 @@ export async function adminGetSubscriptionById(req: Request, res: Response): Pro
 }
 
 // ── POST /admin/subscriptions/grant ──────────────────────────────────────────
-// Grant a plan to a user manually (bypass payment)
 
 const grantSchema = z.object({
   userId:       z.string().uuid(),
@@ -235,10 +222,7 @@ const grantSchema = z.object({
 export async function adminGrantSubscription(req: Request, res: Response): Promise<void> {
   const logger = getLogger();
   const parsed = grantSchema.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ message: 'Invalid input', errors: parsed.error.issues });
-    return;
-  }
+  if (!parsed.success) { res.status(400).json({ message: 'Invalid input', errors: parsed.error.issues }); return; }
 
   const { userId, planSlug, billingCycle, durationDays } = parsed.data;
   const prisma = getPrisma();
@@ -246,7 +230,6 @@ export async function adminGrantSubscription(req: Request, res: Response): Promi
   const plan = await prisma.plan.findUnique({ where: { slug: planSlug } });
   if (!plan) { res.status(404).json({ message: 'Plan not found' }); return; }
 
-  // Cancel existing active subscription
   await prisma.subscription.updateMany({
     where: { userId, status: { in: ['ACTIVE', 'TRIAL'] } },
     data:  { status: 'CANCELLED', cancelledAt: new Date() },
@@ -257,14 +240,7 @@ export async function adminGrantSubscription(req: Request, res: Response): Promi
   periodEnd.setDate(periodEnd.getDate() + durationDays);
 
   const subscription = await prisma.subscription.create({
-    data: {
-      userId,
-      planId: plan.id,
-      status: 'ACTIVE',
-      billingCycle,
-      currentPeriodStart: now,
-      currentPeriodEnd:   periodEnd,
-    },
+    data: { userId, planId: plan.id, status: 'ACTIVE', billingCycle, currentPeriodStart: now, currentPeriodEnd: periodEnd },
     include: { plan: { include: { features: true } } },
   });
 
@@ -276,16 +252,13 @@ export async function adminGrantSubscription(req: Request, res: Response): Promi
 
 export async function adminCancelSubscription(req: Request, res: Response): Promise<void> {
   const logger = getLogger();
-  const { subscriptionId } = req.params;
+  const subscriptionId = param(req, 'subscriptionId');
   const prisma = getPrisma();
 
   const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
   if (!subscription) { res.status(404).json({ message: 'Subscription not found' }); return; }
 
-  await prisma.subscription.update({
-    where: { id: subscriptionId },
-    data:  { status: 'CANCELLED', cancelledAt: new Date() },
-  });
+  await prisma.subscription.update({ where: { id: subscriptionId }, data: { status: 'CANCELLED', cancelledAt: new Date() } });
 
   logger.info('[ADMIN] Subscription cancelled', { subscriptionId, cancelledBy: (req as any).user?.id });
   res.json({ success: true, message: 'Subscription cancelled' });
@@ -300,18 +273,10 @@ export async function adminGetStats(req: Request, res: Response): Promise<void> 
     prisma.subscription.count({ where: { status: 'ACTIVE' } }),
     prisma.subscription.count({ where: { status: 'TRIAL' } }),
     prisma.subscription.count({ where: { status: 'CANCELLED' } }),
-    prisma.payment.aggregate({
-      where:   { status: 'SUCCESS' },
-      _sum:    { amount: true },
-    }),
-    prisma.subscription.groupBy({
-      by:      ['planId'],
-      where:   { status: { in: ['ACTIVE', 'TRIAL'] } },
-      _count:  { _all: true },
-    }),
+    prisma.payment.aggregate({ where: { status: 'SUCCESS' }, _sum: { amount: true } }),
+    prisma.subscription.groupBy({ by: ['planId'], where: { status: { in: ['ACTIVE', 'TRIAL'] } }, _count: { _all: true } }),
   ]);
 
-  // Resolve plan names
   const planIds = planBreakdown.map(p => p.planId);
   const plans   = await prisma.plan.findMany({ where: { id: { in: planIds } }, select: { id: true, name: true, slug: true } });
   const planMap = Object.fromEntries(plans.map(p => [p.id, p]));
@@ -319,15 +284,8 @@ export async function adminGetStats(req: Request, res: Response): Promise<void> 
   res.json({
     success: true,
     data: {
-      subscriptions: {
-        active:    totalActive,
-        trial:     totalTrial,
-        cancelled: totalCancelled,
-        total:     totalActive + totalTrial + totalCancelled,
-      },
-      revenue: {
-        total: Number(revenueResult._sum.amount ?? 0),
-      },
+      subscriptions: { active: totalActive, trial: totalTrial, cancelled: totalCancelled, total: totalActive + totalTrial + totalCancelled },
+      revenue: { total: Number(revenueResult._sum.amount ?? 0) },
       byPlan: planBreakdown.map(p => ({
         plan:  planMap[p.planId] ?? { id: p.planId, name: 'Unknown', slug: '' },
         count: p._count._all,

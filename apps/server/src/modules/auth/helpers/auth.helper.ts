@@ -43,7 +43,7 @@ export const authHelpers = {
     }
 
     return jwt.sign(payload, tokenSecret, {
-      expiresIn: tokenExpiry as string,
+      expiresIn: tokenExpiry as any,
     });
   },
   getDeviceInfo: (userAgent: any) => {

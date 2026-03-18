@@ -184,12 +184,14 @@ async function countDirectUsage(
   switch (limitKey) {
     case 'VOICE_CLONES':
       return prisma.botVoice.count({
-        where: { bot: { userId, availableBotId: '3f0b66d8-b443-4804-92e0-cb8fa0812401' } },
+        where: { bot: { userId, availableBot: { isVoiceBot: true } } },
       });
     case 'VOICE_CHATS':
       return prisma.chat.count({ where: { botVoice: { bot: { userId } } } });
     case 'AI_BOTS':
-      return prisma.bot.count({ where: { userId, status: 'ACTIVE' } });
+      return prisma.bot.count({
+        where: { userId, status: 'ACTIVE', availableBot: { isVoiceBot: false } },
+      });
     default:
       return 0;
   }

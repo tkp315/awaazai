@@ -38,7 +38,7 @@ export const updateAvatar = asyncHandler(async (req, res) => {
 
   const result = await uploadFile(req.file.buffer, 'avatars', 'image', { publicId: userId });
 
-  const profile = await profileService.updateAvatar(userId, result.secure_url);
+  const profile = await profileService.updateAvatar(userId, result.url);
 
   return res
     .status(200)

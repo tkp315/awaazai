@@ -1,6 +1,6 @@
 import { PrismaClient } from 'generated/prisma/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PostgresConfig } from '@config/services/database/prisma/index.js';
+import { PostgresConfig } from '@config/services/database/pg/index.js'; 
 import { getLogger } from '@lib/helper/logger/index.js';
 import { Application } from 'express';
 
@@ -9,7 +9,10 @@ let prisma: PrismaClient;
 async function initPrisma(config: PostgresConfig, appObj: Application) {
   const logger = getLogger();
 
-  const adapter = new PrismaPg({ connectionString: config.url });
+  const adapter = new PrismaPg({
+    connectionString: config.url,
+    ...(config.ssl ? { ssl: { rejectUnauthorized: false } } : {}),
+  });
 
   prisma = new PrismaClient({
     adapter,
