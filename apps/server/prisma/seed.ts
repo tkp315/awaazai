@@ -3,7 +3,8 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 
-dotenv.config({ path: resolve(process.cwd(), '.env.dev') });
+const envFile = process.env.NODE_ENV === 'production' ? '.env.prod' : '.env.dev';
+dotenv.config({ path: resolve(process.cwd(), envFile) });
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter } as any);
@@ -98,6 +99,30 @@ const PLANS = [
   },
 ];
 
+const AVAILABLE_BOTS = [
+  {
+    name: 'VoiceTwin',
+    description: 'Clone & chat in their voice',
+    icon: '🎤',
+    isVoiceBot: true,
+    sortOrder: 0,
+  },
+  {
+    name: 'StudyMate',
+    description: 'Your AI study companion',
+    icon: '📚',
+    isVoiceBot: false,
+    sortOrder: 1,
+  },
+  {
+    name: 'NoteForge',
+    description: 'Smart notes & summarization',
+    icon: '📝',
+    isVoiceBot: false,
+    sortOrder: 2,
+  },
+];
+
 async function main() {
   console.log('Seeding plans...');
 
@@ -138,6 +163,19 @@ async function main() {
         },
       });
       console.log(`Created: ${planData.name}`);
+    }
+  }
+
+  console.log('Seeding available bots...');
+
+  for (const bot of AVAILABLE_BOTS) {
+    const existing = await prisma.availableBot.findFirst({ where: { name: bot.name } });
+    if (existing) {
+      await prisma.availableBot.update({ where: { id: existing.id }, data: bot });
+      console.log(`Updated bot: ${bot.name}`);
+    } else {
+      await prisma.availableBot.create({ data: bot });
+      console.log(`Created bot: ${bot.name}`);
     }
   }
 

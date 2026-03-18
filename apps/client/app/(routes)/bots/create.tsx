@@ -20,7 +20,7 @@ import {
   getAwaazBotVoices,
 } from '@/modules/bots';
 import type { IAvailableBot, IBotVoice } from '@/modules/bots';
-import { AWAAZBOT_AVAILABLE_BOT_ID } from '@/shared/constants';
+
 import { PaywallModal } from '@/components/ui/paywall';
 
 type StepId = 'identity' | 'botType' | 'voice' | 'success';
@@ -52,7 +52,7 @@ export default function CreateBotScreen(): React.JSX.Element {
   const [loadingVoices, setLoadingVoices] = useState(false);
 
   const hasPreselection = !!preselectedId;
-  const isAwaazBot = selectedBotTemplate?.id === AWAAZBOT_AVAILABLE_BOT_ID;
+  const isAwaazBot = selectedBotTemplate?.isVoiceBot === true;
 
   // Compute step order for progress indicator
   const stepOrder: StepId[] = ['identity'];
@@ -79,7 +79,9 @@ export default function CreateBotScreen(): React.JSX.Element {
   const fetchVoices = useCallback(async () => {
     setLoadingVoices(true);
     try {
-      const voices = await getAwaazBotVoices(AWAAZBOT_AVAILABLE_BOT_ID);
+      const voiceBotId = availableBots.find(b => b.isVoiceBot)?.id;
+      if (!voiceBotId) return;
+      const voices = await getAwaazBotVoices(voiceBotId);
       setAwaazBotVoices(voices);
     } finally {
       setLoadingVoices(false);
@@ -102,7 +104,7 @@ export default function CreateBotScreen(): React.JSX.Element {
   };
 
   const goToVoiceOrCreate = async (template: IAvailableBot): Promise<void> => {
-    const isAwaaz = template.id === AWAAZBOT_AVAILABLE_BOT_ID;
+    const isAwaaz = template.isVoiceBot === true;
     if (isAwaaz) {
       await handleCreateWithTemplate(template);
     } else {
@@ -544,13 +546,13 @@ export default function CreateBotScreen(): React.JSX.Element {
               ) : (
                 <>
                   <Text style={{ ...textStyles.buttonMedium, color: colors.textInverse }}>
-                    {selectedBotTemplate && selectedBotTemplate.id !== AWAAZBOT_AVAILABLE_BOT_ID
+                    {selectedBotTemplate && !selectedBotTemplate.isVoiceBot
                       ? 'Next: Select Voice'
                       : 'Create Bot'}
                   </Text>
                   <Ionicons
                     name={
-                      selectedBotTemplate && selectedBotTemplate.id !== AWAAZBOT_AVAILABLE_BOT_ID
+                      selectedBotTemplate && !selectedBotTemplate.isVoiceBot
                         ? 'arrow-forward'
                         : 'checkmark-circle'
                     }

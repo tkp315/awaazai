@@ -66,7 +66,7 @@ export const useMessageStore = create<MessageState>((set, get) => ({
     set({ limitReached: false });
     try {
       const chat = await messageService.createChat(botVoiceId, name);
-      set(state => ({ chats: [chat, ...state.chats] }));
+      await get().fetchChats();
       return chat;
     } catch (e) {
       if (isLimitReached(e)) {
@@ -245,6 +245,7 @@ export const useMessageStore = create<MessageState>((set, get) => ({
       await messageService.endSession(activeChat.id, activeSession.id, feedback);
       set({ activeSession: null, messages: [] });
       disconnectSocket();
+      await get().fetchChats();
     } catch (e) {
       console.error('endSession', e);
     }

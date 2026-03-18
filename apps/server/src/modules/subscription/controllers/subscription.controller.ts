@@ -57,7 +57,7 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
     const order = await razorpay.orders.create({
       amount: amount * 100, // paise
       currency: 'INR',
-      receipt: `sub_${userId}_${Date.now()}`,
+      receipt: `sub_${userId.slice(0, 8)}_${Date.now()}`,
       notes: { userId, planSlug, billingCycle },
     });
 

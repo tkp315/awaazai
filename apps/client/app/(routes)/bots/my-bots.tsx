@@ -217,7 +217,7 @@ export default function MyBotsScreen(): React.JSX.Element {
               </Text>
             </View>
           </View>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={() => router.push('/(routes)/bots/create')}
             style={{
               flexDirection: 'row',
@@ -232,7 +232,7 @@ export default function MyBotsScreen(): React.JSX.Element {
           >
             <Ionicons name="add" size={18} color={colors.textInverse} />
             <Text style={{ ...textStyles.buttonSmall, color: colors.textInverse }}>New Bot</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
 
         {loadingBots && (

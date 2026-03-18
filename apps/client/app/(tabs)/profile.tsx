@@ -1,10 +1,10 @@
-import { ScrollView, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { ScrollView, Text, TouchableOpacity, View, Alert, RefreshControl } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks';
 import { useProfileStore } from '@/modules/profile';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuthStore } from '@/modules/auth/auth.store';
 import { useSubscriptionStore } from '@/modules/subscription';
 
@@ -94,12 +94,20 @@ export default function ProfileScreen(): React.JSX.Element {
     ]);
   };
 
+  const [refreshing, setRefreshing] = useState(false);
+
   useEffect(() => {
     fetchMe();
     fetchPreferences();
     fetchSubscription();
     fetchLimits();
   }, []);
+
+  const onRefresh = async (): Promise<void> => {
+    setRefreshing(true);
+    await Promise.all([fetchMe(), fetchPreferences(), fetchSubscription(), fetchLimits()]);
+    setRefreshing(false);
+  };
 
   const displayName = user?.fullName ?? 'User';
   const displayEmail = user?.email ?? '';
@@ -113,6 +121,7 @@ export default function ProfileScreen(): React.JSX.Element {
           paddingBottom: spacing[8],
         }}
         showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary[500]} />}
       >
         {/* Header */}
         <View
@@ -345,6 +354,13 @@ export default function ProfileScreen(): React.JSX.Element {
             iconBg={colors.secondary[100]}
             iconColor={colors.secondary[600]}
             onPress={() => router.push('/(routes)/subscription/usage')}
+          />
+          <MenuItem
+            icon="receipt-outline"
+            label="Payment History"
+            iconBg={colors.warning.light}
+            iconColor={colors.warning.dark}
+            onPress={() => router.push('/(routes)/subscription/payments')}
           />
           <MenuItem
             icon="shield-checkmark-outline"

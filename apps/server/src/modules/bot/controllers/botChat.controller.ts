@@ -8,7 +8,7 @@ import {
   botMessageListQuerySchema,
 } from '../validators/bot.validation.js';
 import { botService } from '../services/bot.service.js';
-import { botChatService } from '../services/botChat.service.js';
+import { botChatService } from '../types/botChat.service.js';
 
 // ==========================================
 // BOT CHAT CRUD

@@ -1,14 +1,14 @@
 import { getTransporter, getMailConfig } from './client.js';
 import { getOTPTemplate } from './templates/index.js';
 
-interface SendMailOptions {
+export interface SendMailOptions {
   to: string;
   subject: string;
   text?: string;
   html?: string;
 }
 
-interface OTPMailOptions {
+export interface OTPMailOptions {
   to: string;
   otp: string;
   type: 'SIGNUP' | 'PASSWORD_RESET';

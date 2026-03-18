@@ -5,6 +5,7 @@ model AvailableBot {
   description String  // "Clone & chat in their voice"
   icon        String? // emoji "🎤" or icon name for UI
   isActive    Boolean @default(true) // admin enable/disable kar sakta hai
+  isVoiceBot  Boolean @default(false) // voice tab mein dikhana hai ya nahi
   sortOrder   Int     @default(0)    // display order in app
 
   // Capabilities this bot type supports (implicit M2M)

@@ -21,6 +21,8 @@ export const createAvailableBotSchema = z.object({
 
   isActive: z.boolean().optional().default(true),
 
+  isVoiceBot: z.boolean().optional().default(false),
+
   sortOrder: z.number().int().min(0).optional().default(0),
 
   // Capability IDs to connect (Prisma implicit M2M)
@@ -38,6 +40,8 @@ export const updateAvailableBotSchema = z.object({
   icon: z.string().max(10).trim().optional(),
 
   isActive: z.boolean().optional(),
+
+  isVoiceBot: z.boolean().optional(),
 
   sortOrder: z.number().int().min(0).optional(),
 });
