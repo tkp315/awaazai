@@ -30,6 +30,7 @@ export interface IAvailableBot {
   description: string;
   icon: string | null;
   isActive: boolean;
+  isVoiceBot: boolean;
   sortOrder: number;
   capabilities: ICapability[];
 }

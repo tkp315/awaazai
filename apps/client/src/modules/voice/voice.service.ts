@@ -8,6 +8,7 @@ const VOICE_ENDPOINTS = {
   SAMPLE: (sampleId: string) => `voices/samples/${sampleId}`,
   BOT_VOICES: (botId: string) => `voices/bots/${botId}`,
   READY_VOICES: 'voices/ready',
+  RECENT_VOICES: 'voices/recent',
   VOICE: (voiceId: string) => `voices/${voiceId}`,
   RETRY_CLONE: (voiceId: string) => `voices/${voiceId}/clone`,
 };
@@ -52,6 +53,11 @@ export const getVoicesByBot = async (botId: string): Promise<IBotVoice[]> => {
 
 export const getAllReadyVoices = async (): Promise<IBotVoice[]> => {
   const res = await axiosInstance.get(VOICE_ENDPOINTS.READY_VOICES);
+  return res.data.data;
+};
+
+export const getRecentVoices = async (): Promise<IBotVoice[]> => {
+  const res = await axiosInstance.get(VOICE_ENDPOINTS.RECENT_VOICES);
   return res.data.data;
 };
 

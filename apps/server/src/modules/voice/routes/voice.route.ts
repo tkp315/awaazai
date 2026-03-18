@@ -9,6 +9,7 @@ import {
   createBotVoice,
   getVoicesByBot,
   getAllReadyVoices,
+  getRecentVoices,
   getVoiceById,
   deleteVoice,
   retriggerCloning,
@@ -50,6 +51,7 @@ router.delete('/samples/:sampleId', deleteSampleVoice);
 // ==========================================
 // BOT VOICE
 // ==========================================
+router.get('/recent', getRecentVoices);
 router.get('/ready', getAllReadyVoices);
 router.post('/bots/:botId', checkLimit('VOICE_CLONES'), createBotVoice);
 router.get('/bots/:botId', getVoicesByBot);
