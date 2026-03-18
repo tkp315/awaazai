@@ -10,6 +10,9 @@ export interface MailConfig {
     name: string;
     email: string;
   };
+  tls:{
+    rejectUnauthorized:boolean;
+  }
 }
 
 async function mailConfig(): Promise<MailConfig> {
@@ -17,16 +20,21 @@ async function mailConfig(): Promise<MailConfig> {
 
   return {
     host: process.env.MAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.MAIL_PORT || (isProduction ? '465' : '587'), 10),
-    secure: isProduction, // true for 465, false for other ports
+    port: parseInt(process.env.MAIL_PORT || '587', 10),
+    secure: isProduction,
+    tls: {
+      rejectUnauthorized: false,
+    },
     auth: {
       user: process.env.MAIL_USER || '',
       pass: process.env.MAIL_PASSWORD || '', // Gmail app password
     },
+    
     from: {
       name: process.env.MAIL_FROM_NAME || 'AwaazAI',
       email: process.env.MAIL_FROM_EMAIL || 'noreply@awaazai.com',
     },
+    
   };
 }
 

@@ -11,6 +11,7 @@ export async function createTransporter(config: MailConfig): Promise<Transporter
     host: config.host,
     port: config.port,
     secure: config.secure,
+    family: 4, // force IPv4 — Render does not support IPv6 outbound
     auth: {
       user: config.auth.user,
       pass: config.auth.pass,
