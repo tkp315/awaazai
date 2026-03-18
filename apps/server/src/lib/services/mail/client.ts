@@ -1,5 +1,6 @@
 import nodemailer, { Transporter } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
+import { lookup } from 'dns/promises';
 import { MailConfig } from '@config/services/mail/index.js';
 
 let transporter: Transporter | null = null;
@@ -8,8 +9,9 @@ let mailConfig: MailConfig | null = null;
 export async function createTransporter(config: MailConfig): Promise<Transporter> {
   mailConfig = config;
 
+  const { address: resolvedHost } = await lookup(config.host, 4);
   const options = {
-    host: config.host,
+    host: resolvedHost,
     port: config.port,
     secure: config.secure,
     tls: config.tls,
@@ -17,7 +19,6 @@ export async function createTransporter(config: MailConfig): Promise<Transporter
       user: config.auth.user,
       pass: config.auth.pass,
     },
-    dnsLookup: config.dnsLookup,
   } as SMTPTransport.Options;
   transporter = nodemailer.createTransport(options);
 
