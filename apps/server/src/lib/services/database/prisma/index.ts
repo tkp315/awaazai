@@ -9,7 +9,10 @@ let prisma: PrismaClient;
 async function initPrisma(config: PostgresConfig, appObj: Application) {
   const logger = getLogger();
 
-  const adapter = new PrismaPg({ connectionString: config.url });
+  const adapter = new PrismaPg({
+    connectionString: config.url,
+    ...(config.ssl ? { ssl: { rejectUnauthorized: false } } : {}),
+  });
 
   prisma = new PrismaClient({
     adapter,
