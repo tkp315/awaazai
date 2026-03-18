@@ -1,6 +1,6 @@
 import { PrismaClient } from 'generated/prisma/client.js';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PostgresConfig } from '@config/services/database/prisma/index.js';
+import { PostgresConfig } from '@config/services/database/pg/index.js'; 
 import { getLogger } from '@lib/helper/logger/index.js';
 import { Application } from 'express';
 

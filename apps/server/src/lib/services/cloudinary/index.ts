@@ -2,7 +2,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { createWriteStream } from 'fs';
 import { unlink } from 'fs/promises';
 import { pipeline } from 'stream/promises';
-import fetch from 'node-fetch';
+import axios from 'axios';
 import path from 'path';
 import os from 'os';
 import type { CloudinaryConfig } from '@config/services/cloudinary/index.js';
@@ -96,10 +96,10 @@ export async function downloadFile(url: string, filename: string): Promise<strin
   const ext = path.extname(new URL(url).pathname) || '';
   const tempPath = path.join(os.tmpdir(), `${filename}${ext}`);
 
-  const response = await fetch(url);
-  if (!response.ok) throw new Error(`Failed to download file: ${response.statusText}`);
+  const response = await axios.get<NodeJS.ReadableStream>(url, { responseType: 'stream' });
+  if (!response.data) throw new Error(`Failed to download file: ${response.statusText}`);
 
-  await pipeline(response.body!, createWriteStream(tempPath));
+  await pipeline(response.data, createWriteStream(tempPath));
   return tempPath;
 }
 
