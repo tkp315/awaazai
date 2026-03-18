@@ -1,4 +1,5 @@
 import nodemailer, { Transporter } from 'nodemailer';
+import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
 import { MailConfig } from '@config/services/mail/index.js';
 
 let transporter: Transporter | null = null;
@@ -7,7 +8,7 @@ let mailConfig: MailConfig | null = null;
 export async function createTransporter(config: MailConfig): Promise<Transporter> {
   mailConfig = config;
 
-  transporter = nodemailer.createTransport({
+  const options = {
     host: config.host,
     port: config.port,
     secure: config.secure,
@@ -16,8 +17,9 @@ export async function createTransporter(config: MailConfig): Promise<Transporter
       user: config.auth.user,
       pass: config.auth.pass,
     },
-    socketOptions: { family: 4 },
-  } as Parameters<typeof nodemailer.createTransport>[0]);
+    dnsLookup: config.dnsLookup,
+  } as SMTPTransport.Options;
+  transporter = nodemailer.createTransport(options);
 
   // Verify connection
   try {
