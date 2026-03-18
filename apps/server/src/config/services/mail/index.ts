@@ -13,11 +13,11 @@ export interface MailConfig {
 }
 
 async function mailConfig(): Promise<MailConfig> {
-  const isProduction = process.env.NODE_ENV === 'production';
+  const isProduction = process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production';
 
   return {
     host: process.env.MAIL_HOST || 'smtp.gmail.com',
-    port: parseInt(process.env.MAIL_PORT || '587', 10),
+    port: parseInt(process.env.MAIL_PORT || (isProduction ? '465' : '587'), 10),
     secure: isProduction, // true for 465, false for other ports
     auth: {
       user: process.env.MAIL_USER || '',

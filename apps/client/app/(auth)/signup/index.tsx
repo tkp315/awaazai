@@ -240,8 +240,8 @@ export default function SignupScreen() {
               </TouchableOpacity>
             </View>
 
-            {/* Divider */}
-            <View
+            {/* Divider - Google signup disabled temporarily */}
+            {/* <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
@@ -261,7 +261,6 @@ export default function SignupScreen() {
               <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
             </View>
 
-            {/* Google Button */}
             <TouchableOpacity
               style={{
                 flexDirection: 'row',
@@ -286,7 +285,7 @@ export default function SignupScreen() {
               >
                 Continue with Google
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             {/* Login Link */}
             <View
