@@ -13,7 +13,6 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks';
 import { useProfileStore } from '@/modules/profile';
 import { VOICE_STATUS_DISPLAY, useVoiceStore } from '@/modules/voice';
-import { useBotsStore } from '@/modules/bots';
 import type { IBotVoice } from '@/modules/voice';
 
 function VoiceCard({ voice }: { voice: IBotVoice }): React.JSX.Element {
@@ -87,27 +86,17 @@ export default function HomeScreen(): React.JSX.Element {
   const { colors, spacing, layout, radius, textStyles } = useTheme();
   const router = useRouter();
   const { user, fetchMe } = useProfileStore();
-  const { voices, loadingVoices, fetchVoices } = useVoiceStore();
-  const { bots, fetchBots } = useBotsStore();
+  const { readyVoices, loadingReadyVoices, fetchReadyVoices } = useVoiceStore();
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (!user) fetchMe();
-    fetchAllVoices();
+    fetchReadyVoices();
   }, []);
-
-  const fetchAllVoices = async (): Promise<void> => {
-    let voiceBots = bots.filter(b => b.availableBot?.isVoiceBot);
-    if (voiceBots.length === 0) {
-      await fetchBots();
-      voiceBots = bots.filter(b => b.availableBot?.isVoiceBot);
-    }
-    await Promise.all(voiceBots.map(b => fetchVoices(b.id)));
-  };
 
   const onRefresh = async (): Promise<void> => {
     setRefreshing(true);
-    await Promise.all([fetchMe(), fetchAllVoices()]);
+    await Promise.all([fetchMe(), fetchReadyVoices()]);
     setRefreshing(false);
   };
 
@@ -286,11 +275,11 @@ export default function HomeScreen(): React.JSX.Element {
           </TouchableOpacity>
         </View>
 
-        {loadingVoices ? (
+        {loadingReadyVoices ? (
           <View style={{ alignItems: 'center', paddingVertical: spacing[8] }}>
             <ActivityIndicator size="large" color={colors.primary[500]} />
           </View>
-        ) : voices.length === 0 ? (
+        ) : readyVoices.length === 0 ? (
           <View
             style={{
               backgroundColor: colors.surface,
@@ -331,10 +320,10 @@ export default function HomeScreen(): React.JSX.Element {
           </View>
         ) : (
           <>
-            {voices.slice(0, 3).map(voice => (
+            {readyVoices.slice(0, 3).map(voice => (
               <VoiceCard key={voice.id} voice={voice} />
             ))}
-            {voices.length > 3 && (
+            {readyVoices.length > 3 && (
               <TouchableOpacity
                 onPress={() => router.push('/(tabs)/voices')}
                 activeOpacity={0.8}
@@ -348,7 +337,7 @@ export default function HomeScreen(): React.JSX.Element {
                 }}
               >
                 <Text style={{ ...textStyles.labelSmall, color: colors.primary[500] }}>
-                  +{voices.length - 3} more voices
+                  +{readyVoices.length - 3} more voices
                 </Text>
               </TouchableOpacity>
             )}

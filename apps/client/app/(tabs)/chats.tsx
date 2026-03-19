@@ -16,7 +16,6 @@ import { useRouter } from 'expo-router';
 import { useTheme } from '@/hooks';
 import { useMessageStore } from '@/modules/message';
 import { useVoiceStore } from '@/modules/voice';
-import { useBotsStore } from '@/modules/bots';
 import type { IChat } from '@/modules/message';
 import type { IBotVoice } from '@/modules/voice';
 import { PaywallModal } from '@/components/ui/paywall';
@@ -226,9 +225,7 @@ export default function ChatsScreen(): React.JSX.Element {
   const router = useRouter();
   const { chats, loadingChats, fetchChats, createChat, limitReached, clearLimitReached } =
     useMessageStore();
-  const { voices, loadingVoices, fetchVoices } = useVoiceStore();
-  const { bots, fetchBots } = useBotsStore();
-  const readyVoices = voices.filter(v => v.status === 'READY');
+  const { readyVoices, loadingReadyVoices, fetchReadyVoices } = useVoiceStore();
   const [modalVisible, setModalVisible] = useState(false);
   const [creating, setCreating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -245,12 +242,7 @@ export default function ChatsScreen(): React.JSX.Element {
 
   const handleOpenModal = async (): Promise<void> => {
     setModalVisible(true);
-    const voiceBots = bots.filter(b => b.availableBot?.isVoiceBot);
-    if (voiceBots.length === 0) {
-      await fetchBots();
-    }
-    const latestVoiceBots = bots.filter(b => b.availableBot?.isVoiceBot);
-    await Promise.all(latestVoiceBots.map(b => fetchVoices(b.id)));
+    await fetchReadyVoices();
   };
 
   const handleSelectVoice = async (voice: IBotVoice): Promise<void> => {
@@ -366,7 +358,7 @@ export default function ChatsScreen(): React.JSX.Element {
         onClose={() => setModalVisible(false)}
         onSelect={handleSelectVoice}
         voices={readyVoices}
-        loading={loadingVoices}
+        loading={loadingReadyVoices}
       />
     </SafeAreaView>
   );
