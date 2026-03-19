@@ -72,6 +72,7 @@ export const sendOtp = asyncHandler(async (req, res) => {
   await authHelpers.otp.setOtpInRedis(otp, data.email);
 
   await authHelpers.otp.sendOtpMail(data.email, otp, 'SIGNUP', 10).catch(err => {
+    console.error('sendOtpMail failed:', err?.message ?? err);
     throw new ApiError(401, 'Unable to send email');
   });
 
