@@ -1,43 +1,24 @@
-import nodemailer, { Transporter } from 'nodemailer';
-import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
-import { lookup } from 'dns/promises';
+import { Resend } from 'resend';
+// import nodemailer, { Transporter } from 'nodemailer';
+// import SMTPTransport from 'nodemailer/lib/smtp-transport/index.js';
+// import { lookup } from 'dns/promises';
 import { MailConfig } from '@config/services/mail/index.js';
 
-let transporter: Transporter | null = null;
+let resendClient: Resend | null = null;
 let mailConfig: MailConfig | null = null;
 
-export async function createTransporter(config: MailConfig): Promise<Transporter> {
+export async function createTransporter(config: MailConfig): Promise<Resend> {
   mailConfig = config;
-
-  const { address: resolvedHost } = await lookup(config.host, 4);
-  const options = {
-    host: resolvedHost,
-    port: config.port,
-    secure: config.secure,
-    tls: config.tls,
-    auth: {
-      user: config.auth.user,
-      pass: config.auth.pass,
-    },
-  } as SMTPTransport.Options;
-  transporter = nodemailer.createTransport(options);
-
-  // Verify connection
-  try {
-    await transporter.verify();
-    console.log('✅ Mail service connected');
-  } catch (error) {
-    console.error('❌ Mail service connection failed:', error);
-  }
-
-  return transporter;
+  resendClient = new Resend(config.resendApiKey);
+  console.log('✅ Mail service connected (Resend)');
+  return resendClient;
 }
 
-export function getTransporter(): Transporter {
-  if (!transporter) {
-    throw new Error('Mail transporter not initialized. Call createTransporter first.');
+export function getTransporter(): Resend {
+  if (!resendClient) {
+    throw new Error('Mail client not initialized. Call createTransporter first.');
   }
-  return transporter;
+  return resendClient;
 }
 
 export function getMailConfig(): MailConfig {
@@ -48,9 +29,6 @@ export function getMailConfig(): MailConfig {
 }
 
 export async function disconnect(): Promise<void> {
-  if (transporter) {
-    transporter.close();
-    transporter = null;
-    console.log('Mail service disconnected');
-  }
+  resendClient = null;
+  console.log('Mail service disconnected');
 }

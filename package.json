@@ -62,6 +62,7 @@
     ]
   },
   "dependencies": {
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "resend": "^6.9.4"
   }
 }

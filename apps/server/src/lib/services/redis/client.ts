@@ -23,8 +23,9 @@ export async function createClients(config: RedisConfig): Promise<Map<string, Re
       retryStrategy: (times: number) => {
         return Math.min(times * 500, 5000);
       },
-      maxRetriesPerRequest: null,
-      enableOfflineQueue: true,
+      maxRetriesPerRequest: 3,
+      enableOfflineQueue: false,
+      connectTimeout: 10000,
     });
 
     client.on('error', (err: Error) => {

@@ -18,23 +18,25 @@ export interface OTPMailOptions {
 // Generic send mail
 export async function sendMail(options: SendMailOptions): Promise<boolean> {
   try {
-    const transporter = getTransporter();
+    const resend = getTransporter();
     const config = getMailConfig();
 
-    await transporter.sendMail({
-      from: `"${config.from.name}" <${config.from.email}>`,
+    const { data, error } = await resend.emails.send({
+      from: `${config.from.name} <${config.from.email}>`,
       to: options.to,
       subject: options.subject,
-      text: options.text,
-      html: options.html,
+      ...(options.html ? { html: options.html } : { text: options.text ?? '' }),
     });
 
-    console.log(`📧 Email sent to: ${options.to}`);
+    if (error) {
+      console.error(`❌ Resend error:`, error);
+      throw new Error(error.message);
+    }
+    console.log(`📧 Email sent to: ${options.to} | id: ${data?.id}`);
     return true;
   } catch (error) {
-    throw error;
     console.error('Failed to send email:', error);
-    return false;
+    throw error;
   }
 }
 
