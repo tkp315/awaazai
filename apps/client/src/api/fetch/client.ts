@@ -6,6 +6,7 @@ import { router } from 'expo-router';
 import { useAuthStore } from '@/modules/auth/auth.store';
 
 const BASE_URL = url;
+console.log(`BASE_URL ${BASE_URL}`);
 export const axiosInstance = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,

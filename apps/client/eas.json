@@ -12,6 +12,9 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "PROD_BACKEND_URL": "https://awaazai.onrender.com"
       }
     },
     "production": {
