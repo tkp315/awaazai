@@ -11,18 +11,18 @@ const getIPAddress = () => {
   return ip;
 };
 
+const PROD_URL = Constants?.expoConfig?.extra?.PROD_BACKEND_URL || 'https://awaazai.onrender.com/api';
+
 const url = () => {
-  const isDev = __DEV__;
-  const backendPort = Constants?.expoConfig?.extra?.BACKEND_PORT;
-  console.log(`Port :`, Constants.expoConfig?.extra);
-  if (isDev) {
+  if (__DEV__) {
     const ip = getIPAddress();
-    return `http://${ip}:${backendPort}/api`;
-    console.log(`Backend url: ${Constants?.expoConfig?.extra?.PROD_BACKEND_URL}`)
-    return Constants?.expoConfig?.extra?.PROD_BACKEND_URL
-  } else {
-    return Constants?.expoConfig?.extra?.PROD_BACKEND_URL
+    const backendPort = Constants?.expoConfig?.extra?.BACKEND_PORT || 5000;
+    console.log(`backend port ${backendPort}`);
+    // return `http://${ip}:${backendPort}/api`;
+      return `${PROD_URL}/api`;
   }
+  return `${PROD_URL}/api`;
 };
 
 export const BASE_URL = url();
+export const PRODUCTION_URL = PROD_URL;

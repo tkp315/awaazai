@@ -2,6 +2,7 @@ import { io, Socket } from 'socket.io-client';
 import Constants from 'expo-constants';
 import { getToken } from '@/shared/utils/storage';
 import { STORAGE_KEYS } from '@/shared/utils/constants';
+import { PRODUCTION_URL } from '@/api/fetch/config';
 
 let socket: Socket | null = null;
 
@@ -12,9 +13,10 @@ const getSocketUrl = (): string => {
 
   if (__DEV__ && debuggerHost) {
     const ip = debuggerHost.split(':')[0];
-    return `http://${ip}:${backendPort}`;
+    // return `http://${ip}:${backendPort}`;
+    return PRODUCTION_URL
   }
-  return 'https://api.awaazai.com';
+  return PRODUCTION_URL;
 };
 
 export const connectSocket = async (): Promise<Socket> => {

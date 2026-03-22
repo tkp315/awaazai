@@ -71,6 +71,7 @@ export const signup = async (payload: SignupPayload): Promise<ApiResponse | ApiE
 export const login = async (payload: LoginPayload): Promise<ApiResponse | ApiError> => {
   try {
     const res = await axios.post(`${BASE_URL}/${AUTH_ENDPOINTS.LOGIN}`, payload);
+    console.log(`Login`,BASE_URL)
     return { data: res.data, message: res.data.message, success: true };
   } catch (error) {
     return handleAxiosError(error, 'LOGIN_ERROR');
